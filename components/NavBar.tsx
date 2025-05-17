@@ -1,18 +1,15 @@
 'use client'
-
-import { supabase } from '@/lib/supabase';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
-    const handleLogin = async () => {
-        await supabase.auth.signInWithOAuth({
-            provider: 'github'
-        });
-    };
-
+    const router = useRouter();
+  
+    const redirectToLogin = () => {
+        router.push('/login')
+    }
     return(
         <nav>
-            <button onClick={handleLogin}> Sign in with GitHub</button>  
+            <button onClick={redirectToLogin}> Sign in</button>  
         </nav> 
     )
 }
