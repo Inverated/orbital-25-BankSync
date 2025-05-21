@@ -5,11 +5,12 @@ export default function Navbar() {
     const router = useRouter();
   
     const redirectToLogin = () => {
-        router.push('/login')
+        router.push('/registration')
     }
+
     return(
         <nav>
-            <button onClick={redirectToLogin}> Sign in</button>  
+            <button onClick={ redirectToLogin }> Sign in</button>  
         </nav> 
     )
 }
