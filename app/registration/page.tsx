@@ -1,13 +1,36 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Login from "@/components/Login";
 import Signup from "@/components/Signup";
 import supabase from "../config/supabaseClient";
 import { FaGithub } from "react-icons/fa";
 import { FaGoogle } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { Session } from "@supabase/supabase-js";
 
 export default function Registration() {
+    const [currentSession, setSession] = useState<Session | null>(null)
+    const router = useRouter()
+
+    useEffect(() => {
+        const getData = async () => {
+            const { data, error } = await supabase.auth.getSession()
+
+            if (error) {
+                console.log(error.message)
+            } else {
+                console.log("no error")
+            }
+
+            if (data.session != null) {
+                router.push('/dashboard')
+            }
+            setSession(data.session)
+        }
+        getData()
+    }, [])
+
     //switch btw login and signup
     const [isLogin, setIsLogin] = useState(false);
 
@@ -22,9 +45,9 @@ export default function Registration() {
     };
 
     const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
-    
+
     return (
-        <div className="flex justify-center items-center h-screen">
+        currentSession == null && <div className="flex justify-center items-center h-screen">
             <div className="w-[400]">
                 {isLogin ? <Login /> : <Signup />}
 
@@ -46,7 +69,7 @@ export default function Registration() {
                     <hr className="w-full" />
                     <p className="shrink-0">Login with others</p>
                     <hr className="w-full" />
-                </div> 
+                </div>
 
                 <div className={externalAuthButtonStyle}
                     onClick={() => handleOAuthLogin('google')} >
