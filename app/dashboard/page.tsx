@@ -46,22 +46,24 @@ export default function Dashboard() {
     const [currentPage, setPage] = useState<Page>("Overview")
     const CurrentComponent = componentSelector[currentPage]
 
-    const tabStyle = "text-2xl px-4 mx-4 border border-black rounded-md cursor-pointer"
+    const tabStyle = "text-2xl mx-1 px-2 border border-black rounded-md cursor-pointer"
     return (
-        currentSession != null && <div className="">
+        currentSession != null && <div>
             <NavBar user={currentSession?.user} />
-            <div className="flex gap-4 my-4 mx-4 justify-center">
-                {Object.keys(componentSelector).map((tab) =>
-                    <span
-                        onClick={() => setPage(tab as Page)}
-                        key={tab}
-                        className={`${tabStyle} ${currentPage === tab ? "bg-gray-500" : ""}`}>
-                        {tab}
-                    </span>
-                )}
-            </div>
-            <CurrentComponent />
+            <div className="flex justify-end">
+                <div className=" border border-black p-2 m-3">
+                    {Object.keys(componentSelector).map((tab) =>
+                        <span
+                            onClick={() => setPage(tab as Page)}
+                            key={tab}
+                            className={`${tabStyle} ${currentPage === tab ? "bg-gray-500" : ""}`}>
+                            {tab}
+                        </span>
+                    )}
+                </div>
 
+            </div>
+            <div><CurrentComponent /></div>
         </div>
     )
 }

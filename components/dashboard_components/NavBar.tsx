@@ -24,7 +24,7 @@ export default function NavBar(user: { user: User | undefined; }) {
                         <CiSettings onClick={() => setSettingOpening(!settingsIsOpened)} 
                         className={logoStyle} />
                         <div className="relative">
-                            {settingsIsOpened ? <OptionMenu /> : ""}
+                            {settingsIsOpened && <OptionMenu />}
                         </div>
                     </div>
                     

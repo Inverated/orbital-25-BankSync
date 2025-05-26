@@ -1,9 +1,11 @@
 import supabase from "@/app/config/supabaseClient"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 export default function OptionMenu() {
     const selection = ["Profile", "Settings", "Logout"] as const
     const router = useRouter()
+    const [logoutDialogue, togglePopout] = useState(false)
 
     const logout = async () => {
         const { error } = await supabase.auth.signOut()
@@ -19,7 +21,8 @@ export default function OptionMenu() {
     const selectOption = (option: SelectionOption) => {
         switch (option) {
             case "Logout":
-                logout()
+                togglePopout(true)
+                //logout()
                 break
             case "Profile":
                 break
@@ -31,14 +34,41 @@ export default function OptionMenu() {
     }
 
     return (
-        <div className="flex flex-col absolute right-0 mx-4 text-2xl border border-black px-2 py-2 bg-white w-[200] rounded-lg">
-            {selection.map((tab) =>
-                <span key={tab}
-                    className="px-2 py-2 rounded-lg bg-white hover:bg-gray-400 hover:cursor-pointer active:bg-gray-500"
-                    onClick={() => selectOption(tab)}>
-                    {tab}
-                </span>
-            )}
+        <div>
+            <div className="flex flex-col absolute right-0 mx-4 text-2xl border border-black px-2 py-2 bg-white w-[200px] rounded-lg">
+                {selection.map((tab) =>
+                    <span key={tab}
+                        className="px-2 py-2 rounded-lg bg-white hover:bg-gray-400 hover:cursor-pointer active:bg-gray-500"
+                        onClick={() => selectOption(tab)}>
+                        {tab}
+                    </span>
+                )}
+            </div>
+
+            {logoutDialogue &&
+                <div className="fixed inset-0 flex justify-center items-center z-50">
+                    <div className="absolute inset-0 bg-black opacity-50"></div>
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full z-10">
+                        <h2 className="text-xl font-semibold">Are you sure you want to logout?</h2>
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => togglePopout(false)}
+                                className="mt-7 border border-black m-2 p-2 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                            >
+                                Close
+                            </button>
+                            <button
+                                onClick={() => logout()}
+                                className="mt-7 border border-black m-2 p-2 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                            >
+                                Confirm
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            }
         </div>
+
     )
 }

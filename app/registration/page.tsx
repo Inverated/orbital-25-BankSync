@@ -11,6 +11,7 @@ import { Session } from "@supabase/supabase-js";
 
 export default function Registration() {
     const [currentSession, setSession] = useState<Session | null>(null)
+    const [sessionLoaded, setLoadedStatus] = useState(false)
     const router = useRouter()
 
     useEffect(() => {
@@ -27,6 +28,7 @@ export default function Registration() {
                 router.push('/dashboard')
             }
             setSession(data.session)
+            setLoadedStatus(true)
         }
         getData()
     }, [])
@@ -47,7 +49,8 @@ export default function Registration() {
     const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
 
     return (
-        currentSession == null && <div className="flex justify-center items-center h-screen">
+        currentSession == null && sessionLoaded &&
+        <div className="flex justify-center items-center h-screen">
             <div className="w-[400]">
                 {isLogin ? <Login /> : <Signup />}
 
