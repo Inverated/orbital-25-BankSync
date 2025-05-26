@@ -5,7 +5,7 @@ import { RiLockPasswordFill } from "react-icons/ri";
 
 export default function Login() {
     const router = useRouter()
-
+    
     const loginUser = async (formData: FormData) => {
         const userEmail = formData.get('email') as string;
         const userPassword = formData.get('password') as string;
@@ -55,6 +55,5 @@ export default function Login() {
                 </div>
             </form>
         </div>
-
     )
 }

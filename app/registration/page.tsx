@@ -21,6 +21,8 @@ export default function Registration() {
         }
     };
 
+    const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
+    
     return (
         <div className="flex justify-center items-center h-screen">
             <div className="w-[400]">
@@ -44,19 +46,17 @@ export default function Registration() {
                     <hr className="w-full" />
                     <p className="shrink-0">Login with others</p>
                     <hr className="w-full" />
-                </div>
+                </div> 
 
-                <div className="my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition 
-                    items-center justify-center border border-black rounded-lg"
+                <div className={externalAuthButtonStyle}
                     onClick={() => handleOAuthLogin('google')} >
                     <FaGoogle />
                     <span className="mx-2">Sign in with Google</span>
                 </div>
-                <div className="my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition 
-                    items-center justify-center border border-black rounded-lg"
+                <div className={externalAuthButtonStyle}
                     onClick={() => handleOAuthLogin('github')} >
                     <FaGithub />
-                    <span onClick={() => handleOAuthLogin('github')} className="mx-2">Sign in with GitHub</span>
+                    <span className="mx-2">Sign in with GitHub</span>
                 </div>
             </div>
         </div>

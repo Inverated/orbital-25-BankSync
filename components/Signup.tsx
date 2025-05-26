@@ -23,35 +23,38 @@ export default function Signup() {
         router.push('/dashboard')
     }
 
-return (
-    <div>
-        <div className="text-center py-4">
-            <h1 className="text-6xl font-bold">Welcome</h1>
-        </div>
-        {/* use form instead of div onclick for keyboard accessibility*/}
-        <form action={signupUser}>
-            <div className="my-3 flex bg-gray-300 rounded-lg">
-                <CiUser className="text-2xl" />
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="example@email.com"
-                    className="mx-2 bg-transparent w-full" />
+    return (
+        <div>
+            <div className="text-center py-4">
+                <h1 className="text-6xl font-bold">Welcome</h1>
             </div>
-            <div className="my-3 flex bg-gray-300 rounded-lg">
-                <RiLockPasswordFill className="text-2xl" />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="*****"
-                    className="mx-2 bg-transparent w-full" />
-            </div>
+            {/* use form instead of div onclick for keyboard accessibility*/}
+            <form action={signupUser}>
+                <div className="my-3 flex bg-gray-300 rounded-lg">
+                    <CiUser className="text-2xl" />
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="example@email.com"
+                        className="mx-2 bg-transparent w-full" />
+                </div>
+                <div className="my-3 flex bg-gray-300 rounded-lg">
+                    <RiLockPasswordFill className="text-2xl" />
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="*****"
+                        className="mx-2 bg-transparent w-full" />
+                </div>
 
-            <div>
-                <button type='submit' className="bg-black active:bg-gray-900 active:scale-95 w-full transition cursor-pointer text-white p-2 rounded-lg">
-                    Sign Up
-                </button>
-            </div>
-        </form>
-    </div>
-)}
+                <div>
+                    <button type='submit'
+                        className="bg-black active:bg-gray-900 active:scale-95 w-full 
+                    transition cursor-pointer text-white p-2 rounded-lg">
+                        Sign Up
+                    </button>
+                </div>
+            </form>
+        </div>
+    )
+}
