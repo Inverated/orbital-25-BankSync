@@ -11,7 +11,13 @@ import Analytics from "@/components/dashboard_components/dashboard_tabs/Analytic
 export default function Dashboard() {
     const getData = async () => {
         const { data, error } = await supabase.auth.getSession()
-        error ? console.log(error.message) : console.log("no error")
+        
+        if (error) {
+            console.log(error.message)
+         } else {
+            console.log("no error")
+         }
+
         console.log("Session data:", data.session)
     }
 
@@ -29,7 +35,7 @@ export default function Dashboard() {
     } as const
 
     const [currentPage, setPage] = useState<Page>("Overview")
-    let CurrentComponent = componentSelector[currentPage]
+    const CurrentComponent = componentSelector[currentPage]
 
     const tabStyle = "text-2xl px-4 mx-4 border border-black rounded-md cursor-pointer"
     return (

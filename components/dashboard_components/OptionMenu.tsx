@@ -1,12 +1,13 @@
 import supabase from "@/app/config/supabaseClient"
-import { redirect, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 export default function OptionMenu() {
     const selection = ["Profile", "Settings", "Logout"] as const
     const router = useRouter()
 
     const logout = async () => {
-        let { error } = await supabase.auth.signOut()
+        const { error } = await supabase.auth.signOut()
+
         if (error) {
             alert(error.message)
         } else {
