@@ -6,7 +6,7 @@ export async function getAccountDetails() {
     if (!session) {
         return null
     }
-    let { data: account_details, error } = await supabase
+    const { data: account_details, error } = await supabase
         .from('account_details')
         .select("*")
         .eq("user_id", session.user.id)
@@ -22,7 +22,7 @@ export async function getTransactionDetail() {
     if (!session) {
         return null
     }
-    let { data: transaction_details, error } = await supabase
+    const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("*")
         .eq("user_id", session.user.id)
@@ -38,7 +38,7 @@ export async function getIncome() {
     if (!session) {
         return null
     }
-    let { data: transaction_details, error } = await supabase
+    const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("deposit_amount")
         .eq("user_id", session.user.id)
@@ -52,7 +52,7 @@ export async function getExpenses() {
     if (!session) {
         return null
     }
-    let { data: transaction_details, error } = await supabase
+    const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("withdrawal_amount")
         .eq("user_id", session.user.id)
