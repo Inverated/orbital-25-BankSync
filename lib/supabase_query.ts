@@ -1,6 +1,6 @@
 import supabase from "@/app/config/supabaseClient";
 
-const {data: {session}} = await supabase.auth.getSession();
+const { data: { session } } = await supabase.auth.getSession();
 
 export async function getAccountDetails() {
     if (!session) {
@@ -10,13 +10,13 @@ export async function getAccountDetails() {
         .from('account_details')
         .select("*")
         .eq("user_id", session.user.id)
-        
+
     if (error) {
         throw error.message
     }
 
     return account_details
-}                
+}
 
 export async function getTransactionDetail() {
     if (!session) {
@@ -26,13 +26,15 @@ export async function getTransactionDetail() {
         .from('transaction_details')
         .select("*")
         .eq("user_id", session.user.id)
-        
+        .order('transaction_date')
+
+
     if (error) {
         throw error.message
     }
 
     return transaction_details
-}     
+}
 
 export async function getIncome() {
     if (!session) {
@@ -42,10 +44,11 @@ export async function getIncome() {
         .from('transaction_details')
         .select("deposit_amount")
         .eq("user_id", session.user.id)
+        .order('transaction_date')
     if (error) {
         throw error.message
     }
-    return transaction_details 
+    return transaction_details
 }
 
 export async function getExpenses() {
@@ -56,9 +59,11 @@ export async function getExpenses() {
         .from('transaction_details')
         .select("withdrawal_amount")
         .eq("user_id", session.user.id)
+        .order('transaction_date')
+
     if (error) {
         throw error.message
     }
-    return transaction_details 
+    return transaction_details
 }
 

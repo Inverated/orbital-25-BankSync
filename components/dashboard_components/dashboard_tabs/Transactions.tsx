@@ -4,10 +4,8 @@ import Transaction_Row from "./Transaction_Row";
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
 export default function Transactions() {
-    const [loaded, setLoadingStatus] = useState(false)
-
     const [pageNo, setPage] = useState(1)
-    let maxPageNo = 0
+    let maxPageNo = 1
 
     type Entry = { id: number, transaction_description: string; account_no: string; withdrawal_amount: number; deposit_amount: number; category: string; transaction_date: string }
     const [transactionEntry, setEntry] = useState<Entry[]>([])
@@ -25,7 +23,7 @@ export default function Transactions() {
                     transaction_date: entry.transaction_date
                 }]))
         })
-        setLoadingStatus(true)
+        document.getElementById("load_transaction_data")?.classList.remove('hidden')
     }, [])
 
     maxPageNo = Math.ceil(transactionEntry.length / 10)
@@ -40,29 +38,34 @@ export default function Transactions() {
             setPage(newNum)
         }
     }
-    //change display to only show 10 entries
-    return (
-        <div>
-            <div className="text-3xl flex justify-between">
-                <h1 className="p-4">All Transactions</h1>
-                <div>
-                    <button className="p-2 m-4 border border-black rounded-lg hover:cursor-pointer">Export</button>
-                    <button className="p-2 m-4 border border-black rounded-lg hover:cursor-pointer">Filter</button>
-                </div>
+
+
+//change display to only show 10 entries
+return (
+    <div>
+        <div className="text-3xl flex justify-between">
+            <h1 className="p-4">All Transactions</h1>
+            <div>
+                <button className="p-2 m-4 border border-black rounded-lg hover:cursor-pointer">Export</button>
+                <button className="p-2 m-4 border border-black rounded-lg hover:cursor-pointer">Filter</button>
             </div>
-            {loaded && transactionEntry.map(entry =>
+        </div>
+
+        <div id="load_transaction_data" className="hidden">
+            {transactionEntry.map(entry =>
                 <Transaction_Row key={entry.id} {...entry} />
 
             )}
-
             <div className="my-10 flex items-center justify-center">
                 <FaAngleDoubleLeft className="hover:cursor-pointer" onClick={() => setPageNo(-10)} /><FaAngleLeft className="hover:cursor-pointer" onClick={() => setPageNo(-1)} />
                 <div className="px-5">
-                    {loaded ? (pageNo + " of " + maxPageNo) : "1 of 1"}
+                    {pageNo + " of " + maxPageNo}
                 </div>
                 <FaAngleRight className="hover:cursor-pointer" onClick={() => setPageNo(1)} /><FaAngleDoubleRight className="hover:cursor-pointer" onClick={() => setPageNo(10)} />
             </div>
         </div>
 
-    )
+    </div>
+
+)
 }

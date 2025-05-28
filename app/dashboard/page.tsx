@@ -49,7 +49,7 @@ export default function Dashboard() {
 
     const tabStyle = "text-2xl mx-1 px-2 border border-black rounded-md cursor-pointer"
     return (
-        currentSession != null && <div>
+        currentSession && <div>
             <NavBar user={currentSession?.user} />
             <div className="flex justify-end">
                 <div className=" border border-black p-2 m-3">
