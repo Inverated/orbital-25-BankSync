@@ -5,11 +5,11 @@ export default function Overview() {
     const [totalBal, setTotalBal] = useState(0.0)
     const [income, setIncome] = useState(0.0)
     const [expenses, setExpenses] = useState(0.0)
-    
+
     useEffect(() => {
         getAccountDetails().then(arr => {
             if (arr != null) {
-                setTotalBal(arr.reduce((x, y) => x.balance + y.balance))
+                setTotalBal(arr.reduce((x, y) => x + y.balance, 0))
             }
         })
         getIncome().then(arr => {
