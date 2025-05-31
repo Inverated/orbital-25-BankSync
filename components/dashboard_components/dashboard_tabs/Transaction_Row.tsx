@@ -7,7 +7,7 @@ type arguements = { details: details, uniqueCategory: uniqueCategory }
 export default function Transaction_Row({ details, uniqueCategory }: arguements) {
     // Handle persistent expanded row display when shift pressed or long click
     const HOLD_DELAY_TO_PERSIST = 200;
-    const [isRowExpanded, updateExpandRef] = useState(false);
+    const [isRowExpanded, updateRowExpandStatus] = useState(false);
     const refIsRowExpanded = useRef(false);
     const isShiftPressed = useRef(false);
     const expandedRow = useRef<HTMLDivElement>(null);
@@ -39,7 +39,8 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
         } else if (isClickedOnCurrentRow) {
             // Expand any row when clicked on
             currentElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            updateExpandStatus(true)
+            refIsRowExpanded.current = true
+            updateRowExpandStatus(true)
         } else if (!isShiftPressed.current) {
             // Collapse everything else if shift not pressed
             updateExpandStatus(false)
@@ -50,9 +51,12 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == 'Shift') {
             isShiftPressed.current = true
-        } else if (event.key == "Escape") {
+        } else if (event.key == 'Escape') {
             // Collapse all row when pressed
             updateExpandStatus(false)
+        } else if (event.key == 'Enter') {
+            event.preventDefault()
+            document.getElementById('submitButton')?.click()
         }
     }
 
@@ -63,14 +67,11 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
     }
 
     const updateExpandStatus = (isExpanded: boolean) => {
-        if (!isExpanded) {
-            setEditActive(false)
-        }
+        setEditActive(isExpanded)
         refIsRowExpanded.current = isExpanded
-        updateExpandRef(isExpanded)
+        updateRowExpandStatus(isExpanded)
     }
 
-    // TODO: add in ux for phone?
     useEffect(() => {
         document.addEventListener('mousedown', handleMouseDown)
         document.addEventListener('mouseup', handleMouseUp)
@@ -86,86 +87,98 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
 
     // Handle edit dialogue display
     const [showEditDialogue, setEditActive] = useState(false)
-    const [tempEditCat, setTempEditCat] = useState(details.category)
-    const newCatRef = useRef<HTMLInputElement>(null)
+    const [selectedCategory, setSelectedCategory] = useState(details.category)
+    const customCategoryRef = useRef<HTMLInputElement>(null)
 
     const updateCategory = () => {
-        details.category = tempEditCat
+        details.category = selectedCategory
         setEditActive(false)
     }
     //change unique category list to be updated when new added 
 
-    const buttonStyle = "border border-black mx-2 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition " as const
+    const buttonStyle = 'border border-black mx-2 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
     return (
         <div>
             {/* Collapsed transaction row */}
             {!isRowExpanded ?
-                <div id={details.id} className="flex flex-col justify-between m-4 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition border border-black rounded-lg">
+                <div id={details.id} className='flex flex-col justify-between m-4 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition border border-black rounded-lg'>
                     <div>
-                        <div className="p-3 truncate break-after-all">{details.transaction_description}</div>
+                        <p className='p-3 truncate break-after-all'>{details.transaction_description}</p>
                     </div>
-                    <div className="p-3 flex justify-between">
-                        <div>Account No: {details.account_no}</div>
-                        <div>{details.withdrawal_amount == 0 ? "+$" + details.deposit_amount.toFixed(2) : "-$" + details.withdrawal_amount.toFixed(2)}</div>
+                    <div className='p-3 flex justify-between'>
+                        <p>{details.account_no}</p>
+                        <p>{details.withdrawal_amount == 0 ? '+$' + details.deposit_amount.toFixed(2) : '-$' + details.withdrawal_amount.toFixed(2)}</p>
                     </div>
-                    <div className="p-3 flex justify-between">
-                        <div>
+                    <div className='p-3 flex justify-between'>
+                        <p>
                             {details.category}
-                        </div>
-                        <div>
+                        </p>
+                        <p>
                             {details.transaction_date}
-                        </div>
+                        </p>
                     </div>
                 </div>
                 :
-                <div ref={expandedRow} className="border border-black rounded-lg m-4 transition">
+                <div ref={expandedRow} className='border border-black rounded-lg m-4 transition'>
                     {/* Expanded transaction row */}
-                    <div className="flex flex-col">
-                        <div className="flex p-3 start-0.5">
+                    <div className='flex flex-col'>
+                        <p className='flex p-3 start-0.5'>
                             <b>Description:</b>
-                            <span className="px-2 break-all">
+                            <span className='px-2 break-all'>
                                 {details.transaction_description}
                             </span>
-                        </div>
-                        <div className="p-2 flex">
+                        </p>
+                        <p className='p-2 flex'>
                             <b>Account No: &nbsp;</b>{details.account_no}
-                        </div>
-                        <div className="p-2 flex">
-                            <b>Transaction amount: &nbsp;</b>{details.withdrawal_amount == 0 ? "+$" + details.deposit_amount.toFixed(2) : "-$" + details.withdrawal_amount.toFixed(2)}
-                        </div>
-                        <div className="p-2 flex">
+                        </p>
+                        <p className='p-2 flex'>
+                            <b>Transaction amount: &nbsp;</b>{details.withdrawal_amount == 0 ? '+$' + details.deposit_amount.toFixed(2) : '-$' + details.withdrawal_amount.toFixed(2)}
+                        </p>
+                        <p className='p-2 flex'>
                             <b>Transaction date: &nbsp;</b>{details.transaction_date}
-                        </div>
-                        <div className="p-2 flex">
+                        </p>
+                        <p className='p-2 flex'>
                             <b>Category: &nbsp;</b>{!showEditDialogue && details.category}
-                        </div>
+                        </p>
                         {
                             showEditDialogue &&
-                            <div className="flex flex-col mx-2 px-2 border border-black w-2/5">
+                            <div className='flex flex-col mx-2 py-2 px-2 border border-black w-2/5'>
                                 {uniqueCategory.map((cat) =>
                                     <div key={cat}>
-                                        <label className="flex justify-between py-1">
+                                        <label className='flex justify-between py-1'>
                                             {cat}
-                                            <input value={cat} name={details.id}
-                                                checked={cat == tempEditCat}
-                                                onChange={(e) => setTempEditCat(e.target.value)}
-                                                type="radio" />
+                                            <input
+                                                value={cat} name={details.id}
+                                                checked={cat == selectedCategory}
+                                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                                type='radio' />
                                         </label>
                                     </div>
                                 )}
                                 {/* Custom category */}
-                                <label className="flex justify-between py-1">
-                                    <input type="text" className="border border-black" ref={newCatRef} />
-                                    <input type="radio" name={details.id}
-                                        onChange={() => setTempEditCat(newCatRef.current ? newCatRef.current.value : tempEditCat)} />
+                                <label className='flex justify-between py-1'>
+                                    <input
+                                        type='text'
+                                        className='border border-black w-3/4 p-1'
+                                        ref={customCategoryRef}
+                                        placeholder='Custom category'
+                                        onFocus={() => setSelectedCategory(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)}
+                                        onChange={() => setSelectedCategory(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)} />
+                                    <input
+                                        id='categoryRadio'
+                                        type='radio'
+                                        name={details.id}
+                                        checked={selectedCategory == (customCategoryRef.current ? customCategoryRef.current.value : '')}
+                                        onChange={() => setSelectedCategory(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)} />
                                 </label>
                             </div>
                         }
-                        <div className="p-2 flex justify-end">
+                        <div className='p-2 flex justify-end'>
                             {showEditDialogue ?
                                 <>
                                     {/* Confirm and Cancel buttons when edit is active */}
                                     <button
+                                        id='submitButton'
                                         className={buttonStyle}
                                         onClick={updateCategory}>
                                         <b>Confirm</b>
@@ -188,6 +201,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                                         className={buttonStyle}
                                         onClick={() => {
                                             updateExpandStatus(true)
+                                            setSelectedCategory(details.category)
                                         }}>
                                         <b>Edit</b>
                                     </button>
