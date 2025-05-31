@@ -32,7 +32,7 @@ export default function Dashboard() {
             setSession(data.session)
         }
         getData()
-    }, [])
+    }, [router])
 
     type Page = "Overview" | "Accounts" | "Transactions" | "Analytics"
 
