@@ -1,19 +1,19 @@
 import { getTransactionDetail } from "@/lib/supabase_query"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import Transaction_Row from "./Transaction_Row";
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
 export default function Transactions() {
-    const NUM_ENTRIES_PER_PAGE = 10
+    const NUMBER_OF_ENTRIES_PER_PAGE = 10
 
-    type Entry = { id: number, transaction_description: string; account_no: string; withdrawal_amount: number; deposit_amount: number; category: string; transaction_date: string }
+    type Entry = { id: string, transaction_description: string; account_no: string; withdrawal_amount: number; deposit_amount: number; category: string; transaction_date: string }
     const [transactionEntry, setEntry] = useState<Entry[]>([])
     const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
 
     useEffect(() => {
         getTransactionDetail().then(arr => {
             arr?.forEach(entry => {
-                setUnique(uniqueCategory.add(entry.category))
+                setUnique(prev => new Set(prev).add(entry.category))
                 setEntry(prev =>
                     [...prev, {
                         id: entry.id,
@@ -31,6 +31,7 @@ export default function Transactions() {
 
     const [pageNo, setPage] = useState(1)
     const maxPageNo = Math.ceil(transactionEntry.length / 10)
+    const indexSlice: { first: number, last: number } = { first: 1, last: 10 }
 
     const addPageNo = (num: number) => {
         const newNum = pageNo + num
@@ -41,6 +42,8 @@ export default function Transactions() {
         } else {
             setPage(newNum)
         }
+        indexSlice.first = (pageNo - 1) * NUMBER_OF_ENTRIES_PER_PAGE
+        indexSlice.last = pageNo * NUMBER_OF_ENTRIES_PER_PAGE
     }
 
     const [selPageDialogue, setPageDialogue] = useState(false)
@@ -63,9 +66,14 @@ export default function Transactions() {
             </div>
 
             <div id="load_transaction_data" className="hidden">
-                {transactionEntry.slice((pageNo - 1) * NUM_ENTRIES_PER_PAGE, pageNo * NUM_ENTRIES_PER_PAGE).map(entry =>
-                    <Transaction_Row key={entry.id} details={{ ...entry }} uniqueCategory={[...uniqueCategory]} />
-                )}
+                {
+                    transactionEntry.slice(indexSlice.first, indexSlice.last)
+                        .map(entry =>
+                            <Transaction_Row
+                                key={entry.id}
+                                details={{ ...entry }}
+                                uniqueCategory={[...uniqueCategory]} />
+                        )}
                 <div className="my-10 flex items-center justify-center">
                     <FaAngleDoubleLeft className="hover:cursor-pointer" onClick={() => addPageNo(-10)} /><FaAngleLeft className="hover:cursor-pointer" onClick={() => addPageNo(-1)} />
                     <div className="px-5 hover:cursor-pointer" onClick={() => setPageDialogue(true)}>
@@ -81,7 +89,7 @@ export default function Transactions() {
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full z-10">
                         <h2 className="text-xl font-semibold">Select page number</h2>
                         <div className="flex justify-center items-center my-7">
-                            <input id="select_page_num" className="border border-black w-[40px] mx-1" type="number" min="1" max={maxPageNo} defaultValue={pageNo}/>
+                            <input id="select_page_num" className="border border-black w-[40px] mx-1" type="number" min="1" max={maxPageNo} defaultValue={pageNo} />
                             <span>of {maxPageNo}</span>
                         </div>
                         <div className="flex justify-end">

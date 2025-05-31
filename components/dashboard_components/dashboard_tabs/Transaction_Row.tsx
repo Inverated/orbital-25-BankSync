@@ -1,59 +1,91 @@
 import { useEffect, useRef, useState } from "react";
 
-type details = { id: number; transaction_description: string; account_no: string; withdrawal_amount: number; deposit_amount: number; category: string; transaction_date: string }
+type details = { id: string; transaction_description: string; account_no: string; withdrawal_amount: number; deposit_amount: number; category: string; transaction_date: string }
 type uniqueCategory = string[]
 type arguements = { details: details, uniqueCategory: uniqueCategory }
 
 export default function Transaction_Row({ details, uniqueCategory }: arguements) {
-    //handle persistent tab display
-    const HOLD_DELAY_PERSISTANCE = 400
-    const [expandedTab, setExpandState] = useState(false)
-    const startTimeRef = useRef<number>(0)
-    let isShiftPressed = false
+    // Handle persistent expanded row display when shift pressed or long click
+    const HOLD_DELAY_TO_PERSIST = 200;
+    const [isRowExpanded, updateExpandRef] = useState(false);
+    const refIsRowExpanded = useRef(false);
+    const isShiftPressed = useRef(false);
+    const expandedRow = useRef<HTMLDivElement>(null);
 
-    const startTimer = () => startTimeRef.current = Date.now()
+    const clickStartTime = useRef<number | null>(null);
 
-    const handleHoldPersistance = (event: MouseEvent) => {
-        const elaspedTime = Date.now() - startTimeRef.current //dont store as useState, cannot access immediately cause asyncronous
-        const targetElement = event.target as HTMLElement
-        const parent = targetElement.closest("#expanded_transaction_tab")
+    const handleMouseDown = () => {
+        clickStartTime.current = Date.now();
+    };
 
-        if (parent?.id == "expanded_transaction_tab") {
-            //disable collapsing when clicking expanded tab. 
-            return
-        } else if (!isShiftPressed && elaspedTime < HOLD_DELAY_PERSISTANCE && targetElement.parentElement?.id != String(details.id)) {
-            setExpandState(false)
-            setEditActive(false)
-        } else if (targetElement.parentElement?.id == String(details.id)) {
-            setExpandState(true)
+    const handleMouseUp = (event: MouseEvent) => {
+        let duration = null
+        if (clickStartTime.current) {
+            duration = Date.now() - clickStartTime.current
         }
+
+        const currentElement = document.getElementById(details.id)
+        const cursorAt = event.target as Node
+
+        const isClickedOnExpandedElement = expandedRow.current && expandedRow.current.contains(cursorAt)
+        const isAlreadyExpanded = refIsRowExpanded.current
+        const isLongPress = duration && duration > HOLD_DELAY_TO_PERSIST
+        const isClickedOnCurrentRow = currentElement && currentElement.contains(cursorAt)
+
+        if (isClickedOnExpandedElement) {
+            // Does nothing if click on an expanded row
+        } else if (isAlreadyExpanded && isLongPress) {
+            // If current row is already expanded, and is long click then do nothing
+        } else if (isClickedOnCurrentRow) {
+            // Expand any row when clicked on
+            currentElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            updateExpandStatus(true)
+        } else if (!isShiftPressed.current) {
+            // Collapse everything else if shift not pressed
+            updateExpandStatus(false)
+        }
+        clickStartTime.current = null;
     }
 
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == 'Shift') {
-            isShiftPressed = true
+            isShiftPressed.current = true
         } else if (event.key == "Escape") {
-            //collapse all tab when pressed
-            setExpandState(false)
+            // Collapse all row when pressed
+            updateExpandStatus(false)
         }
     }
 
-    const handleButtonUp = () => isShiftPressed = false
+    const handleButtonUp = (event: KeyboardEvent) => {
+        if (event.key == 'Shift') {
+            isShiftPressed.current = false
+        }
+    }
+
+    const updateExpandStatus = (isExpanded: boolean) => {
+        if (!isExpanded) {
+            setEditActive(false)
+        }
+        refIsRowExpanded.current = isExpanded
+        updateExpandRef(isExpanded)
+    }
+
+    // TODO: add in ux for phone?
     useEffect(() => {
-        document.addEventListener('mouseup', handleHoldPersistance)
-        document.addEventListener('mousedown', startTimer)
+        document.addEventListener('mousedown', handleMouseDown)
+        document.addEventListener('mouseup', handleMouseUp)
         document.addEventListener('keydown', handleButtonDown)
         document.addEventListener('keyup', handleButtonUp)
         return () => {
-            document.removeEventListener('mouseup', handleHoldPersistance)
-            document.removeEventListener('mousedown', startTimer)
+            document.removeEventListener('mousedown', handleMouseDown)
+            document.removeEventListener('mouseup', handleMouseUp)
             document.removeEventListener('keydown', handleButtonDown)
             document.removeEventListener('keyup', handleButtonUp)
         }
-    }, [startTimer])
+    }, [])
 
-    //handle edit dialogue
-    const [editDialogue, setEditActive] = useState(false)
+    // Handle edit dialogue display
+    const [showEditDialogue, setEditActive] = useState(false)
     const [tempEditCat, setTempEditCat] = useState(details.category)
     const newCatRef = useRef<HTMLInputElement>(null)
 
@@ -61,15 +93,17 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
         details.category = tempEditCat
         setEditActive(false)
     }
-    //change unique category list to be shared and updated when new added 
+    //change unique category list to be updated when new added 
 
     const buttonStyle = "border border-black mx-2 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition " as const
     return (
         <div>
             {/* Collapsed transaction row */}
-            {!expandedTab ?
-                <div id={String(details.id)} className="flex flex-col justify-between m-4 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition border border-black rounded-lg">
-                    <div className="p-3 truncate break-after-all">{details.transaction_description}</div>
+            {!isRowExpanded ?
+                <div id={details.id} className="flex flex-col justify-between m-4 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition border border-black rounded-lg">
+                    <div>
+                        <div className="p-3 truncate break-after-all">{details.transaction_description}</div>
+                    </div>
                     <div className="p-3 flex justify-between">
                         <div>Account No: {details.account_no}</div>
                         <div>{details.withdrawal_amount == 0 ? "+$" + details.deposit_amount.toFixed(2) : "-$" + details.withdrawal_amount.toFixed(2)}</div>
@@ -82,9 +116,11 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                             {details.transaction_date}
                         </div>
                     </div>
-                </div> : <div id="expanded_transaction_tab" className="border border-black rounded-lg m-4 transition">
+                </div>
+                :
+                <div ref={expandedRow} className="border border-black rounded-lg m-4 transition">
                     {/* Expanded transaction row */}
-                    <div id="expanded_transaction_tab" className="flex flex-col">
+                    <div className="flex flex-col">
                         <div className="flex p-3 start-0.5">
                             <b>Description:</b>
                             <span className="px-2 break-all">
@@ -101,57 +137,65 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                             <b>Transaction date: &nbsp;</b>{details.transaction_date}
                         </div>
                         <div className="p-2 flex">
-                            <b>Category: &nbsp;</b>{!editDialogue && details.category}
+                            <b>Category: &nbsp;</b>{!showEditDialogue && details.category}
                         </div>
                         {
-                            editDialogue &&
-                            <div id="expanded_transaction_tab">
-                                <div className="flex flex-col mx-2 px-2 border border-black w-2/5">
-                                    {uniqueCategory.map((cat) =>
-                                        <>
-                                            <label key={cat} className="flex justify-between py-1">
-                                                {cat}
-                                                <input value={cat} name={String(details.id)}
-                                                    checked={cat == tempEditCat}
-                                                    onChange={(e) => setTempEditCat(e.target.value)}
-                                                    type="radio" />
-                                            </label>
-                                        </>
-                                    )}
-                                    {/* Custom category */}
-                                    <label className="flex justify-between py-1">
-                                        <input type="text" className="border border-black" ref={newCatRef} />
-                                        <input type="radio" name={String(details.id)}
-                                            onChange={() => setTempEditCat(newCatRef.current ? newCatRef.current.value : tempEditCat)} />
-                                    </label>
-                                </div>
+                            showEditDialogue &&
+                            <div className="flex flex-col mx-2 px-2 border border-black w-2/5">
+                                {uniqueCategory.map((cat) =>
+                                    <div key={cat}>
+                                        <label className="flex justify-between py-1">
+                                            {cat}
+                                            <input value={cat} name={details.id}
+                                                checked={cat == tempEditCat}
+                                                onChange={(e) => setTempEditCat(e.target.value)}
+                                                type="radio" />
+                                        </label>
+                                    </div>
+                                )}
+                                {/* Custom category */}
+                                <label className="flex justify-between py-1">
+                                    <input type="text" className="border border-black" ref={newCatRef} />
+                                    <input type="radio" name={details.id}
+                                        onChange={() => setTempEditCat(newCatRef.current ? newCatRef.current.value : tempEditCat)} />
+                                </label>
                             </div>
                         }
                         <div className="p-2 flex justify-end">
-                            {
-                                !editDialogue ?
-                                    <button className={buttonStyle}
+                            {showEditDialogue ?
+                                <>
+                                    {/* Confirm and Cancel buttons when edit is active */}
+                                    <button
+                                        className={buttonStyle}
+                                        onClick={updateCategory}>
+                                        <b>Confirm</b>
+                                    </button>
+                                    {/* Cancel statement bugging out, must include timeout*/}
+                                    <button
+                                        className={buttonStyle}
                                         onClick={() => {
-                                            setEditActive(true)
-                                            setTempEditCat(details.category)
+                                            setTimeout(() => {
+                                                setEditActive(false)
+                                            }, 0)
+                                        }}>
+                                        <b>Cancel</b>
+                                    </button>
+                                </>
+                                :
+                                <>
+                                    {/* Edit button when edit is inactive */}
+                                    <button
+                                        className={buttonStyle}
+                                        onClick={() => {
+                                            updateExpandStatus(true)
                                         }}>
                                         <b>Edit</b>
-                                    </button> : <>
-                                        <button className={buttonStyle}
-                                            onClick={updateCategory}>
-                                            <b>Confirm</b>
-                                        </button>
-                                        <button className={buttonStyle}
-                                            onClick={() => setEditActive(false)}>
-                                            <b>Cancel</b>
-                                        </button>
-                                    </>
+                                    </button>
+                                </>
                             }
-                            <button className={buttonStyle}
-                                onClick={() => {
-                                    setExpandState(false);
-                                    setEditActive(false)
-                                }}>
+                            <button
+                                className={buttonStyle}
+                                onClick={() => updateExpandStatus(false)}>
                                 <b>Close</b>
                             </button>
                         </div>

@@ -9,12 +9,9 @@ export async function getAccountDetails() {
     const { data: account_details, error } = await supabase
         .from('account_details')
         .select("*")
-        .eq("user_id", session.user.id)
-
     if (error) {
         throw error.message
     }
-
     return account_details
 }
 
@@ -25,14 +22,10 @@ export async function getTransactionDetail() {
     const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("*")
-        .eq("user_id", session.user.id)
         .order('transaction_date', {ascending:false})
-
-
     if (error) {
         throw error.message
     }
-
     return transaction_details
 }
 
@@ -43,7 +36,6 @@ export async function getIncome() {
     const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("deposit_amount")
-        .eq("user_id", session.user.id)
         .order('transaction_date')
     if (error) {
         throw error.message
@@ -58,9 +50,7 @@ export async function getExpenses() {
     const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("withdrawal_amount")
-        .eq("user_id", session.user.id)
         .order('transaction_date')
-
     if (error) {
         throw error.message
     }
