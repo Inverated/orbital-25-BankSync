@@ -8,7 +8,7 @@ export default function TransactionAmount({ transaction }: TransactionProps) {
     if (transaction.withdrawal_amount === 0) {
         return (
             <div className="text-green-500">
-                +${transaction.deposit_amount}
+                +${transaction.deposit_amount.toFixed(2)}
             </div>
         );
     }
@@ -16,7 +16,7 @@ export default function TransactionAmount({ transaction }: TransactionProps) {
     if (transaction.deposit_amount === 0) {
         return (
             <div className="text-red-500">
-                -${transaction.withdrawal_amount}
+                -${transaction.withdrawal_amount.toFixed(2)}
             </div>
         );
     }

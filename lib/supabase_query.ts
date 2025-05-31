@@ -58,7 +58,7 @@ export async function getIncome() {
     const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("deposit_amount")
-        .eq("user_id", session.user.id)
+        //.eq("user_id", session.user.id)
     if (error) {
         throw error.message
     }
@@ -72,7 +72,7 @@ export async function getExpenses() {
     const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("withdrawal_amount")
-        .eq("user_id", session.user.id)
+        //.eq("user_id", session.user.id)
     if (error) {
         throw error.message
     }

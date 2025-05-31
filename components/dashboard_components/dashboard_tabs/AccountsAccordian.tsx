@@ -4,7 +4,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import Accounts_TransactionsTable from './Accounts_TransactionsTable';
+import Accounts_TransactionsTable from './AccountsTransactionsTable';
 import { Account } from '@/components/types';
 
 export interface AccordionProps {
@@ -29,5 +29,5 @@ export default function TransactionsAccordion({ account } : AccordionProps) {
         </AccordionDetails>
       </Accordion>
     </div>
-  );
+  )
 }

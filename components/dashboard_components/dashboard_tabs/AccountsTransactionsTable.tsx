@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AccordionProps } from "./Accounts_TransactionsAccordian";
+import { AccordionProps } from "./AccountsAccordian";
 import { getTransactionDetailByAccountNo } from "@/lib/supabase_query";
 import TransactionAmount from "./TransactionAmount";
 
@@ -11,8 +11,8 @@ export default function Accounts_TransactionsTable({ account }: AccordionProps) 
             if (data != null) {
                 setTransactions(data);
             }
-        });
-    }, []);
+        })
+    }, [])
     
     return (
         <table style={{margin: "0 auto", width: "100%"}}>

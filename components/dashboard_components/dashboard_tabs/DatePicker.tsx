@@ -15,5 +15,5 @@ export default function BasicDatePicker({ label }: DatePickerProps) {
         <DatePicker label={label} />
       </DemoContainer>
     </LocalizationProvider>
-  );
+  )
 }
