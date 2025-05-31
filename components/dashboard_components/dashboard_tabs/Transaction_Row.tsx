@@ -39,7 +39,8 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
         } else if (isClickedOnCurrentRow) {
             // Expand any row when clicked on
             currentElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            updateExpandStatus(true)
+            refIsRowExpanded.current = true
+            updateExpandRef(true)
         } else if (!isShiftPressed.current) {
             // Collapse everything else if shift not pressed
             updateExpandStatus(false)
@@ -53,6 +54,8 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
         } else if (event.key == "Escape") {
             // Collapse all row when pressed
             updateExpandStatus(false)
+        } else if (event.key == "Enter") {
+            document.getElementById("categoryRadio")?.classList.add('active')
         }
     }
 
@@ -63,9 +66,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
     }
 
     const updateExpandStatus = (isExpanded: boolean) => {
-        if (!isExpanded) {
-            setEditActive(false)
-        }
+        setEditActive(isExpanded)
         refIsRowExpanded.current = isExpanded
         updateExpandRef(isExpanded)
     }
@@ -102,43 +103,43 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
             {!isRowExpanded ?
                 <div id={details.id} className="flex flex-col justify-between m-4 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition border border-black rounded-lg">
                     <div>
-                        <div className="p-3 truncate break-after-all">{details.transaction_description}</div>
+                        <p className="p-3 truncate break-after-all">{details.transaction_description}</p>
                     </div>
                     <div className="p-3 flex justify-between">
-                        <div>Account No: {details.account_no}</div>
-                        <div>{details.withdrawal_amount == 0 ? "+$" + details.deposit_amount.toFixed(2) : "-$" + details.withdrawal_amount.toFixed(2)}</div>
+                        <p>Account No: {details.account_no}</p>
+                        <p>{details.withdrawal_amount == 0 ? "+$" + details.deposit_amount.toFixed(2) : "-$" + details.withdrawal_amount.toFixed(2)}</p>
                     </div>
                     <div className="p-3 flex justify-between">
-                        <div>
+                        <p>
                             {details.category}
-                        </div>
-                        <div>
+                        </p>
+                        <p>
                             {details.transaction_date}
-                        </div>
+                        </p>
                     </div>
                 </div>
                 :
                 <div ref={expandedRow} className="border border-black rounded-lg m-4 transition">
                     {/* Expanded transaction row */}
                     <div className="flex flex-col">
-                        <div className="flex p-3 start-0.5">
+                        <p className="flex p-3 start-0.5">
                             <b>Description:</b>
                             <span className="px-2 break-all">
                                 {details.transaction_description}
                             </span>
-                        </div>
-                        <div className="p-2 flex">
+                        </p>
+                        <p className="p-2 flex">
                             <b>Account No: &nbsp;</b>{details.account_no}
-                        </div>
-                        <div className="p-2 flex">
+                        </p>
+                        <p className="p-2 flex">
                             <b>Transaction amount: &nbsp;</b>{details.withdrawal_amount == 0 ? "+$" + details.deposit_amount.toFixed(2) : "-$" + details.withdrawal_amount.toFixed(2)}
-                        </div>
-                        <div className="p-2 flex">
+                        </p>
+                        <p className="p-2 flex">
                             <b>Transaction date: &nbsp;</b>{details.transaction_date}
-                        </div>
-                        <div className="p-2 flex">
+                        </p>
+                        <p className="p-2 flex">
                             <b>Category: &nbsp;</b>{!showEditDialogue && details.category}
-                        </div>
+                        </p>
                         {
                             showEditDialogue &&
                             <div className="flex flex-col mx-2 px-2 border border-black w-2/5">
@@ -156,7 +157,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                                 {/* Custom category */}
                                 <label className="flex justify-between py-1">
                                     <input type="text" className="border border-black" ref={newCatRef} />
-                                    <input type="radio" name={details.id}
+                                    <input id="categoryRadio" type="radio" name={details.id}
                                         onChange={() => setTempEditCat(newCatRef.current ? newCatRef.current.value : tempEditCat)} />
                                 </label>
                             </div>

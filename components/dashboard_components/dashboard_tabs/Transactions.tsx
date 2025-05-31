@@ -13,7 +13,7 @@ export default function Transactions() {
     useEffect(() => {
         getTransactionDetail().then(arr => {
             arr?.forEach(entry => {
-                setUnique(prev => new Set(prev).add(entry.category))
+                setUnique(uniqueCategory.add(entry.category))
                 setEntry(prev =>
                     [...prev, {
                         id: entry.id,
@@ -27,11 +27,15 @@ export default function Transactions() {
             })
         })
         document.getElementById("load_transaction_data")?.classList.remove('hidden')
+
+        document.addEventListener('keydown', handleButtonDown)
+        return () => {
+            document.removeEventListener('keydown', handleButtonDown)
+        }
     }, [])
 
     const [pageNo, setPage] = useState(1)
     const maxPageNo = Math.ceil(transactionEntry.length / 10)
-    const indexSlice: { first: number, last: number } = { first: 1, last: 10 }
 
     const addPageNo = (num: number) => {
         const newNum = pageNo + num
@@ -42,15 +46,30 @@ export default function Transactions() {
         } else {
             setPage(newNum)
         }
-        indexSlice.first = (pageNo - 1) * NUMBER_OF_ENTRIES_PER_PAGE
-        indexSlice.last = pageNo * NUMBER_OF_ENTRIES_PER_PAGE
     }
 
     const [selPageDialogue, setPageDialogue] = useState(false)
     const jumpToPage = () => {
-        const input = document.getElementById("select_page_num") as HTMLInputElement
-        setPage(Number(input.value))
+        const inputBox = document.getElementById("select_page_num") as HTMLInputElement
+        if (!inputBox) return
+        const userInput = Number(inputBox.value)
+
+        if (!userInput || userInput < 1) {
+            setPage(1)
+        } else if (userInput > maxPageNo) {
+            setPage(maxPageNo)
+        } else {
+            setPage(userInput)
+        }
         setPageDialogue(false)
+    }
+
+    const handleButtonDown = (event: KeyboardEvent) => {
+        if (event.key == "Escape") {
+            setPageDialogue(false)
+        } else if (event.key == "Enter") {
+            jumpToPage()
+        }
     }
 
     const buttonStyle = "border border-black mx-2 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition " as const
@@ -58,7 +77,7 @@ export default function Transactions() {
     return (
         <div>
             <div className="text-2xl flex justify-between">
-                <h1 className="p-4">All Transactions</h1>
+                <p className="p-4">All Transactions</p>
                 <div>
                     <button className={buttonStyle}>Export</button>
                     <button className={buttonStyle}>Filter</button>
@@ -67,7 +86,11 @@ export default function Transactions() {
 
             <div id="load_transaction_data" className="hidden">
                 {
-                    transactionEntry.slice(indexSlice.first, indexSlice.last)
+                    transactionEntry.slice(
+                        (pageNo - 1) * NUMBER_OF_ENTRIES_PER_PAGE,
+                        pageNo * NUMBER_OF_ENTRIES_PER_PAGE
+                    )
+                        // Unable to extract you the index
                         .map(entry =>
                             <Transaction_Row
                                 key={entry.id}
@@ -87,9 +110,14 @@ export default function Transactions() {
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full z-10">
-                        <h2 className="text-xl font-semibold">Select page number</h2>
+                        <p className="text-xl font-semibold">Select page number</p>
                         <div className="flex justify-center items-center my-7">
-                            <input id="select_page_num" className="border border-black w-[40px] mx-1" type="number" min="1" max={maxPageNo} defaultValue={pageNo} />
+                            <input
+                                id="select_page_num"
+                                className="border border-black w-[40px] mx-1"
+                                type="number"
+                                min="1" max={maxPageNo}
+                                defaultValue={pageNo} />
                             <span>of {maxPageNo}</span>
                         </div>
                         <div className="flex justify-end">
