@@ -45,6 +45,7 @@ export default function Dashboard() {
 
     const [currentPage, setPage] = useState<Page>("Overview")
     const CurrentComponent = componentSelector[currentPage]
+    //const CurrentComponent = componentSelector["Transactions"]
 
     const tabStyle = "text-2xl mx-1 px-2 py-1  border border-black rounded-md cursor-pointer"
     return (

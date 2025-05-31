@@ -1,6 +1,6 @@
 import supabase from "@/app/config/supabaseClient"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function OptionMenu() {
     const selection = ["Profile", "Settings", "Logout"] as const
@@ -22,7 +22,6 @@ export default function OptionMenu() {
         switch (option) {
             case "Logout":
                 togglePopout(true)
-                //logout()
                 break
             case "Profile":
                 break
@@ -32,6 +31,19 @@ export default function OptionMenu() {
                 console.log("Unknown option")
         }
     }
+
+    const handleButtonDown = (event: KeyboardEvent) => {
+        if (event.key == "Escape") {
+            togglePopout(false)
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener('keydown', handleButtonDown)
+        return () => {
+            document.removeEventListener('keydown', handleButtonDown)
+        }
+    }, [])
 
     return (
         <div>
@@ -49,10 +61,12 @@ export default function OptionMenu() {
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full z-10">
-                        <h2 className="text-xl font-semibold">Are you sure you want to logout?</h2>
+                        <p className="text-xl font-semibold">Are you sure you want to logout?</p>
                         <div className="flex justify-end">
                             <button
-                                onClick={() => togglePopout(false)}
+                                onClick={() => {
+                                    togglePopout(false)
+                                }}
                                 className="mt-7 border border-black m-2 p-2 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
                             >
                                 Close

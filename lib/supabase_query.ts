@@ -10,11 +10,9 @@ export async function getAccountDetails() {
         .from('account_details')
         .select("*")
         //.eq("user_id", session.user.id)
-        
     if (error) {
         throw error.message
     }
-
     return account_details
 }                
 
@@ -26,11 +24,9 @@ export async function getTransactionDetail() {
         .from('transaction_details')
         .select("*")
         // .eq("user_id", session.user.id)
-        
     if (error) {
         throw error.message
     }
-
     return transaction_details
 }
 
@@ -43,11 +39,9 @@ export async function getTransactionDetailByAccountNo(account_no: string) {
         .select("*")
         // .eq("user_id", session.user.id)
         .eq("account_no", account_no)
-        
     if (error) {
         throw error.message
     }
-
     return transaction_details
 }
 
