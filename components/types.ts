@@ -14,7 +14,7 @@ export interface Transaction {
     id: number,
     created_at: Timestamp;
     user_id: string;
-    transaction_date: Date;
+    transaction_date: string;
     transaction_description: string;
     withdrawal_amount: number;
     deposit_amount: number;
