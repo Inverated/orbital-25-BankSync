@@ -53,7 +53,7 @@ export default function IncomeExpenses() {
             </div>
 
             <div className="flex justify-between">
-                <p>Net Savings</p>
+                <b>Net Savings</b>
 
                 <p className={savings > 0 ? "text-green-500" : "text-red-500"}>
                     {savingsSign}${Math.abs(savings).toFixed(2)}
