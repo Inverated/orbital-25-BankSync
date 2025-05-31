@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import Accounts_TransactionsAccordian from "./AccountsAccordian";
+import AccountsAccordian from "./AccountsAccordian";
 import { getAccountDetails } from "@/lib/supabase_query";
+import { Account } from "@/components/types";
+import TransactionsTable from "./AccountsTransactionsTable";
 
 export default function Accounts() {
-    const [accounts, setAccounts] = useState<any[]>([]);
+    const [accounts, setAccounts] = useState<Account[]>([]);
 
     useEffect(() => {
         getAccountDetails().then(data => {
@@ -11,7 +13,7 @@ export default function Accounts() {
                 setAccounts(data);
             }
         })
-    }, [])
+    }, [accounts])
 
     return(
         <div className="items-center justify-center">
@@ -21,7 +23,7 @@ export default function Accounts() {
                     <p>Account Name: {account.account_name}</p>
                     <p>Account No.: {account.account_no}</p>
                     <p>Balance: ${account.balance.toFixed(2)}</p>
-                    <Accounts_TransactionsAccordian account={account}/>
+                    <AccountsAccordian account={account}/>
                 </div>
             ))}
         </div>
