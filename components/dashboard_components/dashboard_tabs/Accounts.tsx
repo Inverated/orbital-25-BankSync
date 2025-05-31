@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import AccountsAccordian from "./AccountsAccordian";
 import { getAccountDetails } from "@/lib/supabase_query";
 import { Account } from "@/components/types";
-import TransactionsTable from "./AccountsTransactionsTable";
 
 export default function Accounts() {
     const [accounts, setAccounts] = useState<Account[]>([]);
