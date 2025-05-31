@@ -4,9 +4,9 @@ import { useEffect, useState } from "react"
 import supabase from "../config/supabaseClient"
 import NavBar from "@/components/dashboard_components/NavBar"
 import Overview from "@/components/dashboard_components/dashboard_tabs/Overview";
-import Accounts from "@/components/dashboard_components/dashboard_tabs/Accounts";
+import Accounts from "@/components/dashboard_components/dashboard_tabs/accounts_tab/Accounts";
 import Transactions from "@/components/dashboard_components/dashboard_tabs/Transactions";
-import Analytics from "@/components/dashboard_components/dashboard_tabs/Analytics";
+import Analytics from "@/components/dashboard_components/dashboard_tabs/analytics_tab/Analytics";
 import { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
