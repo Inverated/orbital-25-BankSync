@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { AccordionProps } from "./AccountsAccordian";
 import { getTransactionDetailByAccountNo } from "@/lib/supabase_query";
 import TransactionAmount from "./TransactionAmount";
+import { Transaction } from "@/components/types";
 
-export default function Accounts_TransactionsTable({ account }: AccordionProps) {
-    const [transactions, setTransactions] = useState<any[]>([]);
+export default function TransactionsTable({ account }: AccordionProps) {
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
 
     useEffect(() => {
         getTransactionDetailByAccountNo(account.account_no).then(data => {
@@ -12,7 +13,7 @@ export default function Accounts_TransactionsTable({ account }: AccordionProps) 
                 setTransactions(data);
             }
         })
-    }, [])
+    }, [account.account_no])
     
     return (
         <table style={{margin: "0 auto", width: "100%"}}>
@@ -20,7 +21,7 @@ export default function Accounts_TransactionsTable({ account }: AccordionProps) 
                 <tr>
                     <th className="p-1 text-left">Description</th>
                     <th className="text-left">Amount</th>
-                    <th  className="text-left">Date</th>
+                    <th className="text-left">Date</th>
                 </tr>
             </thead>
 
