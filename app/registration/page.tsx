@@ -31,7 +31,7 @@ export default function Registration() {
             setLoadedStatus(true)
         }
         getData()
-    }, [])
+    }, [router])
 
     //switch btw login and signup
     const [isLogin, setIsLogin] = useState(false);
