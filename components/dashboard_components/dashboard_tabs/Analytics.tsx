@@ -1,5 +1,4 @@
 import Analytics_DatePicker from "./DatePicker";
-import { AiOutlineLineChart, AiOutlinePieChart  } from "react-icons/ai";
 import SpendingTrend from "./AnalyticsSpendingTrend";
 import SpendingCategory from "./AnalyticsSpendingCategory";
 import IncomeExpenses from "./AnalyticsIncomeVsExpenses";
