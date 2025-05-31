@@ -1,7 +1,8 @@
-import { getTransactionDetail } from "@/lib/supabase_query"
-import { useEffect, useState } from "react"
+import { getTransactionDetail } from "@/lib/supabase_query";
+import { useEffect, useState } from "react";
 import Transaction_Row from "./Transaction_Row";
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from "react-icons/fa";
+
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
@@ -26,7 +27,7 @@ export default function Transactions() {
                     }])
             })
         })
-        document.getElementById("load_transaction_data")?.classList.remove('hidden')
+        document.getElementById('load_transaction_data')?.classList.remove('hidden')
 
         document.addEventListener('keydown', handleButtonDown)
         return () => {
@@ -50,7 +51,7 @@ export default function Transactions() {
 
     const [selPageDialogue, setPageDialogue] = useState(false)
     const jumpToPage = () => {
-        const inputBox = document.getElementById("select_page_num") as HTMLInputElement
+        const inputBox = document.getElementById('select_page_num') as HTMLInputElement
         if (!inputBox) return
         const userInput = Number(inputBox.value)
 
@@ -65,26 +66,26 @@ export default function Transactions() {
     }
 
     const handleButtonDown = (event: KeyboardEvent) => {
-        if (event.key == "Escape") {
+        if (event.key == 'Escape') {
             setPageDialogue(false)
-        } else if (event.key == "Enter") {
+        } else if (event.key == 'Enter') {
             jumpToPage()
         }
     }
 
-    const buttonStyle = "border border-black mx-2 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition " as const
+    const buttonStyle = 'border border-black mx-2 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
 
     return (
         <div>
-            <div className="text-2xl flex justify-between">
-                <p className="p-4">All Transactions</p>
+            <div className='text-2xl flex justify-between'>
+                <p className='p-4'>All Transactions</p>
                 <div>
                     <button className={buttonStyle}>Export</button>
                     <button className={buttonStyle}>Filter</button>
                 </div>
             </div>
 
-            <div id="load_transaction_data" className="hidden">
+            <div id='load_transaction_data' className='hidden'>
                 {
                     transactionEntry.slice(
                         (pageNo - 1) * NUMBER_OF_ENTRIES_PER_PAGE,
@@ -97,30 +98,32 @@ export default function Transactions() {
                                 details={{ ...entry }}
                                 uniqueCategory={[...uniqueCategory]} />
                         )}
-                <div className="my-10 flex items-center justify-center">
-                    <FaAngleDoubleLeft className="hover:cursor-pointer" onClick={() => addPageNo(-10)} /><FaAngleLeft className="hover:cursor-pointer" onClick={() => addPageNo(-1)} />
-                    <div className="px-5 hover:cursor-pointer" onClick={() => setPageDialogue(true)}>
+                <div className='my-10 flex items-center justify-center'>
+                    <FaAngleDoubleLeft className='hover:cursor-pointer' onClick={() => addPageNo(-10)} />
+                    <FaAngleLeft className='hover:cursor-pointer' onClick={() => addPageNo(-1)} />
+                    <div className='px-5 hover:cursor-pointer' onClick={() => setPageDialogue(true)}>
                         {pageNo} of {maxPageNo}
                     </div>
-                    <FaAngleRight className="hover:cursor-pointer" onClick={() => addPageNo(1)} /><FaAngleDoubleRight className="hover:cursor-pointer" onClick={() => addPageNo(10)} />
+                    <FaAngleRight className='hover:cursor-pointer' onClick={() => addPageNo(1)} />
+                    <FaAngleDoubleRight className='hover:cursor-pointer' onClick={() => addPageNo(10)} />
                 </div>
             </div>
 
             {selPageDialogue &&
-                <div className="fixed inset-0 flex justify-center items-center z-50">
-                    <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full z-10">
-                        <p className="text-xl font-semibold">Select page number</p>
-                        <div className="flex justify-center items-center my-7">
+                <div className='fixed inset-0 flex justify-center items-center z-50'>
+                    <div className='absolute inset-0 bg-black opacity-50'></div>
+                    <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm w-full z-10'>
+                        <p className='text-xl font-semibold'>Select page number</p>
+                        <div className='flex justify-center items-center my-7'>
                             <input
-                                id="select_page_num"
-                                className="border border-black w-[40px] mx-1"
-                                type="number"
-                                min="1" max={maxPageNo}
+                                id='select_page_num'
+                                className='border border-black w-[40px] mx-1'
+                                type='number'
+                                min='1' max={maxPageNo}
                                 defaultValue={pageNo} />
                             <span>of {maxPageNo}</span>
                         </div>
-                        <div className="flex justify-end">
+                        <div className='flex justify-end'>
                             <button onClick={() => setPageDialogue(false)}
                                 className={buttonStyle}>
                                 Close

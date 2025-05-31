@@ -51,7 +51,7 @@ export default function Overview() {
         <div className="flex flex-col items-center justify-center">
             <div onClick={expandTotalBal}
                 className="justify-items-start w-2/3 py-3 px-7 m-5 border border-black hover:cursor-pointer">
-                <label className="text-2xl">
+                <label className="text-2xl hover:cursor-pointer">
                     <b>Total balance:</b> ${totalBal.toFixed(2)}
                 </label>
                 <div id="expanded_account" className="hidden">
