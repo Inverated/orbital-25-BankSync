@@ -54,14 +54,14 @@ export default function Overview() {
     return (
         isLoaded && <div className="flex flex-col items-center justify-center">
             <div onClick={expandTotalBal}
-                className="py-3 px-7 m-5 w-2/3 border border-black hover:cursor-pointer rounded-lg">
+                className="py-5 px-7 m-5 w-2/3 border border-black hover:cursor-pointer rounded-lg">
                 <label className="text-2xl hover:cursor-pointer">
                     <b>Total balance:</b> ${totalBal.toFixed(2)}
                 </label>
                 <div id="expanded_account" className="hidden">
                     {accountArray.map((accounts, index) =>
-                        <div key={accounts.id} className=" p-3 rounded-lg">
-                            <div className="flex justify-between">
+                        <div key={accounts.id} className="rounded-lg">
+                            <div className="m-2 flex justify-between">
                                 <div>
                                     <b>{accounts.name}:</b> {accounts.no}
                                 </div>

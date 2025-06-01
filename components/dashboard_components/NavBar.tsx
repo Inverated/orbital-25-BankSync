@@ -35,8 +35,10 @@ export default function NavBar(user: { user: User | undefined; }) {
     return (
         <div className='border border-black'>
             <div className='flex justify-between my-7 mx-4'>
-                <div className='text-3xl'>Dashboard</div>
-                <div>Welecome {user.user?.email?.slice(0, user.user.email.indexOf('@'))}</div>
+                <div>
+                    <div className='text-4xl'>Dashboard</div>
+                    <div className="text-xl pt-3">Welcome {user.user?.email?.slice(0, user.user.email.indexOf('@')).replace(/\d+$/, '')}</div>
+                </div>
                 <div className='flex justify-between text-5xl'>
                     <div>
                         <MdFileUpload className={logoStyle} />
