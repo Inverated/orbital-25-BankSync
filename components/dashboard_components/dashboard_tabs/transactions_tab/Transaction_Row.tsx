@@ -101,7 +101,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
         <div>
             {/* Collapsed transaction row */}
             {!isRowExpanded ?
-                <div id={details.id} className='flex flex-col justify-between m-4 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition border border-black rounded-lg'>
+                <div id={details.id} className='flex flex-col justify-between m-3 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition border border-black rounded-lg'>
                     <div>
                         <p className='p-3 truncate break-after-all'>{details.transaction_description}</p>
                     </div>

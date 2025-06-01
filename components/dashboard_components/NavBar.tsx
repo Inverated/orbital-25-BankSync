@@ -37,7 +37,7 @@ export default function NavBar(user: { user: User | undefined; }) {
             <div className='flex justify-between my-7 mx-4'>
                 <div>
                     <div className='text-4xl'>Dashboard</div>
-                    <div className="text-xl pt-3">Welcome {user.user?.email?.slice(0, user.user.email.indexOf('@')).replace(/\d+$/, '')}</div>
+                    <div className="text-xl pt-3">Welcome</div>
                 </div>
                 <div className='flex justify-between text-5xl'>
                     <div>
