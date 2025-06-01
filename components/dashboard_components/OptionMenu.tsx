@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export default function OptionMenu() {
-    const selection = ["Profile", "Settings", "Logout"] as const
+    const selection = ["Profile (WIP)", "Settings (WIP)", "Logout"] as const
     const router = useRouter()
     const [logoutDialogue, togglePopout] = useState(false)
 
@@ -23,9 +23,9 @@ export default function OptionMenu() {
             case "Logout":
                 togglePopout(true)
                 break
-            case "Profile":
+            case "Profile (WIP)":
                 break
-            case "Settings":
+            case "Settings (WIP)":
                 break
             default:
                 console.log("Unknown option")

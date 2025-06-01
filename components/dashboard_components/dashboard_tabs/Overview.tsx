@@ -5,6 +5,7 @@ export default function Overview() {
     const [totalBal, setTotalBal] = useState(0.0)
     const [income, setIncome] = useState(0.0)
     const [expenses, setExpenses] = useState(0.0)
+    const [isLoaded, setLoadingStatus] = useState(false)
 
     type Account = { id: string, name: string, no: string, bal: number }
     const [accountArray, setAccount] = useState<Account[]>([])
@@ -36,6 +37,7 @@ export default function Overview() {
                 setExpenses(arr.reduce((x, y) => x + y.withdrawal_amount, 0))
             }
         })
+        setLoadingStatus(true)
     }, [])
 
     const expandTotalBal = () => {
@@ -48,34 +50,37 @@ export default function Overview() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center">
+        isLoaded && <div className="flex flex-col items-center justify-center">
             <div onClick={expandTotalBal}
-                className="justify-items-start w-2/3 py-3 px-7 m-5 border border-black hover:cursor-pointer">
+                className="justify-items-start w-2/3 py-3 px-7 m-5 border border-black hover:cursor-pointer rounded-lg">
                 <label className="text-2xl hover:cursor-pointer">
                     <b>Total balance:</b> ${totalBal.toFixed(2)}
                 </label>
                 <div id="expanded_account" className="hidden">
-                    {accountArray.map((accounts) =>
-                        <div key={accounts.id} className="flex justify-between py-1">
-                            <div>
-                                <b>{accounts.name}:</b> {accounts.no}
+                    {accountArray.map((accounts, index) =>
+                        <div key={accounts.id}>
+                            <div className="flex justify-between my-2">
+                                <div className="w-2/3">
+                                    <b>{accounts.name}:</b> {accounts.no}
+                                </div>
+                                <div className="flex w-1/3 justify-end">
+                                    ${accounts.bal.toFixed(2)}
+                                </div>
                             </div>
-                            <div>
-                                ${accounts.bal.toFixed(2)}
-                            </div>
+                            {index < accountArray.length - 1 && <hr />}
                         </div>
                     )}
                 </div>
             </div>
             <div className="flex justify-between w-2/3">
-                <div className="justify-items-start w-1/1 py-3 px-7 mr-3 border border-black hover:cursor-pointer">
+                <div className="justify-items-start w-1/1 py-3 px-7 mr-3 border border-black rounded-lg">
                     <label className="text-2xl">
                         <b>Income:</b> ${income.toFixed(2)}
                     </label>
                 </div>
-                <div className="justify-items-start w-1/1 py-3 px-7 ml-3 border border-black hover:cursor-pointer">
+                <div className="justify-items-start w-1/1 py-3 px-7 ml-3 border border-black rounded-lg">
                     <label className="text-2xl">
-                        <b>Expense:</b> ${expenses.toFixed(2)}
+                        <b>Expenses:</b> ${expenses.toFixed(2)}
                     </label>
                 </div>
             </div>
