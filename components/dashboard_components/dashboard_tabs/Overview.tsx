@@ -58,7 +58,7 @@ export default function Overview() {
                 <label className="text-2xl hover:cursor-pointer">
                     <b>Total balance:</b> ${totalBal.toFixed(2)}
                 </label>
-                <div id="expanded_account" className="">
+                <div id="expanded_account" className="hidden">
                     {accountArray.map((accounts, index) =>
                         <div key={accounts.id} className=" p-3 rounded-lg">
                             <div className="flex justify-between">

@@ -11,6 +11,14 @@ export default function Transactions() {
     const [transactionEntry, setEntry] = useState<Entry[]>([])
     const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
 
+    const handleButtonDown = (event: KeyboardEvent) => {
+        if (event.key == 'Escape') {
+            setPageDialogue(false)
+        } else if (event.key == 'Enter') {
+            jumpToPage()
+        }
+    }
+
     useEffect(() => {
         getTransactionDetail().then(arr => {
             arr?.forEach(entry => {
@@ -63,14 +71,6 @@ export default function Transactions() {
             setPage(userInput)
         }
         setPageDialogue(false)
-    }
-
-    const handleButtonDown = (event: KeyboardEvent) => {
-        if (event.key == 'Escape') {
-            setPageDialogue(false)
-        } else if (event.key == 'Enter') {
-            jumpToPage()
-        }
     }
 
     const buttonStyle = 'border border-black mx-2 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const

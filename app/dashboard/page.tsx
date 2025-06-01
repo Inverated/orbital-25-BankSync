@@ -13,6 +13,8 @@ import { useRouter } from "next/navigation";
 export default function Dashboard() {
     const [currentSession, setSession] = useState<Session | null>(null)
     const router = useRouter()
+    const [isLoaded, setLoadingStatus] = useState(false)
+
 
     useEffect(() => {
         const getData = async () => {
@@ -27,6 +29,7 @@ export default function Dashboard() {
             if (data.session == null) {
                 router.push('/registration')
             } else {
+                setLoadingStatus(true)
                 router.push('/dashboard')
             }
             setSession(data.session)
@@ -49,7 +52,7 @@ export default function Dashboard() {
 
     const tabStyle = "text-2xl mx-1 px-2 py-1  border border-black rounded-md cursor-pointer"
     return (
-        currentSession && <div>
+        isLoaded && currentSession && <div>
             <NavBar user={currentSession?.user} />
             <div className="flex justify-end">
                 <div className=" border border-black p-2 m-3">
