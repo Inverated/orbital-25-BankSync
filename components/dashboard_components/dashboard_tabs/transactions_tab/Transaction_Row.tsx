@@ -105,9 +105,9 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                     <div>
                         <p className='p-3 truncate break-after-all'>{details.transaction_description}</p>
                     </div>
-                    <div className='p-3 flex justify-between'>
+                    <div className={'p-3 flex justify-between'}>
                         <p>{details.account_no}</p>
-                        <p>{details.withdrawal_amount == 0 ? '+$' + details.deposit_amount.toFixed(2) : '-$' + details.withdrawal_amount.toFixed(2)}</p>
+                        <p className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>{details.withdrawal_amount == 0 ? '+$' + details.deposit_amount.toFixed(2) : '-$' + details.withdrawal_amount.toFixed(2)}</p>
                     </div>
                     <div className='p-3 flex justify-between'>
                         <p>
@@ -131,9 +131,12 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                         <p className='p-2 flex'>
                             <b>Account No: &nbsp;</b>{details.account_no}
                         </p>
-                        <p className='p-2 flex'>
-                            <b>Transaction amount: &nbsp;</b>{details.withdrawal_amount == 0 ? '+$' + details.deposit_amount.toFixed(2) : '-$' + details.withdrawal_amount.toFixed(2)}
-                        </p>
+                        <div className='p-2 flex'>
+                            <b>Transaction amount: &nbsp;</b>
+                            <div className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>
+                                {details.withdrawal_amount == 0 ? '+$' + details.deposit_amount.toFixed(2) : '-$' + details.withdrawal_amount.toFixed(2)}
+                            </div>
+                        </div>
                         <p className='p-2 flex'>
                             <b>Transaction date: &nbsp;</b>{details.transaction_date}
                         </p>

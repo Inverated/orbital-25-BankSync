@@ -8,10 +8,13 @@ export default function OptionMenu() {
     const [logoutDialogue, togglePopout] = useState(false)
 
     const logout = async () => {
-        const { error } = await supabase.auth.signOut()
+        await supabase.auth.refreshSession();
+        const { error } = await supabase.auth.signOut({
+            scope: 'global',
+        })
 
         if (error) {
-            alert(error.message)
+            console.log(error.message)
         } else {
             router.push("/registration")
         }

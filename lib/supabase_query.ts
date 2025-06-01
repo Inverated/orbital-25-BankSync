@@ -23,6 +23,7 @@ export async function getTransactionDetail() {
     const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("*")
+        .order("transaction_date", {ascending:false})
         // .eq("user_id", session.user.id)
     if (error) {
         throw error.message

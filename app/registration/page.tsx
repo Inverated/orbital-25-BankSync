@@ -17,7 +17,6 @@ export default function Registration() {
     useEffect(() => {
         const getData = async () => {
             const { data, error } = await supabase.auth.getSession()
-
             if (error) {
                 console.log(error.message)
             } else {
