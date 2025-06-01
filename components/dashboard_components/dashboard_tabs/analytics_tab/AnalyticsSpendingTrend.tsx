@@ -2,7 +2,7 @@ import { AiOutlineLineChart } from "react-icons/ai";
 
 export default function SpendingTrend() {
     return (
-        <div className="flex flex-col border order-black p-3 mx-5 rounded-lg gap-2">
+        <div className="flex flex-col border border-black p-3 mx-5 rounded-lg gap-2">
             <h1 className="font-bold text-xl">Spending Trends</h1>
             
             <h2>Spending pattern over last _ day/month/year</h2>

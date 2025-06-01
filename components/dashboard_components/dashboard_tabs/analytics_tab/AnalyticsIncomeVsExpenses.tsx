@@ -22,7 +22,7 @@ export default function IncomeExpenses() {
     }, [])
     
     return (
-        <div className="border order-black p-3 rounded-lg flex-1">
+        <div className="border border-black p-3 rounded-lg flex-1">
             <h1 className="font-bold">Income vs. Expenses</h1>
 
             <div className="flex flex-col h-[300px] justify-center items-center gap-2">

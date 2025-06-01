@@ -2,7 +2,7 @@ import { AiOutlinePieChart } from "react-icons/ai";
 
 export default function SpendingCategory() {
     return (
-        <div className="border order-black p-3 rounded-lg flex-1 flex flex-col gap-2">
+        <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-2">
             <h1 className="font-bold">Spending by Category</h1>
         
             <div className="flex flex-col h-[300px] justify-center items-center gap-2">
