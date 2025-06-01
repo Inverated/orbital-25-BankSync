@@ -16,7 +16,7 @@ export default function AccountsTransactionsTable({ account }: AccountsTransacti
                 setTransactions(data);
             }
         })
-    })
+    }, [])
     
     return (
         <table className="table-fixed" 

@@ -83,7 +83,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
             document.removeEventListener('keydown', handleButtonDown)
             document.removeEventListener('keyup', handleButtonUp)
         }
-    })
+    }, [])
 
     // Handle edit dialogue display
     const [showEditDialogue, setEditActive] = useState(false)

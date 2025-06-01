@@ -33,7 +33,7 @@ export default function Transactions() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    })
+    }, [])
 
     const [pageNo, setPage] = useState(1)
     const maxPageNo = Math.ceil(transactionEntry.length / 10)
