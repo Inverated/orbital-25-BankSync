@@ -27,11 +27,13 @@ export default function Overview() {
             setTotalBal(totalBalance)
             setAccount(accountArr)
         })
+
         getIncome().then(arr => {
             if (arr != null) {
                 setIncome(arr.reduce((x, y) => x + y.deposit_amount, 0))
             }
         })
+
         getExpenses().then(arr => {
             if (arr != null) {
                 setExpenses(arr.reduce((x, y) => x + y.withdrawal_amount, 0))
