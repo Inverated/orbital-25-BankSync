@@ -17,28 +17,34 @@ export default function Dashboard() {
 
 
     useEffect(() => {
-        const getData = async () => {
-            const { data, error } = await supabase.auth.getSession()
-
-            if (error) {
-                console.log(error.message)
-            } else {
-                console.log("no error")
+        const { data: authListener } = supabase.auth.onAuthStateChange(
+            (_, session) => {
+                if (!session) {
+                    router.push('/login');
+                } else {
+                    setSession(session)
+                    setLoadingStatus(true);
+                }
             }
+        );
 
-            if (data.session == null) {
-                router.push('/registration')
-            } else {
-                setLoadingStatus(true)
-                router.push('/dashboard')
-            }
-            setSession(data.session)
+        supabase.auth.getSession()
+            .then(({ data: { session } }) => {
+                if (!session) {
+                    router.push('/login')
+                } else {
+                    setSession(session)
+                    setLoadingStatus(true)
+                }
+            })
+
+        return () => {
+            authListener.subscription.unsubscribe()
         }
-        getData()
     }, [router])
 
     type Page = "Overview" | "Accounts" | "Transactions" | "Analytics"
-
+    
     const componentSelector: Record<Page, React.FC> = {
         Overview: Overview,
         Accounts: Accounts,

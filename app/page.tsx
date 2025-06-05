@@ -18,7 +18,7 @@ export default function Home() {
             }
 
             if (data == null) {
-                router.push('/registration')
+                router.push('/signup')
             } else {
                 router.push('/dashboard')
             }

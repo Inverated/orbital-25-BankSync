@@ -16,7 +16,7 @@ export default function OptionMenu() {
         if (error) {
             console.log(error.message)
         } else {
-            router.push("/registration")
+            router.push("/")
         }
     }
 
