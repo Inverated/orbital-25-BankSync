@@ -19,11 +19,9 @@ export default function Login() {
             alert(error.message)
             return
         }
-        console.log("push")
+
         router.push('/dashboard')
     }
-
-
 
     return (
         <div>

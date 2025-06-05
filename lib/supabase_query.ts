@@ -1,11 +1,7 @@
 import supabase from "@/app/config/supabaseClient";
 
-const {data: {session}} = await supabase.auth.getSession();
-
+//need to pass in session later for RLS instead of getting session here
 export async function getAccountDetails() {
-    if (!session) {
-        return null
-    }
     const { data: account_details, error } = await supabase
         .from('account_details')
         .select("*")
@@ -17,9 +13,6 @@ export async function getAccountDetails() {
 }                
 
 export async function getTransactionDetail() {
-    if (!session) {
-        return null
-    }
     const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("*")
@@ -32,9 +25,6 @@ export async function getTransactionDetail() {
 }
 
 export async function getTransactionDetailByAccountNo(account_no: string) {
-    if (!session) {
-        return null
-    }
     const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("*")
@@ -47,9 +37,6 @@ export async function getTransactionDetailByAccountNo(account_no: string) {
 }
 
 export async function getIncome() {
-    if (!session) {
-        return null
-    }
     const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("deposit_amount")
@@ -61,9 +48,6 @@ export async function getIncome() {
 }
 
 export async function getExpenses() {
-    if (!session) {
-        return null
-    }
     const { data: transaction_details, error } = await supabase
         .from('transaction_details')
         .select("withdrawal_amount")
