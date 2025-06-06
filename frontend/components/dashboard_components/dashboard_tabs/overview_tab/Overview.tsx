@@ -1,3 +1,4 @@
+import { Account } from "@/components/types"
 import { getAccountDetails, getExpenses, getIncome } from "@/lib/supabase_query"
 import { useEffect, useState } from "react"
 
@@ -7,21 +8,20 @@ export default function Overview() {
     const [expenses, setExpenses] = useState(0.0)
     const [isLoaded, setLoadingStatus] = useState(false)
 
-    type Account = { id: string, name: string, no: string, bal: number }
-    const [accountArray, setAccount] = useState<Account[]>([])
+    const [accountArray, setAccount] = useState<Partial<Account>[]>([])
 
     //change to store query locally and retrieve instead of querying every time
     useEffect(() => {
         getAccountDetails().then(arr => {
             let totalBalance = 0
-            const accountArr: Account[] = []
+            const accountArr: Partial<Account>[] = []
             arr?.forEach(entry => {
                 totalBalance += entry.balance
                 accountArr.push({
                     id: entry.id,
-                    name: entry.account_name,
-                    no: entry.account_no,
-                    bal: entry.balance
+                    account_name: entry.account_name,
+                    account_no: entry.account_no,
+                    balance: entry.balance
                 })
             })
             setTotalBal(totalBalance)
@@ -63,10 +63,10 @@ export default function Overview() {
                         <div key={accounts.id} className="rounded-lg">
                             <div className="m-2 flex justify-between">
                                 <div>
-                                    <b>{accounts.name}:</b> {accounts.no}
+                                    <b>{accounts.account_name}:</b> {accounts.account_no}
                                 </div>
                                 <div>
-                                    ${accounts.bal.toFixed(2)}
+                                    ${accounts.balance ? accounts.balance.toFixed(2) : '0.00'}
                                 </div>
                             </div>
                             {index < accountArray.length - 1 && <hr />}

@@ -1,4 +1,4 @@
-import supabase from "@/app/config/supabaseClient";
+import { supabase } from "./supabase"
 
 //need to pass in session later for RLS instead of getting session here
 export async function getAccountDetails() {

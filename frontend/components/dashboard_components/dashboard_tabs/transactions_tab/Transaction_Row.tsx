@@ -1,8 +1,8 @@
+import { Transaction } from "@/components/types";
 import { useEffect, useRef, useState } from "react";
 
-type details = { id: string; transaction_description: string; account_no: string; withdrawal_amount: number; deposit_amount: number; category: string; transaction_date: string }
 type uniqueCategory = string[]
-type arguements = { details: details, uniqueCategory: uniqueCategory }
+type arguements = { details: Partial<Transaction>, uniqueCategory: uniqueCategory }
 
 export default function Transaction_Row({ details, uniqueCategory }: arguements) {
     // Handle persistent expanded row display when shift pressed or long click
@@ -24,7 +24,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
             duration = Date.now() - clickStartTime.current
         }
 
-        const currentElement = document.getElementById(details.id)
+        const currentElement = document.getElementById(String(details.id))
         const cursorAt = event.target as Node
 
         const isClickedOnExpandedElement = expandedRow.current && expandedRow.current.contains(cursorAt)
@@ -101,13 +101,15 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
         <div>
             {/* Collapsed transaction row */}
             {!isRowExpanded ?
-                <div id={details.id} className='flex flex-col justify-between m-3 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition border border-black rounded-lg'>
+                <div id={String(details.id)} className='flex flex-col justify-between m-3 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition border border-black rounded-lg'>
                     <div>
                         <p className='p-3 truncate break-after-all'>{details.transaction_description}</p>
                     </div>
                     <div className={'p-3 flex justify-between'}>
                         <p>{details.account_no}</p>
-                        <p className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>{details.withdrawal_amount == 0 ? '+$' + details.deposit_amount.toFixed(2) : '-$' + details.withdrawal_amount.toFixed(2)}</p>
+                        <p className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>
+                            {details.withdrawal_amount == 0 ? '+$' + details.deposit_amount?.toFixed(2) : '-$' + details.withdrawal_amount?.toFixed(2)}
+                        </p>
                     </div>
                     <div className='p-3 flex justify-between'>
                         <p>
@@ -133,9 +135,9 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                         </p>
                         <div className='p-2 flex'>
                             <b>Transaction amount: &nbsp;</b>
-                            <div className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>
-                                {details.withdrawal_amount == 0 ? '+$' + details.deposit_amount.toFixed(2) : '-$' + details.withdrawal_amount.toFixed(2)}
-                            </div>
+                            <p className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>
+                                {details.withdrawal_amount == 0 ? '+$' + details.deposit_amount?.toFixed(2) : '-$' + details.withdrawal_amount?.toFixed(2)}
+                            </p>
                         </div>
                         <p className='p-2 flex'>
                             <b>Transaction date: &nbsp;</b>{details.transaction_date}
@@ -151,7 +153,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                                         <label className='flex justify-between py-1'>
                                             {cat}
                                             <input
-                                                value={cat} name={details.id}
+                                                value={cat} name={String(details.id)}
                                                 checked={cat == selectedCategory}
                                                 onChange={(e) => setSelectedCategory(e.target.value)}
                                                 type='radio' />
@@ -170,7 +172,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                                     <input
                                         id='categoryRadio'
                                         type='radio'
-                                        name={details.id}
+                                        name={String(details.id)}
                                         checked={selectedCategory == (customCategoryRef.current ? customCategoryRef.current.value : '')}
                                         onChange={() => setSelectedCategory(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)} />
                                 </label>

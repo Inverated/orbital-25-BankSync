@@ -2,13 +2,12 @@ import { getTransactionDetail } from "@/lib/supabase_query";
 import { useEffect, useState } from "react";
 import Transaction_Row from "./Transaction_Row";
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from "react-icons/fa";
-
+import { Transaction } from "@/components/types";
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
     
-    type Entry = { id: string, transaction_description: string; account_no: string; withdrawal_amount: number; deposit_amount: number; category: string; transaction_date: string }
-    const [transactionEntry, setEntry] = useState<Entry[]>([])
+    const [transactionEntry, setEntry] = useState<Partial<Transaction>[]>([])
     const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
 
     const handleButtonDown = (event: KeyboardEvent) => {

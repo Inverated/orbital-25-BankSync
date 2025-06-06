@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
 import { FaGithub } from "react-icons/fa";
 import { FaGoogle } from "react-icons/fa";
 import { redirect, useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js";
 import LoginHandler from "@/components/LoginHandler";
+import { supabase } from "@/lib/supabase";
 
 export default function Login() {
     const [currentSession, setSession] = useState<Session | null>(null)

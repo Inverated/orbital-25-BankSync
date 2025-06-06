@@ -1,15 +1,14 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import Login from "@/components/LoginHandler";
-import Signup from "@/components/SignupHandler";
-import supabase from "../config/supabaseClient";
 import { FaGithub } from "react-icons/fa";
 import { FaGoogle } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js";
+import SignupHandler from "@/components/SignupHandler";
+import { supabase } from "@/lib/supabase";
 
-export default function Registration() {
+export default function Signup() {
     const [currentSession, setSession] = useState<Session | null>(null)
     const [sessionLoaded, setLoadedStatus] = useState(false)
     const router = useRouter()
@@ -32,12 +31,8 @@ export default function Registration() {
         getData()
     }, [router])
 
-    //switch btw login and signup
-    const [isLogin, setIsLogin] = useState(false);
-
     const handleOAuthLogin = async (provider: 'github' | 'google') => {
         const { data, error } = await supabase.auth.signInWithOAuth({ provider });
-
         if (error) {
             console.error("OAuth error: " + error);
         } else {
@@ -45,19 +40,20 @@ export default function Registration() {
         }
     };
 
-    const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
+    const redirectToLogin = () => redirect('/login')
 
+    const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
     return (
         currentSession == null && sessionLoaded &&
         <div className="flex justify-center items-center h-screen">
             <div className="w-[400]">
-                {isLogin ? <Login /> : <Signup />}
+                <SignupHandler />
 
                 <div className="my-2 text-sm flex justify-between cursor-pointer"
-                    onClick={() => setIsLogin(!isLogin)}>
-                    <p>{!isLogin ? "Already have an account?" : "Don't have an account?"}</p>
+                    onClick={redirectToLogin}>
+                    <p>Already have an account?</p>
                     <span className="font-semibold underline">
-                        {!isLogin ? "Login" : "Signup"}
+                        Login
                     </span>
                 </div>
 

@@ -1,4 +1,4 @@
-import supabase from "@/app/config/supabaseClient";
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { CiUser } from "react-icons/ci";
 import { RiLockPasswordFill } from "react-icons/ri";
