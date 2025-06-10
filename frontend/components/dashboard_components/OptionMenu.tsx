@@ -75,7 +75,7 @@ export default function OptionMenu() {
                                 Close
                             </button>
                             <button
-                                onClick={() => logout()}
+                                onClick={logout}
                                 className="mt-7 border border-black m-2 p-2 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
                             >
                                 Confirm

@@ -1,5 +1,5 @@
 {
-  "_comment": "Run both frontend and backend from root",
+  "_comment": "cant run both frontend and backend from root for some reason, use uvicorn backend.main:app --reload",
   "name": "banksync",
   "scripts": {
     "dev": "concurrently \"npm --prefix frontend run dev\" ",

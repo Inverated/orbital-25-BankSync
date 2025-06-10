@@ -2,13 +2,13 @@
 
 import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
-import { MdFileUpload, MdOutlineSettings } from "react-icons/md";
+import { MdOutlineSettings } from "react-icons/md";
 import OptionMenu from "./OptionMenu";
+import UploadButton from "./UploadButton";
 
 
 export default function NavBar(user: { user: User | undefined; }) {
     const [settingsIsOpened, setSettingOpen] = useState(false)
-    const logoStyle = 'mx-4 border border-black items-center rounded-lg hover:cursor-pointer'
 
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == 'Escape') {
@@ -40,12 +40,10 @@ export default function NavBar(user: { user: User | undefined; }) {
                     <div className="text-xl pt-3">Welcome {user.user?.email?.slice(0, user.user.email.indexOf('@')).replace(/\d+$/, '')}</div>
                 </div>
                 <div className='flex justify-between text-5xl'>
-                    <div>
-                        <MdFileUpload className={logoStyle} />
-                    </div>
+                    <UploadButton />
                     <div id='optionMenu'>
                         <MdOutlineSettings onClick={() => setSettingOpen(!settingsIsOpened)}
-                            className={logoStyle} />
+                            className={'mx-4 border border-black items-center rounded-lg hover:cursor-pointer'} />
                         <div className='relative'>
                             {settingsIsOpened && <OptionMenu />}
                         </div>
