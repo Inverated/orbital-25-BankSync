@@ -1,11 +1,11 @@
 {
-  "_comment": "cant run both frontend and backend from root for some reason, use uvicorn backend.main:app --reload",
+  "_comment": "cant run both frontend and backend from root using concurrently for some reason, use uvicorn backend.main:app --reload",
   "name": "banksync",
   "scripts": {
-    "dev": "concurrently \"npm --prefix frontend run dev\" ",
-    "build": "concurrently \"npm --prefix frontend run build\" ",
-    "start": "concurrently \"npm --prefix frontend run start\" ",
-    "lint": "concurrently \"npm --prefix frontend run lint\" "
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "lint": "npm --prefix frontend run lint"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

@@ -29,8 +29,8 @@ export default function UploadButton() {
     const setCurrentFile = (element: ChangeEvent<HTMLInputElement>) => {
         const file = element.target.files
         if (file) {
-            const fileExt = file[0].name.slice(file[0].name.lastIndexOf(".") + 1)
-            /* if (['pdf', 'csv'].includes(fileExt.toLowerCase())) {
+            /* const fileExt = file[0].name.slice(file[0].name.lastIndexOf(".") + 1)
+            if (['pdf', 'csv'].includes(fileExt.toLowerCase())) {
                 setFile(file[0])
                 setFileError(false)
                 return
