@@ -1,6 +1,6 @@
 import { getExpenses, getIncome } from "@/lib/supabase_query";
 import { useEffect, useState } from "react";
-import { AiOutlineLineChart } from "react-icons/ai";
+import { LineChart } from "lucide-react";
 
 export default function IncomeExpenses() {
     const [income, setIncome] = useState(0.0)
@@ -26,7 +26,7 @@ export default function IncomeExpenses() {
             <h1 className="font-bold">Income vs. Expenses</h1>
 
             <div className="flex flex-col h-[300px] justify-center items-center gap-2">
-                <AiOutlineLineChart className="h-12 w-12"/>
+                <LineChart className="h-12 w-12"/>
                 <p className="text-sm text-gray-400">Income vs. Expenses Chart</p>
             </div>
 

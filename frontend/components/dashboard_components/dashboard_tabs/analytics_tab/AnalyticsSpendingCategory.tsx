@@ -1,4 +1,4 @@
-import { AiOutlinePieChart } from "react-icons/ai";
+import { PieChart } from "lucide-react";
 
 export default function SpendingCategory() {
     return (
@@ -6,7 +6,7 @@ export default function SpendingCategory() {
             <h1 className="font-bold">Spending by Category</h1>
         
             <div className="flex flex-col h-[300px] justify-center items-center gap-2">
-                <AiOutlinePieChart className="h-12 w-12"/>
+                <PieChart className="h-12 w-12"/>
                 <p className="text-sm text-gray-400">Category Breakdown Chart</p>
             </div>
         </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FaGithub } from "react-icons/fa";
-import { FaGoogle } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import { redirect, useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js";
 import LoginHandler from "@/components/LoginHandler";
@@ -72,7 +72,7 @@ export default function Login() {
 
                 <div className={externalAuthButtonStyle}
                     onClick={() => handleOAuthLogin('google')} >
-                    <FaGoogle />
+                    <FcGoogle />
                     <span className="mx-2">Sign in with Google</span>
                 </div>
                 <div className={externalAuthButtonStyle}

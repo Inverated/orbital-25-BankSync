@@ -21,7 +21,7 @@ export default function Analytics() {
             <div className="border border-black p-3 m-5 rounded-lg">
                 {bothNull && (
                     <div className="text-gray-500 mt-1 ml-2 font-medium">
-                        Select a date range
+                        Select a date range:
                     </div>
                 )}
 

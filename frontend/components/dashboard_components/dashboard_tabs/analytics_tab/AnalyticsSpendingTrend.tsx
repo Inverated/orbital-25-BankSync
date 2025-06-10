@@ -1,4 +1,4 @@
-import { AiOutlineLineChart } from "react-icons/ai";
+import { LineChart } from "lucide-react";
 
 export default function SpendingTrend() {
     return (
@@ -8,7 +8,7 @@ export default function SpendingTrend() {
             <h2>Spending pattern over last _ day/month/year</h2>
             
             <div className="flex flex-col h-[300px] justify-center items-center gap-2">
-                <AiOutlineLineChart className="h-12 w-12"/>
+                <LineChart className="h-12 w-12"/>
                 <p className="text-sm text-gray-400">Spending Chart</p>
             </div>
         </div>

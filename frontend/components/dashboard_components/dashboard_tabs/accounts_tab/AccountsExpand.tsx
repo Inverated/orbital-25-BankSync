@@ -1,6 +1,6 @@
 import { Account } from '@/components/types';
 import AccountsTransactionsTable from "./AccountsTransactionsTable";
-import { SlArrowDown } from "react-icons/sl";
+import { ArrowDown } from "lucide-react";
 
 export interface AccountExpandProps {
   account: Account;
@@ -22,7 +22,7 @@ export default function AccountsExpand({ account, index } : AccountExpandProps) 
       className="inline-block p-3 rounded-lg border border-black hover:cursor-pointer">
       <h1 className="text-blue-600 underline flex flex-row gap-4 items-center">
         All Transactions 
-        <SlArrowDown />
+        <ArrowDown />
       </h1>
       
       <div id={`expanded-${index}`} className="hidden">
