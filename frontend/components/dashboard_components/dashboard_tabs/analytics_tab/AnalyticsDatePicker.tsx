@@ -12,7 +12,15 @@ export default function AnalyticsDatePicker({ label }: DatePickerProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer components={['DatePicker']}>
-        <DatePicker label={label} />
+        <DatePicker 
+          label={label} 
+          views={["month", "year"]}
+          slotProps={{
+            textField: {
+              helperText: "MM/YY",
+            }
+          }} 
+        />
       </DemoContainer>
     </LocalizationProvider>
   )
