@@ -6,9 +6,10 @@ async function uploadFile(file: File) {
 
     try {
         const response = await api.post('/dashboard', formData);
-        console.log(response.data);
+        return(response.data);
     } catch (error) {
         console.error("Upload failed:", error);
+        return null
     }
 }
 

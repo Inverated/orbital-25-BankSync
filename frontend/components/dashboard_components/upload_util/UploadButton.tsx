@@ -1,11 +1,15 @@
+import { Account, Transaction } from "@/utils/types";
 import uploadFile from "@/utils/uploadFile";
 import { ChangeEvent, useEffect, useState } from "react";
 import { MdFileUpload, MdUploadFile } from "react-icons/md";
+import PreviewTable from "./PreviewTable";
 
 export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
     const [errorFileType, setFileError] = useState(false)
     const [currentFile, setFile] = useState<File | null>(null)
+    const [transactionData, setTransactionData] = useState<Partial<Transaction>[] | null>(null)
+    const [accountData, setaccountData] = useState<Partial<Account> | null>(null)
 
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == 'Escape') {
@@ -13,10 +17,16 @@ export default function UploadButton() {
         }
     }
 
-    const handleUpload = () => {
-        console.log(currentFile)
+    const handleUpload = async () => {
         if (currentFile != null) {
-            uploadFile(currentFile)
+            const parsedData = await uploadFile(currentFile)
+            if (parsedData.data.hasData) {
+                setTransactionData(parsedData.data.transactions)
+                setaccountData(parsedData.data.account)
+            }
+            console.log(parsedData)
+            console.log(transactionData)
+            console.log(accountData)
         }
     }
 
@@ -24,22 +34,22 @@ export default function UploadButton() {
         setDialogueStatus(false)
         setFileError(false)
         setFile(null)
+        setTransactionData(null)
+        setaccountData(null)
     }
 
     const setCurrentFile = (element: ChangeEvent<HTMLInputElement>) => {
         const file = element.target.files
-        if (file) {
-            /* const fileExt = file[0].name.slice(file[0].name.lastIndexOf(".") + 1)
+        console.log(file)
+        if (file && file.length > 0) {
+            const fileExt = file[0].name.slice(file[0].name.lastIndexOf(".") + 1)
             if (['pdf', 'csv'].includes(fileExt.toLowerCase())) {
                 setFile(file[0])
                 setFileError(false)
                 return
             } else {
                 setFileError(true)
-            } */
-            setFile(file[0])
-            setFileError(false)
-            return
+            }
         }
         setFile(null)
     }
@@ -59,7 +69,7 @@ export default function UploadButton() {
             {uploadDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-sm w-full z-2">
+                    <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-3xl w-full z-2">
                         <p className="text-2xl mb-3">File Upload</p>
 
                         <label
@@ -78,6 +88,9 @@ export default function UploadButton() {
                                 onChange={(e) => setCurrentFile(e)}
                                 className="hidden" />
                         </label>
+
+                        {transactionData && <PreviewTable transactionData={transactionData} accountData={accountData}/>}
+
                         {errorFileType && <p className="text-xs italic text-red-600">Please upload the correct file type</p>}
                         <div className="flex justify-end">
                             <button

@@ -4,7 +4,7 @@ import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { MdOutlineSettings } from "react-icons/md";
 import OptionMenu from "./OptionMenu";
-import UploadButton from "./UploadButton";
+import UploadButton from "./upload_util/UploadButton";
 
 
 export default function NavBar(user: { user: User | undefined; }) {

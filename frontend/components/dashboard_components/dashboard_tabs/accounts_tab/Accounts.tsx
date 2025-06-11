@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAccountDetails } from "@/lib/supabase_query";
-import { Account } from "@/components/types";
+import { Account } from "@/utils/types";
 import AccountsExpand from "./AccountsExpand";
 
 export default function Accounts() {

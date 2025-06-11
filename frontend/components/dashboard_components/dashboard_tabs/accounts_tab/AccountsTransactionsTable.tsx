@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTransactionDetailByAccountNo } from "@/lib/supabase_query";
-import { Account, Transaction } from "@/components/types";
+import { Account, Transaction } from "@/utils/types";
 import TransactionAmount from "./TransactionAmount";
 
 interface AccountsTransactionsTableProps {

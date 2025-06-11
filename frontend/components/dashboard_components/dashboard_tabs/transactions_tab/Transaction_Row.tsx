@@ -1,4 +1,4 @@
-import { Transaction } from "@/components/types";
+import { Transaction } from "@/utils/types";
 import { useEffect, useRef, useState } from "react";
 
 type uniqueCategory = string[]

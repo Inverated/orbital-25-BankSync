@@ -1,4 +1,4 @@
-import { Account } from '@/components/types';
+import { Account } from '@/utils/types';
 import AccountsTransactionsTable from "./AccountsTransactionsTable";
 import { SlArrowDown } from "react-icons/sl";
 

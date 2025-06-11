@@ -2,7 +2,7 @@ import { getTransactionDetail } from "@/lib/supabase_query";
 import { useEffect, useState } from "react";
 import Transaction_Row from "./Transaction_Row";
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import { Transaction } from "@/components/types";
+import { Transaction } from "@/utils/types";
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
