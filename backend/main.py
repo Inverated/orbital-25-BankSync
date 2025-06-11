@@ -2,6 +2,8 @@ import uvicorn
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.services.fileProcesser import fileProcesser
+
 app = FastAPI()
 
 origins = [
@@ -21,7 +23,7 @@ app.add_middleware(
 async def upload_file(file: UploadFile = File(...)):
     contents = await file.read()
     # Process contents here, e.g., save or parse
-    print(type(contents))
+    fileProcesser(contents)
     return {"filename": file.filename, "content_type": file.content_type}
 
 if __name__ == "__main__": 
