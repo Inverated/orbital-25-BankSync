@@ -4,6 +4,20 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.services import fileProcesser
 
+'''
+Initialise backend:
+
+cd backend
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+
+Run backend + frontend
+
+cd..
+npm run dev
+
+'''
 app = FastAPI()
 
 origins = [
@@ -31,6 +45,10 @@ async def upload_file(file: UploadFile = File(...)):
     jsonData = fileProcesser.pdfParser(contents)
     print(jsonData)
     return {"filename": file.filename, "content_type": file.content_type, "data": jsonData}
+
+@app.get("/api/hello")
+def hello():
+    return {"message": "Hello from FastAPI on Vercel"}
 
 if __name__ == "__main__": 
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

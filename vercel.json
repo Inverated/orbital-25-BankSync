@@ -1,5 +1,5 @@
 {
-  "builds": [
+    "builds": [
     {
       "src": "frontend/package.json",
       "use": "@vercel/next"
@@ -11,13 +11,12 @@
   ],
   "routes": [
     {
-      "src": "/dashboard/(.*)",
+      "src": "/api/(.*)",
       "dest": "backend/main.py"
     },
     {
       "src": "/(.*)",
       "dest": "frontend/$1"
-    } 
-    
+    }
   ]
 }
