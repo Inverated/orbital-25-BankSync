@@ -21,8 +21,8 @@ npm run dev
 app = FastAPI()
 
 origins = [
-    'http://localhost:3000'
-    #'https://orbital-25-bank-sync.vercel.app'
+    'http://localhost:3000',
+    'https://orbital-25-bank-sync.vercel.app'
 ]
 
 app.add_middleware(
