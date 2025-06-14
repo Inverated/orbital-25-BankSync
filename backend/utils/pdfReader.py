@@ -1,7 +1,11 @@
-from io import BytesIO
+from io import BufferedReader, BytesIO
 from pypdf import PdfReader
 
+def convertToPages(content):
+    return convertToPypdf(content).pages
 
-def bytesToPdfPages(content: bytes):
-    decryptedPdf = PdfReader(BytesIO(content))
-    return decryptedPdf.pages
+def convertToPypdf(content: bytes):
+    return PdfReader(BytesIO(content))
+
+def convertToPypdf(content: BufferedReader):
+    return PdfReader(BytesIO(content))
