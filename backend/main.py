@@ -46,9 +46,9 @@ async def upload_file(file: UploadFile = File(...)):
     print(jsonData)
     return {"filename": file.filename, "content_type": file.content_type, "data": jsonData}
 
-@app.get("/api/hello")
-def hello():
-    return {"message": "Hello from FastAPI on Vercel"}
+@app.get("/")
+async def read_root():
+    return {"status": "Backend is running"}
 
 if __name__ == "__main__": 
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

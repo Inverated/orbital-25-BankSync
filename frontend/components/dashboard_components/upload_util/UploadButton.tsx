@@ -65,11 +65,11 @@ export default function UploadButton() {
         <div>
             <MdFileUpload
                 onClick={() => setDialogueStatus(true)}
-                className={'mx-4 border border-black items-center rounded-lg hover:cursor-pointer z-1'} />
+                className={'mx-4 border border-black items-center rounded-lg hover:cursor-pointer'} />
             {uploadDialogue &&
-                <div className="fixed inset-0 flex justify-center items-center">
+                <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-3xl w-full z-2">
+                    <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-3xl w-full z-60">
                         <p className="text-2xl mb-3">File Upload</p>
 
                         <label

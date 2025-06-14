@@ -6,7 +6,7 @@ import SpendingTrend from "./AnalyticsSpendingTrend";
 
 export default function Analytics() {
     return(
-        <div className="flex flex-col">
+        <div className="flex flex-col relative z-0">
             <div className="flex flex-row items-center self-start border border-black p-5 m-5 rounded-lg gap-2">
                 <p>Date: </p>
                 <AnalyticsDatePicker label="Start Date" />
