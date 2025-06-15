@@ -1,11 +1,11 @@
 import { useState } from "react";
-import AnalyticsDatePicker from "./AnalyticsDatePicker";
 import IncomeExpenses from "./AnalyticsIncomeVsExpenses";
 import SpendingCategory from "./AnalyticsSpendingCategory";
 import SpendingTrend from "./AnalyticsSpendingTrend";
 import { Dayjs } from "dayjs";
 import { Ban, MousePointer2 } from "lucide-react";
 import { Alert } from "@mui/material";
+import AnalyticsDatePicker from "@/utils/DatePicker";
 
 export default function Analytics() {
     const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -42,6 +42,7 @@ export default function Analytics() {
                             position: "static",
                             alignItems: "center",
                             display: "flex",
+
                         }}
                         severity="info"
                         icon={<MousePointer2 />}
@@ -68,9 +69,9 @@ export default function Analytics() {
                 )}
             </div>
 
-            <SpendingTrend />
+            <SpendingTrend startDate={startDate} endDate={endDate} />
             
-            <div className="flex flex-row justify-center m-5 m-5 gap-5">
+            <div className="flex flex-row justify-center m-5 gap-5">
                 <SpendingCategory />
                 <IncomeExpenses />
             </div>
