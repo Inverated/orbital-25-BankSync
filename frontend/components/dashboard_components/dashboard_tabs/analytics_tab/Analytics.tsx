@@ -4,7 +4,8 @@ import IncomeExpenses from "./AnalyticsIncomeVsExpenses";
 import SpendingCategory from "./AnalyticsSpendingCategory";
 import SpendingTrend from "./AnalyticsSpendingTrend";
 import { Dayjs } from "dayjs";
-import { Ban } from "lucide-react";
+import { Ban, MousePointer2 } from "lucide-react";
+import { Alert } from "@mui/material";
 
 export default function Analytics() {
     const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -19,12 +20,6 @@ export default function Analytics() {
     return(
         <div className="flex flex-col">
             <div className="border border-black p-3 m-5 rounded-lg">
-                {bothNull && (
-                    <div className="text-gray-500 mt-1 ml-2 font-medium">
-                        Select a date range:
-                    </div>
-                )}
-
                 <div className="flex flex-row items-center p-2 gap-2">
                     <AnalyticsDatePicker 
                         label="Start Date"
@@ -40,12 +35,36 @@ export default function Analytics() {
                         onChange={setEndDate}
                     />
                 </div>
+
+                {bothNull && (
+                    <Alert
+                        sx={{ 
+                            position: "static",
+                            alignItems: "center",
+                            display: "flex",
+                        }}
+                        severity="info"
+                        icon={<MousePointer2 />}
+                        className="mt-2"
+                    >
+                        Please select a date range.
+                    </Alert>
+                )}
                 
                 {invalidDate && (
-                    <div className="flex flex-row items-center gap-2 text-red-400 mt-1 ml-2">
-                        <Ban className="w-5 h-5"/>
-                        <p className="font-medium">Invalid date</p>
-                    </div>
+                    <Alert
+                        sx={{ 
+                            position: "static",
+                            alignItems: "center",
+                            display: "flex",
+                        }}
+                        severity="error"
+                        icon={<Ban className="w-8 h-8"/>}
+                        className="mt-2"
+                    >
+                        <div className="font-bold">Invalid date</div>
+                        <div className="text-sm">Select a valid date range to see your anlaysis.</div>
+                    </Alert>
                 )}
             </div>
 

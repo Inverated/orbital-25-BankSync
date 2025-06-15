@@ -39,9 +39,6 @@ export default function AnalyticsDatePicker({ label, value, onChange }: DatePick
           value={value}
           onChange={onChange}
           slotProps={{
-            textField: {
-              helperText: "MMMM YYYY",
-            },
             field: {
               clearable: true,
               onClear: () => setCleared(true)
