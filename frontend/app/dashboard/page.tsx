@@ -9,6 +9,7 @@ import Analytics from "@/components/dashboard_components/dashboard_tabs/analytic
 import { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { registerCharts } from "@/utils/RegisterCharts";
 
 export default function Dashboard() {
     const [currentSession, setSession] = useState<Session | null>(null)
@@ -57,6 +58,9 @@ export default function Dashboard() {
     //const CurrentComponent = componentSelector["Transactions"]
 
     const tabStyle = "text-2xl mx-1 px-2 py-1  border border-black rounded-md cursor-pointer"
+    
+    registerCharts();
+    
     return (
         isLoaded && currentSession && <div>
             <NavBar user={currentSession?.user} />
