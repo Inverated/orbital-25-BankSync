@@ -1,6 +1,5 @@
 from io import BytesIO
 from pypdf import PdfReader
-import pdfplumber
 
 def convertToPypdf(content: bytes):
     return PdfReader(BytesIO(content))
