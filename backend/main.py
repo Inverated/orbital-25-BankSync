@@ -50,5 +50,10 @@ async def upload_file(file: UploadFile = File(...), password: Optional[str] = Fo
 async def read_root():
     return {"status": "Backend is running"}
 
+
+@app.head('/ping')
+async def ping():
+    return {'status': 'poooong'}
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
