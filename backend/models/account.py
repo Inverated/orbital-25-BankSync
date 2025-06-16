@@ -11,5 +11,5 @@ class Account(BaseModel):
     
 class Statement(BaseModel):
     hasData: bool = False
-    account: Account
-    transactions: List[Transaction]
+    account: Account = Account()
+    transactions: List[Transaction] = [Transaction()]
