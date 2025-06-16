@@ -1,6 +1,6 @@
-import { StatementResponse, Transaction, uploadReturnData } from "@/utils/types";
+import { StatementResponse, uploadReturnData } from "@/utils/types";
 import uploadFile from "@/utils/uploadFile";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { MdFileUpload, MdUploadFile } from "react-icons/md";
 import PreviewTable from "./PreviewTable";
 
@@ -12,14 +12,6 @@ export default function UploadButton() {
     const filePassword = useRef<HTMLInputElement>(null)
     const [statements, setStatements] = useState<StatementResponse[] | null>(null)
     const [activeTab, setActiveTab] = useState(0)
-
-
-
-    const handleButtonDown = (event: KeyboardEvent) => {
-        if (event.key == 'Escape') {
-            closeDialogue()
-        }
-    }
 
     const handleUploadFile = async () => {
         setActiveTab(0)
@@ -84,13 +76,13 @@ export default function UploadButton() {
 
     }
 
-    const handleUpdate = (index: number, updatedItem: StatementResponse) => {
+    const handleUpdate = useCallback((index: number, updatedItem: StatementResponse) => {
         if (statements) {
             const newStatement = [...statements]
             newStatement[index] = updatedItem
             setStatements(newStatement)
         }
-    }
+    },[setStatements, statements])
 
     const handleUploadData = () => {
 
@@ -110,6 +102,11 @@ export default function UploadButton() {
     }
 
     useEffect(() => {
+        const handleButtonDown = (event: KeyboardEvent) => {
+        if (event.key == 'Escape') {
+            closeDialogue()
+        }
+    }
         document.addEventListener('keydown', handleButtonDown)
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
@@ -178,7 +175,7 @@ export default function UploadButton() {
                                 </div>
 
                                 <PreviewTable
-                                    index={activeTab}
+                                    currIndex={activeTab}
                                     transactionData={statements[activeTab].transactions}
                                     accountData={statements[activeTab].account}
                                     onUpdate={handleUpdate}
@@ -196,6 +193,7 @@ export default function UploadButton() {
                             </button>
                             <button
                                 disabled={statements === null}
+                                onClick={handleUploadData}
                                 className="border disabled:border-gray-400 disabled:text-gray-400 border-black mt-4 p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
                             >
                                 Upload

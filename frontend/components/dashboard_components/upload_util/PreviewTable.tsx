@@ -2,21 +2,21 @@ import { Account, StatementResponse, Transaction } from "@/utils/types";
 import { useState } from "react";
 
 interface Props {
-    index: number
+    currIndex: number
     transactionData: Transaction[];
     accountData: Account;
     onUpdate: (index: number, updatedItem: StatementResponse) => void
 }
 
 
-export default function PreviewTable({ index, transactionData, accountData, onUpdate }: Props) {
+export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate }: Props) {
     const [editingId, setEditId] = useState(-1)
     const rowStyle = "px-4 py-2 whitespace-pre-line"
 
     const handleTransactionChange = (index: number, field: keyof Transaction, newValue: string | number) => {
         transactionData[index] = { ...transactionData[index], [field]: newValue }
         const updatedStatement: StatementResponse = { hasData: true, account: accountData, transactions: transactionData }
-        onUpdate(index, updatedStatement)
+        onUpdate(currIndex, updatedStatement)
     }
 
     const fixDecimalPlace = (index: number) => {
@@ -28,7 +28,7 @@ export default function PreviewTable({ index, transactionData, accountData, onUp
             ['ending_balance']: Number(transactionRow.ending_balance.toFixed(2).split('.').join('.')),
         }
         const updatedStatement: StatementResponse = { hasData: true, account: accountData, transactions: transactionData }
-        onUpdate(index, updatedStatement)
+        onUpdate(currIndex, updatedStatement)
     }
 
     return (
