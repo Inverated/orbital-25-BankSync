@@ -41,9 +41,16 @@ async def upload_file(file: UploadFile = File(...), password: Optional[str] = Fo
     contents = await file.read()
 
     extension = file.filename.split('/')[-1].split('.')[-1]
+    error_message = {'error':''}
+    statement_data = []
     (success, jsonData) = fileProcesser.fileParser(contents, extension, password)
-
-    return {"filename": file.filename, "content_type": file.content_type, 'success': success, "data": jsonData}
+    if success:
+        statement_data = jsonData 
+    else:
+        error_message = jsonData
+        print(error_message)
+    
+    return {"filename": file.filename, "content_type": file.content_type, 'success': success, "error": error_message, "data": statement_data}
 
 
 @app.get("/")

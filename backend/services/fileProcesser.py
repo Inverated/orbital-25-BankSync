@@ -1,6 +1,7 @@
 from typing import Optional
 from backend.models.account import Account, Statement
 from backend.models.transaction import Transaction
+from backend.services import pdfTextProcesser
 from backend.utils import pdfReader
 from backend.utils.pdfReader import convertToPypdf, decryptPdf
 
@@ -12,7 +13,7 @@ def fileParser(content: bytes, extension: str, password: Optional[str]):
     if (extension == 'pdf'):
         return parsePdf(content, password)
     elif (extension == 'csv'):
-        return (True, Statement())
+        return (False, 'Not implemented yet')
 
 
 
@@ -20,17 +21,37 @@ def parsePdf(content: bytes, password: Optional[str]):
     pypdf = convertToPypdf(content)
     if (pdfReader.isPasswordProtected(pypdf)):
         if password == None:
-            return (False, {'requirePassword': True})
+            return (False, 'requirePassword')
         else:
             pypdf = decryptPdf(pypdf, password)
             if pypdf == None:
-                return (False, {'requirePassword': True, 'invalidPassword': True})
+                return (False, 'invalidPassword')
     
+    #Remove copy protection (Encryption != password only)
+    pypdf = pdfReader.stripEncryption(pypdf)
+    extractedText = pdfReader.extractText(pypdf)
+    if extractedText == []:
+        return (False, 'invalidFile')
+    bank = pdfTextProcesser.detectBank(extractedText)
     
+    match bank:
+        case 'DBS':
+            try:
+                statements = pdfTextProcesser.processDBS(extractedText)
+                return (True, statements)
+            except Exception as e:
+                return (False, e)
+        case 'OCBS':
+            None
+        case 'UOB':
+            None
+        case _:
+            return (False, 'invalidBankType')
+            
     transactions = [Transaction(transaction_date='2025-05-01', transaction_description='test 1', withdrawal_amount=69, deposit_amount=0, account_no='360', category='fun'),
                     Transaction(transaction_date='2025-05-10', transaction_description='test 2', withdrawal_amount=420, deposit_amount=0, account_no='360', category='notfun')]
     account = Account(account_name='Savings 1', account_no='360120180',
                       bank_name='Standard Chartererered', balance=1111111.1)
-    return (True, Statement(hasData=True, transactions=transactions, account=account))
+    return (True, [Statement(hasData=True, transactions=transactions, account=account)])
     
 

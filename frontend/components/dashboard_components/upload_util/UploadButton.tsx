@@ -1,4 +1,4 @@
-import { Account, Transaction } from "@/utils/types";
+import { StatementResponse, Transaction, uploadReturnData } from "@/utils/types";
 import uploadFile from "@/utils/uploadFile";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { MdFileUpload, MdUploadFile } from "react-icons/md";
@@ -7,11 +7,13 @@ import PreviewTable from "./PreviewTable";
 export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
     const [errorFileType, setFileError] = useState(false)
-    const [currentFile, setFile] = useState<File | null>(null)
+    const currentFile = useRef<File | null>(null)
     const [passwordQuery, setQueryPassword] = useState(false)
     const filePassword = useRef<HTMLInputElement>(null)
-    const [transactionData, setTransactionData] = useState<Partial<Transaction>[] | null>(null)
-    const [accountData, setaccountData] = useState<Partial<Account> | null>(null)
+    const [statements, setStatements] = useState<StatementResponse[] | null>(null)
+    const [activeTab, setActiveTab] = useState(0)
+
+
 
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == 'Escape') {
@@ -19,21 +21,34 @@ export default function UploadButton() {
         }
     }
 
-    const handleUpload = async () => {
-        if (currentFile != null) {
-            const parsedData = await uploadFile(currentFile, filePassword.current?.value)
-
-            if (!parsedData.success && parsedData.data.requirePassword) {
-                setQueryPassword(true)
-                if (parsedData.data.invalidPassword) alert('Wrong password')
+    const handleUploadFile = async () => {
+        setActiveTab(0)
+        setStatements(null)
+        if (currentFile.current != null) {
+            const parsedData: uploadReturnData = await uploadFile(currentFile.current, filePassword.current?.value)
+            console.log(parsedData)
+            if (!parsedData.success) {
+                const errorMessage = parsedData.error
+                console.log(errorMessage)
+                if (errorMessage == 'requirePassword') {
+                    setQueryPassword(true)
+                } else if (errorMessage == 'invalidPassword') {
+                    setQueryPassword(true)
+                    alert('Wrong password')
+                } else if (errorMessage == 'invalidFile') {
+                    alert("Invalid file. Please use a readable file")
+                } else if (errorMessage == 'invalidBankType') {
+                    alert('Please use documents from supported banks')
+                } else {
+                    alert(errorMessage)
+                    console.log(errorMessage)
+                }
                 return
             } else {
                 setQueryPassword(false)
             }
-            if (parsedData.data.hasData) {
-                setTransactionData(parsedData.data.transactions)
-                setaccountData(parsedData.data.account)
-            }
+
+            setStatements(parsedData.data)
             //console.log('parsed', parsedData)
         }
     }
@@ -41,25 +56,57 @@ export default function UploadButton() {
     const closeDialogue = () => {
         setDialogueStatus(false)
         setFileError(false)
-        setFile(null)
-        setTransactionData(null)
-        setaccountData(null)
+        currentFile.current = null
+        setStatements(null)
+        setActiveTab(0)
     }
 
-    const setCurrentFile = (element: ChangeEvent<HTMLInputElement>) => {
-        const file = element.target.files
-        //console.log(file)
-        if (file && file.length > 0) {
-            const fileExt = file[0].name.slice(file[0].name.lastIndexOf(".") + 1)
-            if (['pdf', 'csv'].includes(fileExt.toLowerCase())) {
-                setFile(file[0])
-                setFileError(false)
-                return
-            } else {
-                setFileError(true)
-            }
+    const setCurrentFile = async (element: ChangeEvent<HTMLInputElement>) => {
+        const files = element.target.files
+        if (files && files.length > 0) {
+            checkFileType(files[0])
+        } else {
+            currentFile.current = null
         }
-        setFile(null)
+    }
+
+    const checkFileType = (file: File) => {
+        const fileExt = file.name.slice(file.name.lastIndexOf(".") + 1)
+        if (['pdf', 'csv'].includes(fileExt.toLowerCase())) {
+            currentFile.current = file
+            setFileError(false)
+            return
+        } else {
+            setFileError(true)
+            currentFile.current = null
+        }
+        
+
+    }
+
+    const handleUpdate = (index: number, updatedItem: StatementResponse) => {
+        if (statements) {
+            const newStatement = [...statements]
+            newStatement[index] = updatedItem
+            setStatements(newStatement)
+        }
+    }
+
+    const handleUploadData = () => {
+
+    }
+
+    const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            checkFileType(file)
+            handleUploadFile()
+        }
+    }
+
+    const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
+        e.preventDefault(); // necessary to allow drop
     }
 
     useEffect(() => {
@@ -67,7 +114,7 @@ export default function UploadButton() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [])
+    }, [handleUpdate])
 
     return (
         <div>
@@ -77,12 +124,13 @@ export default function UploadButton() {
             {uploadDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-3xl w-full z-60">
+                    <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-5/6 w-full z-60 max-h-11/12 overflow-y-auto">
                         <p className="text-2xl mb-3">File Upload</p>
-
                         <label
+                            onDrop={handleDrop}
+                            onDragOver={handleDragOver}
                             htmlFor="dropzone-file"
-                            className="flex flex-col items-center justify-center w-full h-32 border-2 border-black border-dashed rounded-lg cursor-pointer hover:bg-gray-300">
+                            className="z-100 flex flex-col items-center justify-center w-full h-32 border-2 border-black border-dashed rounded-lg cursor-pointer hover:bg-gray-300">
                             <div className="flex flex-col items-center justify-center">
                                 <MdUploadFile />
                                 <p className="mb-2 text-sm text-gray-500">
@@ -93,13 +141,16 @@ export default function UploadButton() {
                                 </p>
                             </div>
                             <input id="dropzone-file" type="file"
-                                onChange={(e) => setCurrentFile(e)}
+                                onChange={(e) => {
+                                    setCurrentFile(e)
+                                    handleUploadFile()
+                                }}
                                 className="hidden" />
                         </label>
 
-                        {currentFile &&
+                        {currentFile.current &&
                             <div className="text-sm">
-                                <p><b>Uploaded file: </b>{currentFile.name}</p>
+                                <p><b>Uploaded file: </b>{currentFile.current.name}</p>
                                 {passwordQuery &&
                                     <p>
                                         <b className="text-red-400">Please enter password: </b>
@@ -109,7 +160,31 @@ export default function UploadButton() {
                             </div>
                         }
 
-                        {transactionData && <PreviewTable transactionData={transactionData} accountData={accountData} />}
+                        {statements &&
+                            <div>
+                                <div className="flex flex-row justify-start text-sm item">
+                                    {statements.map((statement, index) =>
+                                        <button
+                                            key={index}
+                                            className={`px-4 py-2 border-b-2 ${activeTab === index
+                                                ? 'border-blue-500 text-blue-600'
+                                                : 'border-transparent text-gray-500 hover:text-blue-600'
+                                                }`}
+                                            onClick={() => setActiveTab(index)}
+                                        >
+                                            {statement.account.account_name}
+                                        </button>
+                                    )}
+                                </div>
+
+                                <PreviewTable
+                                    index={activeTab}
+                                    transactionData={statements[activeTab].transactions}
+                                    accountData={statements[activeTab].account}
+                                    onUpdate={handleUpdate}
+                                />
+                            </div>
+                        }
 
                         {errorFileType && <p className="text-xs italic text-red-600">Please upload the correct file type</p>}
                         <div className="flex justify-end">
@@ -120,10 +195,10 @@ export default function UploadButton() {
                                 Close
                             </button>
                             <button
-                                onClick={handleUpload}
-                                className="border border-black mt-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                                disabled={statements === null}
+                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black mt-4 p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
                             >
-                                Confirm
+                                Upload
                             </button>
                         </div>
                     </div>
