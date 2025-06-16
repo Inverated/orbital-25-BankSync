@@ -1,6 +1,6 @@
 import { Account, Transaction } from "@/utils/types";
 import uploadFile from "@/utils/uploadFile";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { MdFileUpload, MdUploadFile } from "react-icons/md";
 import PreviewTable from "./PreviewTable";
 
@@ -8,6 +8,8 @@ export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
     const [errorFileType, setFileError] = useState(false)
     const [currentFile, setFile] = useState<File | null>(null)
+    const [passwordQuery, setQueryPassword] = useState(false)
+    const filePassword = useRef<HTMLInputElement>(null)
     const [transactionData, setTransactionData] = useState<Partial<Transaction>[] | null>(null)
     const [accountData, setaccountData] = useState<Partial<Account> | null>(null)
 
@@ -19,14 +21,20 @@ export default function UploadButton() {
 
     const handleUpload = async () => {
         if (currentFile != null) {
-            const parsedData = await uploadFile(currentFile)
+            const parsedData = await uploadFile(currentFile, filePassword.current?.value)
+
+            if (!parsedData.success && parsedData.data.requirePassword) {
+                setQueryPassword(true)
+                if (parsedData.data.invalidPassword) alert('Wrong password')
+                return
+            } else {
+                setQueryPassword(false)
+            }
             if (parsedData.data.hasData) {
                 setTransactionData(parsedData.data.transactions)
                 setaccountData(parsedData.data.account)
             }
-            console.log(parsedData)
-            console.log(transactionData)
-            console.log(accountData)
+            //console.log('parsed', parsedData)
         }
     }
 
@@ -40,7 +48,7 @@ export default function UploadButton() {
 
     const setCurrentFile = (element: ChangeEvent<HTMLInputElement>) => {
         const file = element.target.files
-        console.log(file)
+        //console.log(file)
         if (file && file.length > 0) {
             const fileExt = file[0].name.slice(file[0].name.lastIndexOf(".") + 1)
             if (['pdf', 'csv'].includes(fileExt.toLowerCase())) {
@@ -89,7 +97,19 @@ export default function UploadButton() {
                                 className="hidden" />
                         </label>
 
-                        {transactionData && <PreviewTable transactionData={transactionData} accountData={accountData}/>}
+                        {currentFile &&
+                            <div className="text-sm">
+                                <p><b>Uploaded file: </b>{currentFile.name}</p>
+                                {passwordQuery &&
+                                    <p>
+                                        <b className="text-red-400">Please enter password: </b>
+                                        <input className='border border-black' ref={filePassword} type="password" />
+                                    </p>
+                                }
+                            </div>
+                        }
+
+                        {transactionData && <PreviewTable transactionData={transactionData} accountData={accountData} />}
 
                         {errorFileType && <p className="text-xs italic text-red-600">Please upload the correct file type</p>}
                         <div className="flex justify-end">
