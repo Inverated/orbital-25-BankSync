@@ -1,10 +1,10 @@
 from backend.models.account import Account, Statement
-from backend.models.keywordDict import bankKeywords
+from backend.models.keywordDict import bankKeywords, accountTableKeywords
 from backend.models.transaction import Transaction
 from backend.utils.textFormatter import rmSpaceFromList
 
 
-def detectBank(textList: list) -> str:
+def detectBank(textList: list[str]) -> str:
     freqList = {keys: 0 for keys in list(bankKeywords.keys())}
     for line in textList:
         for key, values in bankKeywords.items():
@@ -21,37 +21,54 @@ def detectBank(textList: list) -> str:
     return bank
 
 
-def processDBS(textList: list) -> list[Statement]:
-    accountTabIndex = []
+def detectAccountTable(parameters: list[str], textList: list[str]) -> list[int]:
+    accountTableIndex = []
+    # for long list of possible of keywords of unknown bank type
+    min_conf = 3 if len(parameters) > 6 else len(parameters)
     for index, line in enumerate(textList):
-        # Account list in dbs split into multiple section
-        if (line.find('Account') != -1) & (line.find('Account No.') != -1) & (line.rfind('Balance') != -1):
-            accountTabIndex.append(index + 2)
+        conf = 0
+        for each in parameters:
+            if (line.find(each) != -1):
+                conf += 1
 
+        # use in future for unknown bank?
+        if conf >= min_conf:
+            accountTableIndex.append(index)
+
+    return accountTableIndex
+
+
+def processDBS(textList: list[str]) -> list[Statement]:
+    # acc list starts from +2 index
+    accountTableIndex = [
+        index + 2 for index in detectAccountTable(accountTableKeywords['DBS'], textList)]
     accountList = []
-    
-    for index in accountTabIndex:
+
+    for index in accountTableIndex:
         while len(textList[index]) > 3:
-            stripped = rmSpaceFromList(textList[index].split('  '))
-            print(stripped)
+            accountDetail = rmSpaceFromList(textList[index].split('  '))
             try:
-                float(stripped[-1].replace(',',''))
+                float(accountDetail[-1].replace(',', ''))
             except ValueError:
                 # break if last item is not balance value
                 break
             accountList.append(
                 Account(
-                    account_name=stripped[0],
+                    account_name=accountDetail[0],
                     bank_name="DBS",
-                    account_no=stripped[1],
-                    balance=stripped[-1].replace(',',''))
+                    account_no=accountDetail[1],
+                    balance=accountDetail[-1].replace(',', '')
+                )
             )
             index += 1
+
+    if accountList == []:
+        return (False, 'Account data cannot be read')
 
     statements = [Statement(account=account) for account in accountList]
 
     for statement in statements:
-        # find where in file is begining of transaction table for the account
+        # find where is begining of all transaction table for current account
         transactionStartIndex = []
         for index, line in enumerate(textList):
             if ('Account No. ' + statement.account.account_no) in line:
@@ -85,7 +102,7 @@ def processDBS(textList: list) -> list[Statement]:
                 if ('Balance Brought Forward' in row):
                     if (initialBal == None):
                         initialBal = float(rmSpaceFromList(
-                            row.split('  '))[-1].split(' ')[-1].replace(',',''))
+                            row.split('  '))[-1].split(' ')[-1].replace(',', ''))
                     date = description = ''
                     change = balance = 0.0
                     index += 1
@@ -133,8 +150,8 @@ def processDBS(textList: list) -> list[Statement]:
                     continue
 
                 tempChange, tempBal = amountBalList
-                change = float(tempChange.replace(',',''))
-                balance = float(tempBal.replace(',',''))
+                change = float(tempChange.replace(',', ''))
+                balance = float(tempBal.replace(',', ''))
                 index += 1
         # compiled list of all transactions for this account
 
@@ -152,3 +169,31 @@ def processDBS(textList: list) -> list[Statement]:
                 transaction.withdrawal_amount = transaction.amount_changed
 
     return statements
+
+
+def processUOB(textList: list[str]) -> list[Statement]:
+    accountTableIndex = [
+        index + 1 for index in detectAccountTable(accountTableKeywords['UOB'], textList)]
+    accountList = []
+
+    for index in accountTableIndex:
+        while textList[index].find('Total') != -1:
+            accountDetail = rmSpaceFromList(textList[index + 2].split('  '))
+            account_no = textList[index + 3]
+
+            accountList.append(
+                Account(
+                    account_name=accountDetail[0],
+                    bank_name='UOB',
+                    account_no=account_no,
+                    balance=accountDetail[-1].replace(',', '')
+                )
+            )
+            index += 3
+
+    if accountList == []:
+        return (False, 'Account data cannot be read')
+
+    statements = [Statement(account=account) for account in accountList]
+
+    return
