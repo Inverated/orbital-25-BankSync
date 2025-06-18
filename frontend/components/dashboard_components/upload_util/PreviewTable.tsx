@@ -11,7 +11,7 @@ interface Props {
 
 export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate }: Props) {
     const [editingId, setEditId] = useState(-1)
-    const rowStyle = "px-4 py-2 whitespace-pre-line"
+    const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit"
 
     const handleTransactionChange = (index: number, field: keyof Transaction, newValue: string | number) => {
         transactionData[index] = { ...transactionData[index], [field]: newValue }
@@ -47,7 +47,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                     ${accountData?.balance?.toFixed(2)}
                 </p>
             </div>
-            <div className="overflow-auto shadow-md rounded-lg mt-4 max-h-[400px]">
+            <div className="overflow-auto shadow-md mt-4 max-h-[400px]">
                 <table className="text-xs w-full text-left rtl:text-right text-gray-500">
                     <thead className=" text-gray-700 bg-gray-300">
                         <tr>
@@ -93,7 +93,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                             {transaction.transaction_description}
                                         </div> :
                                         <textarea
-                                            className="border rounded-sm w-full overflow-hidden z-30 h-[65] min-w-40"
+                                            className="border rounded-sm w-full overflow-hidden z-30 h-[65]"
                                             value={transaction.transaction_description}
                                             onChange={(e) => handleTransactionChange(index, 'transaction_description', e.target.value)}
                                             readOnly={editingId != index}
@@ -131,7 +131,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                 </td>
                                 <td className={rowStyle}>
                                     <input
-                                        className={editingId == index ? "border border-gray-400 max-w-30 rounded-sm" : 'max-w-30 pointer-events-none select-text cursor-text'}
+                                        className={editingId == index ? "border border-gray-400 max-w-25 rounded-sm h-full" : 'pointer-events-none max-w-25 select-text cursor-text'}
                                         type='text'
                                         value={transaction.category}
                                         onChange={(e) => handleTransactionChange(index, 'category', e.target.value)}

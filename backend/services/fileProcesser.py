@@ -34,19 +34,20 @@ def parsePdf(content: bytes, password: Optional[str]):
         return (False, 'invalidFile')
     bank = pdfTextProcesser.detectBank(extractedText)
     
+    #try:
     match bank:
         case 'DBS':
-            try:
-                statements = pdfTextProcesser.processDBS(extractedText)
-                return (True, statements)
-            except Exception as e:
-                return (False, e)
+            statements = pdfTextProcesser.processDBS(extractedText)
+            return (True, statements)
         case 'OCBS':
             None
         case 'UOB':
-            None
+            statements = pdfTextProcesser.processUOB(extractedText)
+            return (True, statements)
         case _:
             return (False, 'invalidBankType')
+    #except Exception as e:
+    #    return (False, e)
             
     transactions = [Transaction(transaction_date='2025-05-01', transaction_description='test 1', withdrawal_amount=69, deposit_amount=0, account_no='360', category='fun'),
                     Transaction(transaction_date='2025-05-10', transaction_description='test 2', withdrawal_amount=420, deposit_amount=0, account_no='360', category='notfun')]
