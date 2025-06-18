@@ -1,5 +1,3 @@
-"use client";
-
 import { getSpendingByDate } from "@/lib/supabase_query";
 import { Dayjs } from "dayjs";
 import { LineChart } from "lucide-react";
@@ -29,7 +27,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
         let current = start.startOf("month");
         const last = end.startOf("month");
 
-        while (current.isBefore(last) || current.isSame(last)) {
+        while (!current.isAfter(last)) {
             months.push(current);
             current = current.add(1, "month");
         }
@@ -37,13 +35,15 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
         return months;
     }
     
-    const [dataPoints, setDataPoints] = useState<MonthlySpending[]>([]);
+    const showChart = startDate && endDate && !startDate.isAfter(endDate);
+
     const [loading, setLoading] = useState(true);
 
+    const [dataPoints, setDataPoints] = useState<MonthlySpending[]>([]);
+
     useEffect(() => {
-        if (startDate && endDate && (startDate.isBefore(endDate) || startDate.isSame(endDate))) {
+        if (startDate && endDate && !startDate.isAfter(endDate)) {
             const months = getMonths(startDate, endDate);
-            console.log("Months: ", months.map(m => m.format("MMM YY")));
 
             const fetchData = async () => {
                 setLoading(true);
@@ -69,12 +69,6 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
         }
     }, [startDate, endDate])
 
-    useEffect(() => {
-        if (!loading) {
-            console.log("Data points ready:", dataPoints);
-        }
-    }, [])
-
     const chartData = {
         labels: dataPoints.map(d => d.date),
         datasets: [
@@ -82,6 +76,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
                 label: "Total Spending",
                 data: dataPoints.map(d => d.spending),
                 borderColor: "rgb(76, 214, 191)",
+                backgroundColor: "rgb(76, 214, 191)",
                 fill: false,
             }
         ],
@@ -91,16 +86,10 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
         responsive: true,
         plugins: {
             legend: {
-                position: "top" as const,
+                position: "right" as const,
             },
         },
-        title: {
-            display: true,
-            text: "chart",
-        },
     }
-
-    const showChart = startDate && endDate && !startDate.isAfter(endDate);
 
     return (
         <div className="flex flex-col border border-black p-3 mx-5 rounded-lg gap-2">

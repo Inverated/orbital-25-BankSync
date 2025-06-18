@@ -11,7 +11,7 @@ export default function Analytics() {
     const [startDate, setStartDate] = useState<Dayjs | null>(null);
     const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
-    const bothNull = !startDate && !endDate;
+    const nullDates = !startDate && !endDate;
     const invalidDate = 
         (!startDate && endDate) || 
         (startDate && !endDate) || 
@@ -36,7 +36,7 @@ export default function Analytics() {
                     />
                 </div>
 
-                {bothNull && (
+                {nullDates && (
                     <Alert
                         sx={{ 
                             position: "static",
@@ -72,7 +72,7 @@ export default function Analytics() {
             <SpendingTrend startDate={startDate} endDate={endDate} />
             
             <div className="flex flex-row justify-center m-5 gap-5">
-                <SpendingCategory />
+                <SpendingCategory startDate={startDate} endDate={endDate} />
                 <IncomeExpenses />
             </div>
         </div>
