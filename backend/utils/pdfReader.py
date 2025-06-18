@@ -1,4 +1,5 @@
 from io import BytesIO
+import re
 import pdfplumber
 from pypdf import PdfReader, PdfWriter
 
@@ -41,9 +42,13 @@ def extractText(pdf: PdfReader):
     pages = pdfplumber.open(buffer).pages
     extracted = []
     for page in pages:
-        text = page.extract_text(layout=True)
+        text = page.extract_text(layout=True)     
+        
+        text = re.sub(r'[^\x20-\x7E\n\r\t]', '', text)
         lines = text.split('\n')
         for line in lines:
             if line.strip() != '':
                 extracted.append(line.strip()) 
+    
     return extracted
+

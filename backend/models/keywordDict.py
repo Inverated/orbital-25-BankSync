@@ -1,7 +1,8 @@
 bankKeywords = {
     "DBS": ["dbs.com", "posb.com"],
     "UOB": ["uob.com", "uobgroup.com"],
-    "OCBC": ["ocbc.com"]
+    "OCBC": ['ocbc website', 'ocbc online banking'],
+    "SC": ['sc.com']
 }
 
 accountTableKeywords = {

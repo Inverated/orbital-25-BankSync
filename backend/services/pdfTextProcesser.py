@@ -15,24 +15,23 @@ def detectBank(textList: list[str]) -> str:
     bank = None
     highestFreq = 0
     for key, freq in freqList.items():
-        if (freq > highestFreq) & (freq != 0):
+        if (freq > highestFreq) and (freq != 0):
             bank = key
             highestFreq = freq
-
     return bank
 
 
 def detectAccountTable(parameters: list[str], textList: list[str]) -> list[int]:
     accountTableIndex = []
-    # for long list of possible of keywords of unknown bank type
-    min_conf = 3 if len(parameters) > 6 else len(parameters)
+
+    min_conf = int(0.7 * len(parameters)) if len(parameters) > 6 else len(parameters)
     for index, line in enumerate(textList):
         conf = 0
         for keyword in parameters:
             if keyword in line:
                 conf += 1
 
-        # use in future for unknown bank?
+        # use in future for unknown bank? nah, how they put in table different
         if conf >= min_conf:
             accountTableIndex.append(index)
     return accountTableIndex
@@ -88,11 +87,9 @@ def processDBS(textList: list[str]) -> list[Statement]:
 
         if len(transactionStartIndex) == 0:
             continue
-        statement.hasData = True
-
-        reachedTransStart = False
-        initialBal = None
         
+        statement.hasData = True
+        initialBal = None
 
         for index in transactionStartIndex:
             reachedTransStart = True
@@ -122,18 +119,13 @@ def processDBS(textList: list[str]) -> list[Statement]:
                     change = balance = 0.0
                     index += 1
                     continue
-                if (not reachedTransStart) & ("/" not in row[0:3]):
-                    date = description = ''
-                    change = balance = 0.0
-                    index += 1
-                    continue
 
                 # does not start with date
                 if "/" not in row[0:3]:
                     description += '\n' + textList[index]
                     index += 1          
                     continue
-                elif (len(row) > 4) & (not bool(re.fullmatch(r"\d+/\d+", row[0:4]))):
+                elif (len(row) > 4) and (not bool(re.fullmatch(r"\d+/\d+", row[0:4]))):
                     description += '\n' + textList[index]
                     index += 1          
                     continue
@@ -204,7 +196,7 @@ def processUOB(textList: list[str]) -> list[Statement]:
     
     yyyy = ''
     for row in textList:
-        if ('Account Overview as at' in row) | ('Period: ' in row):
+        if ('Account Overview as at' in row) or ('Period: ' in row):
             yyyy = row.split(' ')[-1].strip()
             break
             
@@ -216,19 +208,17 @@ def processUOB(textList: list[str]) -> list[Statement]:
 
         if len(transactionStartIndex) == 0:
             continue
-        statement.hasData = True
         
-        reachedTransStart = False
+        statement.hasData = True
         initialBal = None
         
         for index in transactionStartIndex:
-            reachedTransStart = True
             date = description = ''
             change = balance = 0.0
             
             while True:
                 row = textList[index]
-                if ('Pleasenotethatyouareboundbyaduty' in row) | ('End of Transaction' in row):
+                if ('Pleasenotethatyouareboundbyaduty' in row) or ('End of Transaction' in row):
                     if date != '':
                         statement.transactions.append(Transaction(
                             transaction_date=date,
@@ -240,16 +230,10 @@ def processUOB(textList: list[str]) -> list[Statement]:
                         change = balance = 0.0
                     break
                 
-                #One time appearance for uob
                 if ('BALANCE B/F' in row):
                     if (initialBal == None):
                         initialBal = float(rmSpaceFromList(
                             row.split('  '))[-1].split(' ')[-1].replace(',', ''))
-                    date = description = ''
-                    change = balance = 0.0
-                    index += 1
-                    continue
-                if (not reachedTransStart) & (not row.split(' ')[0].isdigit()):
                     date = description = ''
                     change = balance = 0.0
                     index += 1
@@ -283,10 +267,20 @@ def processUOB(textList: list[str]) -> list[Statement]:
                     change = balance = 0.0
                 
                 splitted = rmSpaceFromList(row.split('  '))
-
                 dayMonthList = splitted[0].strip().split(' ')
-                dd = dayMonthList[0]
-                mm = monthLookup[str(dayMonthList[1]).lower()]
+                
+                if len(dayMonthList) == 2:
+                    dd = dayMonthList[0]
+                    mm = monthLookup.get(str(dayMonthList[1]).lower())
+                    if mm == None:
+                        description += '\n' + textList[index]
+                        index += 1
+                        continue
+                else: 
+                    description += '\n' + textList[index]
+                    index += 1
+                    continue
+                
                 date = yyyy + '-' + mm + '-' + dd
                 
                 description = str(splitted[1]).strip()
@@ -295,6 +289,144 @@ def processUOB(textList: list[str]) -> list[Statement]:
                 index += 1
                                 
         assignWithdrawDeposit(statement, initialBal)
-    
+
     return statements
 
+def processOCBC(textList: list[str]) -> list[Statement]:
+    accountNumList = []
+    accountList = []
+    stupidIdRuinThings = None
+    yyyy = ''
+    #no account table
+    for index, line in enumerate(textList):
+        row = rmSpaceFromList(line.split('  '))
+        lastIndexed = row[-1].split(' ')
+        
+        if (len(lastIndexed) > 3) and (monthLookup.get(lastIndexed[-2].lower()) != None):
+            account_name=row[0].strip()
+            yyyy = lastIndexed[-1]
+            
+        if ('OF ACCOUNT' in line) or ('TRANSACTION CODE DESCRIPTION' in line):
+            stupidIdRuinThings = textList[index - 1].split('\\')[0]
+    
+        if 'Account No.' in textList[index]:
+            account_no = textList[index].replace('Account No. ', '').strip()
+            if account_no in accountNumList:
+                continue
+            
+            accountNumList.append(account_no)
+            accountList.append(
+                Account(
+                    account_name=account_name,
+                    bank_name='OCBC',
+                    account_no=account_no
+                )
+            )
+        
+    if accountList == []:
+        return (False, 'Account data cannot be read')
+
+    statements = [Statement(account=account) for account in accountList]
+    
+    for statement in statements:
+        transactionStartIndex = []
+        for index, line in enumerate(textList):
+            if ('TRANSACTION CODE DESCRIPTION' in row):
+                continue
+            if ('Account No. ' + statement.account.account_no in line):
+                transactionStartIndex.append(index + 3)
+
+        if len(transactionStartIndex) == 0:
+            continue
+        
+        statement.hasData = True
+        initialBal = None
+        
+        for index in transactionStartIndex:
+            date = description = ''
+            change = balance = 0.0
+            
+            while True:
+                row = textList[index]
+                if (stupidIdRuinThings in row) or ('BALANCE C/F' in row) or ('TRANSACTION CODE DESCRIPTION' in row):
+                    if date != '':
+                        statement.transactions.append(Transaction(
+                            transaction_date=date,
+                            transaction_description=description,
+                            amount_changed=change,
+                            ending_balance=balance,
+                            account_no=statement.account.account_no))
+                        date = description = ''
+                        change = balance = 0.0
+                    break
+                
+                if ('BALANCE B/F' in row):
+                    if (initialBal == None):
+                        initialBal = float(rmSpaceFromList(
+                            row.split('  '))[-1].split(' ')[-1].replace(',', ''))
+                    date = description = ''
+                    change = balance = 0.0
+                    index += 1
+                    continue
+                
+                try:
+                    #if can convert, means is new row of transaction
+                    testSplit = rmSpaceFromList(row.split('  '))
+                    testChange = testSplit[-2].replace(',', '')
+                    testBalance = testSplit[-1].replace(',', '')
+                    float(testChange)
+                    float(testBalance)
+                    if 'Total' in testSplit[0]:
+                        index += 1
+                        continue
+                except:
+                    #Add entire row to description and move on
+                    if len(textList[index]) != 1:
+                        description += '\n' + textList[index]
+                    index += 1
+                    continue
+                
+                if date != '':
+                    statement.transactions.append(Transaction(
+                        transaction_date=date,
+                        transaction_description=description,
+                        amount_changed=change,
+                        ending_balance=balance,
+                        account_no=statement.account.account_no
+                    ))
+                    date = description = ''
+                    change = balance = 0.0
+    
+                splitted = rmSpaceFromList(row.split('  '))
+                dateDescription = splitted[0].split(' ')
+                
+                if len(dateDescription) > 4:
+                    dd = dateDescription[0]
+                    mm = monthLookup.get(str(dateDescription[1]).lower())
+                    if mm == None:
+                        description += '\n' + textList[index]
+                        index += 1
+                        continue
+                else: 
+                    description += '\n' + textList[index]
+                    index += 1
+                    continue
+                
+                date = yyyy + '-' + mm + '-' + dd
+                
+                description = str(' '.join(dateDescription[4:])).strip()
+                change = float(splitted[-2].replace(',', ''))
+                balance = float(splitted[-1].replace(',', ''))
+                index += 1
+                
+        assignWithdrawDeposit(statement, initialBal)
+        
+        if (statement.hasData):
+            statement.account.balance = statement.transactions[-1].ending_balance
+        
+    return statements
+
+def processSC(textList: list[str]) -> list[Statement]:
+    
+    
+    return

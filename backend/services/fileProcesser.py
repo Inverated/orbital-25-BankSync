@@ -30,6 +30,8 @@ def parsePdf(content: bytes, password: Optional[str]):
     #Remove copy protection (Encryption != password only)
     pypdf = pdfReader.stripEncryption(pypdf)
     extractedText = pdfReader.extractText(pypdf)
+    
+
     if extractedText == []:
         return (False, 'invalidFile')
     bank = pdfTextProcesser.detectBank(extractedText)
@@ -38,12 +40,19 @@ def parsePdf(content: bytes, password: Optional[str]):
     match bank:
         case 'DBS':
             statements = pdfTextProcesser.processDBS(extractedText)
-            return (True, statements)
-        case 'OCBS':
-            None
+            return (True, statements)    
         case 'UOB':
             statements = pdfTextProcesser.processUOB(extractedText)
             return (True, statements)
+        case 'OCBC':
+            # pdf have weird formatting or some shit for ocbc pdf
+            # takes very long for pdf plumber to extract text 
+            # similar object count in each page to other pdf
+            # see objects = page.objects
+            # might be char object got some stupid complicated formatting shit
+                   
+            statements = pdfTextProcesser.processOCBC(extractedText)     
+            return (True, statements) 
         case _:
             return (False, 'invalidBankType')
     #except Exception as e:

@@ -16,12 +16,18 @@ export default function UploadButton() {
     const handleUploadFile = async () => {
         setActiveTab(0)
         setStatements(null)
+        console.log(currentFile.current)
         if (currentFile.current != null) {
-            const parsedData: uploadReturnData = await uploadFile(currentFile.current, filePassword.current?.value)
+            const start = performance.now();
+            let parsedData: uploadReturnData | null = await uploadFile(currentFile.current, filePassword.current?.value)
+            const end = performance.now();
+            console.log(end - start)
             console.log(parsedData)
+            if (!parsedData) {
+                return
+            }
             if (!parsedData.success) {
                 const errorMessage = parsedData.error
-                console.log(errorMessage)
                 if (errorMessage == 'requirePassword') {
                     setQueryPassword(true)
                 } else if (errorMessage == 'invalidPassword') {
@@ -35,6 +41,8 @@ export default function UploadButton() {
                     alert(errorMessage)
                     console.log(errorMessage)
                 }
+                setStatements(null)
+                parsedData = null
                 return
             } else {
                 setQueryPassword(false)
@@ -51,10 +59,12 @@ export default function UploadButton() {
         currentFile.current = null
         setStatements(null)
         setActiveTab(0)
+        setQueryPassword(false)
     }
 
     const setCurrentFile = async (element: ChangeEvent<HTMLInputElement>) => {
         const files = element.target.files
+        console.log(files)
         if (files && files.length > 0) {
             checkFileType(files[0])
         } else {
@@ -72,8 +82,6 @@ export default function UploadButton() {
             setFileError(true)
             currentFile.current = null
         }
-        
-
     }
 
     const handleUpdate = useCallback((index: number, updatedItem: StatementResponse) => {
@@ -82,7 +90,7 @@ export default function UploadButton() {
             newStatement[index] = updatedItem
             setStatements(newStatement)
         }
-    },[setStatements, statements])
+    }, [setStatements, statements])
 
     //to be implemented
     const handleUploadData = () => {
@@ -104,10 +112,10 @@ export default function UploadButton() {
 
     useEffect(() => {
         const handleButtonDown = (event: KeyboardEvent) => {
-        if (event.key == 'Escape') {
-            closeDialogue()
+            if (event.key == 'Escape') {
+                closeDialogue()
+            }
         }
-    }
         document.addEventListener('keydown', handleButtonDown)
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
@@ -150,10 +158,20 @@ export default function UploadButton() {
                             <div className="text-sm">
                                 <p><b>Uploaded file: </b>{currentFile.current.name}</p>
                                 {passwordQuery &&
-                                    <p>
-                                        <b className="text-red-400">Please enter password: </b>
-                                        <input className='border border-black' ref={filePassword} type="password" />
-                                    </p>
+                                    <form onSubmit={(event) => {
+                                        event.preventDefault()
+                                        handleUploadFile()
+                                    }
+                                    }
+                                        className="flex justify-between">
+                                        <span>
+                                            <b className="text-red-400">Please enter password: </b>
+                                            <input className='border border-black' ref={filePassword} type="password" />
+                                        </span>
+                                        <button
+                                            className="border border-black items-center rounded-sm px-2 flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                                            type='submit'>Confirm</button>
+                                    </form>
                                 }
                             </div>
                         }
