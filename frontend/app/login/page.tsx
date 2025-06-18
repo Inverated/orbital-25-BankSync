@@ -44,6 +44,7 @@ export default function Login() {
     const redirectToSignUp = () => redirect("/signup")
 
     const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
+    
     return (
         currentSession == null && sessionLoaded &&
         <div className="flex justify-center items-center h-screen">
