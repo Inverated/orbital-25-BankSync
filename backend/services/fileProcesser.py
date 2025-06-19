@@ -39,11 +39,9 @@ def parsePdf(content: bytes, password: Optional[str]):
     #try:
     match bank:
         case 'DBS':
-            statements = pdfTextProcesser.processDBS(extractedText)
-            return (True, statements)    
+            return pdfTextProcesser.processDBS(extractedText)
         case 'UOB':
-            statements = pdfTextProcesser.processUOB(extractedText)
-            return (True, statements)
+            return pdfTextProcesser.processUOB(extractedText)
         case 'OCBC':
             # pdf have weird formatting or some shit for ocbc pdf
             # takes very long for pdf plumber to extract text 
@@ -51,8 +49,9 @@ def parsePdf(content: bytes, password: Optional[str]):
             # see objects = page.objects
             # might be char object got some stupid complicated formatting shit
                    
-            statements = pdfTextProcesser.processOCBC(extractedText)     
-            return (True, statements) 
+            return pdfTextProcesser.processOCBC(extractedText)     
+        case 'SC':
+            return pdfTextProcesser.processSC(extractedText)
         case _:
             return (False, 'invalidBankType')
     #except Exception as e:
