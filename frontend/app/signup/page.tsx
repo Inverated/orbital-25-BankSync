@@ -34,9 +34,6 @@ export default function Signup() {
     const handleOAuthLogin = async (provider: 'github' | 'google') => {
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: provider,
-            options: {
-                redirectTo: 'https://orbital-25-bank-sync.vercel.app/auth/callback',
-            },
         });
         
         if (error) {
