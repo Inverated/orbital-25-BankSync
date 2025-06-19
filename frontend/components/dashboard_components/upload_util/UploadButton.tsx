@@ -16,27 +16,19 @@ export default function UploadButton() {
     const handleUploadFile = async () => {
         setActiveTab(0)
         setStatements(null)
-        console.log(currentFile.current)
+
         if (currentFile.current != null) {
-            const start = performance.now();
             let parsedData: uploadReturnData | null = await uploadFile(currentFile.current, filePassword.current?.value)
-            const end = performance.now();
-            console.log(end - start)
-            console.log(parsedData)
             if (!parsedData) {
                 return
             }
             if (!parsedData.success) {
                 const errorMessage = parsedData.error
-                if (errorMessage == 'requirePassword') {
+                if (errorMessage == 'Require Password') {
                     setQueryPassword(true)
-                } else if (errorMessage == 'invalidPassword') {
+                } else if (errorMessage == 'Invalid Password') {
                     setQueryPassword(true)
                     alert('Wrong password')
-                } else if (errorMessage == 'invalidFile') {
-                    alert("Invalid file. Please use a readable file")
-                } else if (errorMessage == 'invalidBankType') {
-                    alert('Please use documents from supported banks')
                 } else {
                     alert(errorMessage)
                     console.log(errorMessage)
@@ -46,10 +38,8 @@ export default function UploadButton() {
                 return
             } else {
                 setQueryPassword(false)
+                setStatements(parsedData.data)
             }
-
-            setStatements(parsedData.data)
-            //console.log('parsed', parsedData)
         }
     }
 
@@ -64,7 +54,6 @@ export default function UploadButton() {
 
     const setCurrentFile = async (element: ChangeEvent<HTMLInputElement>) => {
         const files = element.target.files
-        console.log(files)
         if (files && files.length > 0) {
             checkFileType(files[0])
         } else {

@@ -103,7 +103,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                 <td className={rowStyle}>
                                     {editingId != index ?
                                         <div>
-                                            {transaction.deposit_amount.toFixed(2)}
+                                            {(transaction.deposit_amount != 0) ? transaction.deposit_amount.toFixed(2) : ''}
                                         </div> :
                                         <input
                                             className="max-w-20"
@@ -117,7 +117,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                 <td className={rowStyle}>
                                     {editingId != index ?
                                         <div>
-                                            {transaction.withdrawal_amount?.toFixed(2)}
+                                            {transaction.withdrawal_amount != 0 ? transaction.withdrawal_amount?.toFixed(2) : ''}
                                         </div> :
                                         <input
                                             className="max-w-20"
