@@ -31,7 +31,7 @@ export default function UploadButton() {
                     alert('Wrong password')
                 } else {
                     alert(errorMessage)
-                    console.log(errorMessage)
+                    console.error(errorMessage)
                 }
                 setStatements(null)
                 parsedData = null

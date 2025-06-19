@@ -17,11 +17,9 @@ export default function Signup() {
         const getData = async () => {
             const { data, error } = await supabase.auth.getSession()
             if (error) {
-                console.log(error.message)
-            } else {
-                console.log("no error")
-            }
-
+                console.error(error.message)
+            } 
+            
             if (data.session != null) {
                 router.push('/dashboard')
             }

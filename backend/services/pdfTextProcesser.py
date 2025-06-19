@@ -569,6 +569,5 @@ def processSC(textList: list[str]) -> list[Statement]:
         
         if (statement.hasData):
             statement.account.balance = statement.transactions[-1].ending_balance
-        print(len(statements[0].transactions))
         
     return (True, statements)  

@@ -5,9 +5,6 @@ from backend.utils.pdfReader import convertToPypdf, decryptPdf
 
 
 def fileParser(content: bytes, extension: str, password: Optional[str]):
-    # pdfPages = convertToPages(content)
-    # for page in pdfPages:
-    # print(page)
     if (extension == 'pdf'):
         return parsePdf(content, password)
     elif (extension == 'csv'):
@@ -31,7 +28,7 @@ def parsePdf(content: bytes, password: Optional[str]):
     
 
     if extractedText == []:
-        return (False, 'File cannot be read, ensure it is text and can ba selected')
+        return (False, 'File cannot be read, ensure it is text and can be selected')
     bank = pdfTextProcesser.detectBank(extractedText)
     
     #try:

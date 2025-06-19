@@ -42,6 +42,7 @@ async def upload_file(file: UploadFile = File(...), password: Optional[str] = Fo
 
     extension = file.filename.split('/')[-1].split('.')[-1]
     statement_data = []
+    error_message = ''
     (success, jsonData) = fileProcesser.fileParser(contents, extension, password)
 
     if success:

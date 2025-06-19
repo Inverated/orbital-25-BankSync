@@ -14,7 +14,7 @@ export default function OptionMenu() {
         })
 
         if (error) {
-            console.log(error.message)
+            console.error(error.message)
         } else {
             router.push("/")
         }
@@ -31,7 +31,7 @@ export default function OptionMenu() {
             case "Settings (WIP)":
                 break
             default:
-                console.log("Unknown option")
+                console.error("Unknown option")
         }
     }
 

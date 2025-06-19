@@ -12,9 +12,7 @@ export default function Home() {
             const { data, error } = await supabase.auth.getSession()
 
             if (error) {
-                console.log(error.message)
-            } else {
-                console.log("no error")
+                console.error(error.message)
             }
 
             if (data == null) {
