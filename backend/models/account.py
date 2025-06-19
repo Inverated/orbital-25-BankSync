@@ -12,4 +12,4 @@ class Account(BaseModel):
 class Statement(BaseModel):
     hasData: bool = False
     account: Account = Account()
-    transactions: List[Transaction] = [Transaction()]
+    transactions: List[Transaction] = []

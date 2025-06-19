@@ -14,40 +14,6 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
 
     const clickStartTime = useRef<number | null>(null);
 
-    const handleMouseDown = () => {
-        clickStartTime.current = Date.now();
-    };
-
-    const handleMouseUp = (event: MouseEvent) => {
-        let duration = null
-        if (clickStartTime.current) {
-            duration = Date.now() - clickStartTime.current
-        }
-
-        const currentElement = document.getElementById(String(details.id))
-        const cursorAt = event.target as Node
-
-        const isClickedOnExpandedElement = expandedRow.current && expandedRow.current.contains(cursorAt)
-        const isAlreadyExpanded = refIsRowExpanded.current
-        const isLongPress = duration && duration > HOLD_DELAY_TO_PERSIST
-        const isClickedOnCurrentRow = currentElement && currentElement.contains(cursorAt)
-
-        if (isClickedOnExpandedElement) {
-            // Does nothing if click on an expanded row
-        } else if (isAlreadyExpanded && isLongPress) {
-            // If current row is already expanded, and is long click then do nothing
-        } else if (isClickedOnCurrentRow) {
-            // Expand any row when clicked on
-            currentElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            refIsRowExpanded.current = true
-            updateRowExpandStatus(true)
-        } else if (!isShiftPressed.current) {
-            // Collapse everything else if shift not pressed
-            updateExpandStatus(false)
-        }
-        clickStartTime.current = null;
-    }
-
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == 'Shift') {
             isShiftPressed.current = true
@@ -73,6 +39,40 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
     }
 
     useEffect(() => {
+        const handleMouseDown = () => {
+            clickStartTime.current = Date.now();
+        };
+
+        const handleMouseUp = (event: MouseEvent) => {
+            let duration = null
+            if (clickStartTime.current) {
+                duration = Date.now() - clickStartTime.current
+            }
+
+            const currentElement = document.getElementById(String(details.id))
+            const cursorAt = event.target as Node
+
+            const isClickedOnExpandedElement = expandedRow.current && expandedRow.current.contains(cursorAt)
+            const isAlreadyExpanded = refIsRowExpanded.current
+            const isLongPress = duration && duration > HOLD_DELAY_TO_PERSIST
+            const isClickedOnCurrentRow = currentElement && currentElement.contains(cursorAt)
+
+            if (isClickedOnExpandedElement) {
+                // Does nothing if click on an expanded row
+            } else if (isAlreadyExpanded && isLongPress) {
+                // If current row is already expanded, and is long click then do nothing
+            } else if (isClickedOnCurrentRow) {
+                // Expand any row when clicked on
+                currentElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                refIsRowExpanded.current = true
+                updateRowExpandStatus(true)
+            } else if (!isShiftPressed.current) {
+                // Collapse everything else if shift not pressed
+                updateExpandStatus(false)
+            }
+            clickStartTime.current = null;
+        }
+
         document.addEventListener('mousedown', handleMouseDown)
         document.addEventListener('mouseup', handleMouseUp)
         document.addEventListener('keydown', handleButtonDown)
