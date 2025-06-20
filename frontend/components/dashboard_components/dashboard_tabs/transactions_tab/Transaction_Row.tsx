@@ -1,8 +1,8 @@
-import { Transaction } from "@/utils/types";
+import { Account, Transaction } from "@/utils/types";
 import { useEffect, useRef, useState } from "react";
 
 type uniqueCategory = string[]
-type arguements = { details: Partial<Transaction>, uniqueCategory: uniqueCategory }
+type arguements = { details: Partial<Transaction & Account>, uniqueCategory: uniqueCategory }
 
 export default function Transaction_Row({ details, uniqueCategory }: arguements) {
     // Handle persistent expanded row display when shift pressed or long click
@@ -130,14 +130,25 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                                 {details.transaction_description}
                             </span>
                         </p>
-                        <p className='p-2 flex'>
-                            <b>Account No: &nbsp;</b>{details.account_no}
-                        </p>
-                        <div className='p-2 flex'>
-                            <b>Transaction amount: &nbsp;</b>
-                            <p className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>
-                                {details.withdrawal_amount == 0 ? '+$' + details.deposit_amount?.toFixed(2) : '-$' + details.withdrawal_amount?.toFixed(2)}
+                        <div className="flex justify-between">
+                            <p className='p-2 flex'>
+                                <b>{details.account_name ? details.account_name + ': ' : 'Account No: '}&nbsp;</b>{details.account_no}
                             </p>
+                            {details.bank_name && <div className="flex mx-2">
+                                <b>Bank: &nbsp;</b><p>{details.bank_name}</p>
+                            </div>}
+                        </div>
+
+                        <div className="flex justify-between">
+                            <div className='p-2 flex'>
+                                <b>Transaction amount: &nbsp;</b>
+                                <p className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>
+                                    {details.withdrawal_amount == 0 ? '+$' + details.deposit_amount?.toFixed(2) : '-$' + details.withdrawal_amount?.toFixed(2)}
+                                </p>
+                            </div>
+                            <div className="flex mx-2">
+                                <b>Ending Balance: &nbsp;</b><p>${details.ending_balance?.toFixed(2)}</p>
+                            </div>
                         </div>
                         <p className='p-2 flex'>
                             <b>Transaction date: &nbsp;</b>{details.transaction_date}

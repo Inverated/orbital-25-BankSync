@@ -17,7 +17,7 @@ export async function getTransactionDetail() {
         .from('transaction_details')
         .select("*")
         .order("transaction_date", {ascending:false})
-        // .eq("user_id", session.user.id)
+        //.eq("user_id", user_id)
     if (error) {
         throw error.message
     }
