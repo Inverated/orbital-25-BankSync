@@ -15,11 +15,11 @@ export default function ForgetPassword() {
         const email = searchParams.get('email');
         messageElement.current = document.getElementById('message')
         if (emailInput.current) emailInput.current.value = email ? email : ''
-    }, [])
+    }, [searchParams])
 
     const forgetPassword = async () => {
         if (emailInput.current && emailInput.current.value != '') {
-            let { data, error } = await supabase
+            const { data, error } = await supabase
                 .auth
                 .resetPasswordForEmail(emailInput.current.value)
             if (error) {
