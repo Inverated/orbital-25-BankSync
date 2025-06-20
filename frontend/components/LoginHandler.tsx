@@ -26,12 +26,13 @@ export default function Login() {
     return (
         <div>
             <div className="text-center py-4">
-                <h1 className="text-6xl font-bold">Login</h1>
+                <div className="text-6xl font-bold">Login</div>
             </div>
             <form action={loginUser}>
                 <div className="my-2 flex bg-gray-300 rounded-lg">
                     <CiUser className="text-2xl" />
                     <input
+                        id='loginEmailInput'
                         type="email"
                         name="email"
                         placeholder="example@email.com"

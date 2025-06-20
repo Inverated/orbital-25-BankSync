@@ -12,6 +12,8 @@ export default function Signup() {
     const signupUser = async (event: FormEvent) => {
         event.preventDefault()
 
+        if (showIncorrectConfirmPassword) return
+
         const userEmail = document.getElementById('email') as HTMLInputElement
         const userPassword = document.getElementById('password') as HTMLInputElement
         const confirmPassword = document.getElementById('confirmPassword') as HTMLInputElement
@@ -66,7 +68,9 @@ export default function Signup() {
                         type="password"
                         id='password'
                         placeholder="Enter new password"
-                        className="mx-2 bg-transparent w-full" />
+                        className="mx-2 bg-transparent w-full"
+                        onChange={updatePasswordSimilarity} />
+
                 </div>
                 <div className="my-3 flex bg-gray-300 rounded-lg">
                     <RiLockPasswordFill className="text-2xl" />

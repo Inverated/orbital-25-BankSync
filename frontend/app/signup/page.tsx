@@ -58,12 +58,6 @@ export default function Signup() {
                     </span>
                 </div>
 
-                <div className="my-2 text-sm flex cursor-pointer">
-                    <span className="font-semibold underline ml-auto">
-                        Forgot your password?
-                    </span>
-                </div>
-
                 <div className="flex items-center">
                     <hr className="w-full" />
                     <p className="shrink-0">Login with others</p>
