@@ -1,4 +1,5 @@
 import { getSpendingByCategory, getTransactionCategories } from "@/lib/supabase_query";
+import { Chart, LegendItem } from "chart.js";
 import { Dayjs } from "dayjs";
 import { PieChart } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -29,7 +30,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
                 const categories = await getTransactionCategories();
 
                 const data = await Promise.all(
-                    categories.map(async (category) => {
+                    categories.map(async ({ category }) => {
                         const transactions = await getSpendingByCategory(category);
                         const spending = transactions
                             .reduce((sum, transaction) => sum + (Number(transaction.withdrawal_amount) || 0), 0);
@@ -71,21 +72,81 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
         responsive: true,
         plugins: {
             legend: {
-                position: "bottom" as const,
-            }
+                display: false,
+            //     position: "bottom" as const,
+            //     align: "start" as const,
+            //     labels: {
+            //         usePointStyle: true,
+            //         pointStyle: "circle",
+            //         boxWidth: 15,
+            //         padding: 10,
+            //         direction: "column" as const,
+            //         generateLabels: (chart: Chart<"pie">): LegendItem[] => {
+            //             const data = chart.data;
+            //             const dataset = data.datasets[0];
+
+            //             const values = dataset.data as number[]
+            //             const total = values.reduce((sum, value) => sum + value, 0);
+
+            //             return data.labels!.map((label, index) => {
+            //                 const value = Number(dataset.data[index]);
+            //                 const percentage = total ? ((value / total) * 100).toFixed(1) : "0.0";
+
+            //                 return {
+            //                     text: `${label} : ${percentage}%`,
+            //                     fillStyle: (dataset.backgroundColor as string[])[index],
+            //                     strokeStyle: "rgb(255, 255, 255)",
+            //                     index,
+            //                 };
+            //             });
+            //         },
+            //     },
+            },
         }
     }
 
+    const generateLegendItem = () => {
+        const dataset = chartData.datasets[0];
+        const values = dataset.data as number[];
+        const total = values.reduce((sum, value) => sum + value, 0);
+
+        return chartData.labels!.map((label, index) => {
+            const value = values[index];
+            const percentage = total ? ((value / total) * 100).toFixed(1) : "0.0";
+            const color = (dataset.backgroundColor as string[])[index];
+
+            return (
+                <div className="flex items-center justify-between text-sm">
+                    <div key={index} className="flex items-center gap-2">
+                        <span 
+                            className="inline-block w-3 h-3 rounded-full"
+                            style={{ backgroundColor: color}}/>
+                        
+                        <span>{label}</span>
+                    </div>
+
+                    <span>{percentage} %</span>
+                </div>
+            );
+        });
+    }
+
     return (
-        <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-2">
+        <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-4">
             <h1 className="font-bold">Spending by Category</h1>
         
-            <div className="flex flex-col h-[300px] justify-center items-center gap-2">
+            <div className="flex flex-col justify-center items-center">
                 {showChart ? (
                     loading ? (
                         <p className="text-gray-400">Loading data...</p>
                     ) : (
-                        <Pie data={chartData} options={chartOptions} />
+                        <div className="flex flex-col items-center justify-center gap-3">
+                            <Pie data={chartData} options={chartOptions} />
+
+                            <div className="flex flex-col gap-1 w-full">
+                                {generateLegendItem()}
+                            </div>
+                        </div>
                     )
                 ) : (
                     <>
