@@ -73,7 +73,8 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
             legend: {
                 display: false,
             },
-        }
+        },
+        maintainAspectRatio: false,
     }
 
     const generateChartLegend = () => {
@@ -103,16 +104,21 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
     }
 
     return (
-        <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-4">
-            <h1 className="font-bold">Spending by Category</h1>
+        <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-5">
+            <h1 className="font-bold text-xl">Spending by Category</h1>
         
-            <div className="flex flex-col justify-center items-center">
+            <div className="flex flex-col justify-center items-center gap-2">
                 {showChart ? (
                     loading ? (
-                        <p className="text-gray-400">Loading data...</p>
+                        <div className="text-gray-400 h-[500px] flex flex-col justify-center items-center">
+                            Loading data...
+                        </div>
                     ) : (
-                        <div className="flex flex-col items-center justify-center gap-3">
-                            <Pie data={chartData} options={chartOptions} />
+                        <div className="flex flex-col justify-center items-center gap-4 h-full">
+                            <div className="flex flex-col justify-center items-center
+                                w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] md:w-[300px] md:h-[300px]">
+                                <Pie data={chartData} options={chartOptions} />
+                            </div>
 
                             <div className="flex flex-col gap-1 w-full">
                                 {generateChartLegend()}
@@ -120,10 +126,10 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
                         </div>
                     )
                 ) : (
-                    <>
+                    <div className="flex flex-col justify-center items-center gap-2 h-[500px]">
                         <PieChart className="h-12 w-12"/>
                         <p className="text-sm text-gray-400">Category Breakdown Chart</p>
-                    </>
+                    </div>
                 )}
             </div>
         </div>

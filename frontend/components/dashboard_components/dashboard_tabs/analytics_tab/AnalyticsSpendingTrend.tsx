@@ -1,4 +1,4 @@
-import { getSpendingByDate } from "@/lib/supabase_query";
+import { getTransactionsByDate } from "@/lib/supabase_query";
 import { Dayjs } from "dayjs";
 import { LineChart } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -50,7 +50,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
 
                 const data = await Promise.all(
                     months.map(async (month) => {
-                        const transactions = await getSpendingByDate(month);
+                        const transactions = await getTransactionsByDate(month);
                         const spending = transactions
                             .reduce((sum, transaction) => sum + (Number(transaction.withdrawal_amount) || 0), 0);
                         
@@ -97,18 +97,20 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
             
             <h2>Spending pattern from {formatDate(startDate)} to {formatDate(endDate)}</h2>
             
-            <div className="flex flex-col h-[300px] justify-center items-center gap-2">
+            <div className="flex flex-col h-[500px] justify-center items-center gap-2">
                 {showChart ? (
                     loading ? (
-                        <p className="text-gray-400">Loading data...</p>
-                    ) : (
+                        <div className="text-gray-400 flex flex-col justify-center items-center">
+                            Loading data...
+                        </div>
+                    ) : ( 
                         <Line data={chartData} options={chartOptions} />
                     )  
                 ) : (
-                    <>
+                    <div className="flex flex-col justify-center items-center gap-2">
                         <LineChart className="h-12 w-12" />
                         <p className="text-sm text-gray-400">Spending Chart</p>
-                    </>
+                    </div>
                 )}
             </div>
         </div>

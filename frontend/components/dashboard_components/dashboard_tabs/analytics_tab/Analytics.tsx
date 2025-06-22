@@ -73,7 +73,7 @@ export default function Analytics() {
             
             <div className="flex flex-row justify-center m-5 gap-5">
                 <SpendingCategory startDate={startDate} endDate={endDate} />
-                <IncomeExpenses />
+                <IncomeExpenses startDate={startDate} endDate={endDate} />
             </div>
         </div>
     )
