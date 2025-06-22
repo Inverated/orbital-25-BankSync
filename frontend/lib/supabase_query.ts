@@ -74,13 +74,31 @@ export async function getTransactionDetail() {
 }
 
 // Queries for Analytics tab
-export async function getSpendingByDate(date: Dayjs) {
+export async function getTransactionsByDate(date: Dayjs) {
     const start = date.startOf("month").toISOString();
     const end = date.endOf("month").toISOString();
 
     const { data: transaction_details, error } = await supabase
         .from("transaction_details")
         .select("transaction_date, withdrawal_amount")
+        .gte("transaction_date", start)
+        .lte("transaction_date", end)
+        //.eq("user_id", session.user.id)
+    
+    if (error) {
+        throw error.message;
+    }
+
+    return transaction_details;
+}
+
+export async function getDepositsByDate(date: Dayjs) {
+    const start = date.startOf("month").toISOString();
+    const end = date.endOf("month").toISOString();
+
+    const { data: transaction_details, error } = await supabase
+        .from("transaction_details")
+        .select("transaction_date, deposit_amount")
         .gte("transaction_date", start)
         .lte("transaction_date", end)
         //.eq("user_id", session.user.id)
