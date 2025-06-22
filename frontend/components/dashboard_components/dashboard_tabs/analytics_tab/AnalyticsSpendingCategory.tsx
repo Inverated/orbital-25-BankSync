@@ -1,5 +1,4 @@
 import { getSpendingByCategory, getTransactionCategories } from "@/lib/supabase_query";
-import { Chart, LegendItem } from "chart.js";
 import { Dayjs } from "dayjs";
 import { PieChart } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -73,39 +72,11 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
         plugins: {
             legend: {
                 display: false,
-            //     position: "bottom" as const,
-            //     align: "start" as const,
-            //     labels: {
-            //         usePointStyle: true,
-            //         pointStyle: "circle",
-            //         boxWidth: 15,
-            //         padding: 10,
-            //         direction: "column" as const,
-            //         generateLabels: (chart: Chart<"pie">): LegendItem[] => {
-            //             const data = chart.data;
-            //             const dataset = data.datasets[0];
-
-            //             const values = dataset.data as number[]
-            //             const total = values.reduce((sum, value) => sum + value, 0);
-
-            //             return data.labels!.map((label, index) => {
-            //                 const value = Number(dataset.data[index]);
-            //                 const percentage = total ? ((value / total) * 100).toFixed(1) : "0.0";
-
-            //                 return {
-            //                     text: `${label} : ${percentage}%`,
-            //                     fillStyle: (dataset.backgroundColor as string[])[index],
-            //                     strokeStyle: "rgb(255, 255, 255)",
-            //                     index,
-            //                 };
-            //             });
-            //         },
-            //     },
             },
         }
     }
 
-    const generateLegendItem = () => {
+    const generateChartLegend = () => {
         const dataset = chartData.datasets[0];
         const values = dataset.data as number[];
         const total = values.reduce((sum, value) => sum + value, 0);
@@ -116,8 +87,8 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
             const color = (dataset.backgroundColor as string[])[index];
 
             return (
-                <div className="flex items-center justify-between text-sm">
-                    <div key={index} className="flex items-center gap-2">
+                <div key={index} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
                         <span 
                             className="inline-block w-3 h-3 rounded-full"
                             style={{ backgroundColor: color}}/>
@@ -144,7 +115,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
                             <Pie data={chartData} options={chartOptions} />
 
                             <div className="flex flex-col gap-1 w-full">
-                                {generateLegendItem()}
+                                {generateChartLegend()}
                             </div>
                         </div>
                     )
