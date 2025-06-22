@@ -5,7 +5,7 @@ interface MoneyInMoneyOutProps {
 export default function MoneyInMoneyOut({ account_no } : MoneyInMoneyOutProps) {
     return (
         <div>
-            hi
+            {account_no}
         </div>
     )
 }

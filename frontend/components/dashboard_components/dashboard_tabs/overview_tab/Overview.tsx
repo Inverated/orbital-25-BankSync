@@ -44,7 +44,7 @@ export default function Overview() {
         })
     }, [])
 
-    const expandTotalBal = (event: React.MouseEvent<HTMLDivElement>) => {
+    const expandTotalBal = () => {
         const expanded_account = document.getElementById("expanded_account");
         if (expanded_account?.className.includes('hidden')) {
             expanded_account?.classList.remove('hidden');
