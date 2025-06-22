@@ -92,7 +92,7 @@ export async function getSpendingByDate(date: Dayjs) {
     return transaction_details;
 }
 
-export async function getTransactionCategories() {
+export async function getTransactionCategories(): Promise<{ category: string }[]> {
     const { data: transaction_categories, error } = await supabase
         .rpc("gettransactioncategories");
     
@@ -100,7 +100,7 @@ export async function getTransactionCategories() {
         throw error.message;
     }
 
-    return transaction_categories as string[];
+    return transaction_categories;
 }
 
 export async function getSpendingByCategory(category: string) {
