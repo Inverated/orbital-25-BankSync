@@ -3,6 +3,7 @@ import uploadFile from "@/utils/uploadFile";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { MdFileUpload, MdUploadFile } from "react-icons/md";
 import PreviewTable from "./PreviewTable";
+import setStatementCategory from "@/utils/setStatementCategory";
 
 export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
@@ -38,6 +39,8 @@ export default function UploadButton() {
                 return
             } else {
                 setQueryPassword(false)
+                // Set category here instead of backend to allow custom cat
+                setStatementCategory(parsedData.data)
                 setStatements(parsedData.data)
             }
         }
@@ -54,6 +57,7 @@ export default function UploadButton() {
 
     const setCurrentFile = async (element: ChangeEvent<HTMLInputElement>) => {
         const files = element.target.files
+        // Only picking first file if multiple dragged 
         if (files && files.length > 0) {
             checkFileType(files[0])
         } else {
@@ -63,7 +67,7 @@ export default function UploadButton() {
 
     const checkFileType = (file: File) => {
         const fileExt = file.name.slice(file.name.lastIndexOf(".") + 1)
-        if (['pdf', 'csv'].includes(fileExt.toLowerCase())) {
+        if (['pdf', 'xlsx'].includes(fileExt.toLowerCase())) {
             currentFile.current = file
             setFileError(false)
             return
@@ -132,7 +136,7 @@ export default function UploadButton() {
                                     <span className="font-semibold">Click to upload</span> drag and drop
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                    PDF or CSV
+                                    PDF or XLSX
                                 </p>
                             </div>
                             <input id="dropzone-file" type="file"

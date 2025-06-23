@@ -1,59 +1,46 @@
+import { Account, Transaction } from "@/utils/types"
 import { supabase } from "./supabase"
 
-//need to pass in session later for RLS instead of getting session here
-export async function getAccountDetails() {
-    const { data: account_details, error } = await supabase
+
+export async function getTransactionDetails<TransKey extends (keyof Transaction)[]>(
+    selection: (keyof Transaction)[] = [],
+    condition: { key: keyof Transaction, value: string[] }[] = [], ascending_date: true | false = false
+): Promise<Pick<Transaction, TransKey[number]>[]> {
+    // Keys[number] 
+    const query = supabase
+        .from('transaction_details')
+        .select(selection.length == 0 ? '*' : selection.join(','))
+    // .eq("user_id", session.user.id)
+
+    condition.forEach(({ key, value }) => {
+        query.in(key, value)
+    })
+
+    const { data: transaction_details, error } = await query
+        .order("transaction_date", { ascending: ascending_date })
+
+    if (error) {
+        throw error.message
+    }
+    return transaction_details as unknown as Pick<Transaction, TransKey[number]>[]
+}
+
+export async function getAccountDetails<AccKeys extends (keyof Account)[]>(
+    selection: (keyof Account)[] = [],
+    condition: { key: keyof Account, value: string[] }[] = []
+): Promise<Pick<Account, AccKeys[number]>[]> {
+    let query = supabase
         .from('account_details')
-        .select("*")
-        //.eq("user_id", session.user.id)
-    if (error) {
-        throw error.message
-    }
-    return account_details
-}                
+        .select(selection.length == 0 ? '*' : selection.join(','))
+    // .eq("user_id", session.user.id)
 
-export async function getTransactionDetail() {
-    const { data: transaction_details, error } = await supabase
-        .from('transaction_details')
-        .select("*")
-        .order("transaction_date", {ascending:false})
-        //.eq("user_id", user_id)
-    if (error) {
-        throw error.message
-    }
-    return transaction_details
-}
+    condition.forEach(({ key, value }) => {
+        query = query.in(key, value)
+    })
+    const { data: account_details, error } = await query
 
-export async function getTransactionDetailByAccountNo(account_no: string) {
-    const { data: transaction_details, error } = await supabase
-        .from('transaction_details')
-        .select("*")
-        // .eq("user_id", session.user.id)
-        .eq("account_no", account_no)
     if (error) {
         throw error.message
     }
-    return transaction_details
-}
-
-export async function getIncome() {
-    const { data: transaction_details, error } = await supabase
-        .from('transaction_details')
-        .select("deposit_amount")
-        //.eq("user_id", session.user.id)
-    if (error) {
-        throw error.message
-    }
-    return transaction_details 
-}
-
-export async function getExpenses() {
-    const { data: transaction_details, error } = await supabase
-        .from('transaction_details')
-        .select("withdrawal_amount")
-        //.eq("user_id", session.user.id)
-    if (error) {
-        throw error.message
-    }
-    return transaction_details 
+    return account_details as unknown as Pick<Account, AccKeys[number]>[]
 }

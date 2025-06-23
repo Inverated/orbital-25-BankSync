@@ -1,5 +1,5 @@
 import { Account } from "@/utils/types"
-import { getAccountDetails, getExpenses, getIncome } from "@/lib/supabase_query"
+import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
 import { useEffect, useState } from "react"
 
 export default function Overview() {
@@ -16,7 +16,7 @@ export default function Overview() {
             let totalBalance = 0
             const accountArr: Partial<Account>[] = []
             arr?.forEach(entry => {
-                totalBalance += entry.balance
+                if (entry.balance) totalBalance += entry.balance
                 accountArr.push({
                     id: entry.id,
                     account_name: entry.account_name,
@@ -29,17 +29,20 @@ export default function Overview() {
             setLoadingStatus(true)
         })
 
-        getIncome().then(arr => {
-            if (arr != null) {
-                setIncome(arr.reduce((x, y) => x + y.deposit_amount, 0))
-            }
-        })
+        getTransactionDetails(['deposit_amount', 'withdrawal_amount'])
+            .then(data => {
+                setIncome(data.reduce((x, y) => {
+                    if (y.deposit_amount) {
+                        return x + y.deposit_amount
+                    } else return x
+                }, 0))
+                setExpenses(data.reduce((x, y) => {
+                    if (y.withdrawal_amount) {
+                        return x + y.withdrawal_amount
+                    } else return x
+                }, 0))
 
-        getExpenses().then(arr => {
-            if (arr != null) {
-                setExpenses(arr.reduce((x, y) => x + y.withdrawal_amount, 0))
-            }
-        })
+            })
     }, [])
 
     const expandTotalBal = () => {

@@ -8,6 +8,7 @@ export interface Account {
     bank_name: string;
     balance: number;
     user_id?: string;
+    latest_recorded_month: string;
 }
 
 export interface Transaction {

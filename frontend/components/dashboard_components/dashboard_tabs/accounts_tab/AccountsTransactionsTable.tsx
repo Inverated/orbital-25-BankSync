@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTransactionDetailByAccountNo } from "@/lib/supabase_query";
+import { getTransactionDetails } from "@/lib/supabase_query";
 import { Account, Transaction } from "@/utils/types";
 import TransactionAmount from "./TransactionAmount";
 
@@ -11,11 +11,12 @@ export default function AccountsTransactionsTable({ account }: AccountsTransacti
     const [transactions, setTransactions] = useState<Transaction[]>([]);
 
     useEffect(() => {
-        getTransactionDetailByAccountNo(account.account_no).then(data => {
-            if (data != null) {
-                setTransactions(data);
-            }
-        })
+        getTransactionDetails(undefined, [{key: 'account_no', value: [account.account_no]}])
+            .then(data => {
+                if (data != null) {
+                    setTransactions(data)
+                }
+            })
     }, [])
     
     return (

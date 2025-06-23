@@ -1,42 +1,112 @@
-import { getAccountDetails, getTransactionDetail } from "@/lib/supabase_query";
-import { useEffect, useState } from "react";
+import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Transaction_Row from "./Transaction_Row";
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { Transaction } from "@/utils/types";
+import FilterButton from "./FilterButton";
+import ExportButton from "./ExportButton";
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
 
+    const [filterCondiction, setFilterCondition] = useState<{ key: keyof Transaction, value: string[] }[] | undefined>(undefined)
+    const [isAscending, setIsAscending] = useState(false)
+
     const [transactionEntry, setEntry] = useState<Partial<Transaction>[]>([])
     const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
+
+    const pageNoRef = useRef<HTMLInputElement>(null)
+    // useState to update html and useRef to get the latest value to run in function
+    const currPageRef = useRef(1)
+    const [pageNo, setPageNo] = useState(1)
+    const maxPageNo = useRef(Math.ceil(transactionEntry.length / 10))
+
+    const addPageNo = (num: number) => {
+        const newNum = currPageRef.current + num
+        if (newNum > maxPageNo.current) {
+            currPageRef.current = maxPageNo.current
+            setPageNo(maxPageNo.current)
+        } else if (newNum < 1) {
+            currPageRef.current = 1
+            setPageNo(1)
+        } else {
+            currPageRef.current = newNum
+            setPageNo(newNum)
+        }
+    }
+
+    const [selPageDialogue, setPageDialogue] = useState(false)
+    const jumpToPage = () => {
+        const userInput = Number(pageNoRef.current?.value)
+        if (!userInput || userInput < 1) {
+            currPageRef.current = 1
+            setPageNo(1)
+        } else if (userInput > maxPageNo.current) {
+            currPageRef.current = maxPageNo.current
+            setPageNo(maxPageNo.current)
+        } else {
+            currPageRef.current = userInput
+            setPageNo(userInput)
+        }
+        setPageDialogue(false)
+    }
 
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == 'Escape') {
             setPageDialogue(false)
         } else if (event.key == 'Enter') {
             jumpToPage()
+        } else if (event.key == 'ArrowRight') {
+            addPageNo(1)
+        } else if (event.key == 'ArrowLeft') {
+            addPageNo(-1)
         }
     }
+    const handleFilterQuery = useCallback((accountSelection: string[], categorySelection: string[], ascendingSelection: boolean) => {
+        setIsAscending(ascendingSelection)
+        const filter: { key: keyof Transaction, value: string[] }[] = []
+        if (accountSelection.length != 0) {
+            filter.push({ key: 'account_no', value: accountSelection })
+        }
+        if (categorySelection.length != 0) {
+            filter.push({ key: 'category', value: categorySelection })
+        }
+        if (filter.length == 0) {
+            setFilterCondition(undefined)
+        } else {
+            setFilterCondition(filter)
+        }
+    }, [])
 
     useEffect(() => {
+        setEntry([])
+        currPageRef.current = 1
+        setUnique(new Set())
+        pageNoRef.current = document.getElementById('select_page_num') as HTMLInputElement
         type AccountDetails = {
             [account_no: string]: {
                 account_name: string;
                 bank_name: string;
             }
         }
+
         const accounts: AccountDetails = {}
         getAccountDetails().then(arr => {
             arr.forEach(entry => {
-                accounts[entry.account_no] = {
-                    account_name: entry.account_name,
-                    bank_name: entry.bank_name
+                if (entry.account_no && entry.account_name && entry.bank_name) {
+                    accounts[entry.account_no] = {
+                        account_name: entry.account_name,
+                        bank_name: entry.bank_name
+                    }
                 }
             })
         }).then(() =>
-            getTransactionDetail().then(arr => {
+            getTransactionDetails([], filterCondiction, isAscending).then(arr => {
+                maxPageNo.current = (Math.ceil(arr.length / 10))
                 arr.forEach(entry => {
-                    setUnique(uniqueCategory.add(entry.category))
+                    if (entry.category) {
+                        setUnique(uniqueCategory.add(entry.category))
+                    }
                     setEntry(prev =>
                         [...prev, {
                             id: entry.id,
@@ -47,8 +117,8 @@ export default function Transactions() {
                             category: entry.category,
                             transaction_date: entry.transaction_date,
                             ending_balance: entry.ending_balance,
-                            account_name: accounts[entry.account_no].account_name,
-                            bank_name: accounts[entry.account_no].bank_name
+                            account_name: entry.account_no ? accounts[entry.account_no].account_name : '',
+                            bank_name: entry.account_no ? accounts[entry.account_no].bank_name : ''
                         }])
                 })
             }))
@@ -59,37 +129,7 @@ export default function Transactions() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [])
-
-    const [pageNo, setPage] = useState(1)
-    const maxPageNo = Math.ceil(transactionEntry.length / 10)
-
-    const addPageNo = (num: number) => {
-        const newNum = pageNo + num
-        if (newNum > maxPageNo) {
-            setPage(maxPageNo)
-        } else if (newNum < 1) {
-            setPage(1)
-        } else {
-            setPage(newNum)
-        }
-    }
-
-    const [selPageDialogue, setPageDialogue] = useState(false)
-    const jumpToPage = () => {
-        const inputBox = document.getElementById('select_page_num') as HTMLInputElement
-        if (!inputBox) return
-        const userInput = Number(inputBox.value)
-
-        if (!userInput || userInput < 1) {
-            setPage(1)
-        } else if (userInput > maxPageNo) {
-            setPage(maxPageNo)
-        } else {
-            setPage(userInput)
-        }
-        setPageDialogue(false)
-    }
+    }, [filterCondiction, isAscending])
 
     const buttonStyle = 'border border-black mx-3 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
 
@@ -97,9 +137,10 @@ export default function Transactions() {
         <div>
             <div className='text-2xl flex justify-between'>
                 <p className='p-4'>All Transactions</p>
-                <div>
-                    <button className={buttonStyle}>Export</button>
-                    <button className={buttonStyle}>Filter</button>
+                <div className=" flex justify-between">
+                    <ExportButton />
+                    <FilterButton
+                        setFilter={handleFilterQuery} />
                 </div>
             </div>
             <div id='load_transaction_data' className='hidden'>
@@ -119,7 +160,7 @@ export default function Transactions() {
                     <FaAngleDoubleLeft className='hover:cursor-pointer' onClick={() => addPageNo(-10)} />
                     <FaAngleLeft className='hover:cursor-pointer' onClick={() => addPageNo(-1)} />
                     <div className='px-5 hover:cursor-pointer' onClick={() => setPageDialogue(true)}>
-                        {pageNo} of {maxPageNo}
+                        {pageNo} of {maxPageNo.current}
                     </div>
                     <FaAngleRight className='hover:cursor-pointer' onClick={() => addPageNo(1)} />
                     <FaAngleDoubleRight className='hover:cursor-pointer' onClick={() => addPageNo(10)} />
@@ -136,9 +177,10 @@ export default function Transactions() {
                                 id='select_page_num'
                                 className='border border-black w-[40px] mx-1'
                                 type='number'
-                                min='1' max={maxPageNo}
-                                defaultValue={pageNo} />
-                            <span>of {maxPageNo}</span>
+                                min='1' max={maxPageNo.current}
+                                defaultValue={currPageRef.current}
+                                ref={pageNoRef} />
+                            <span>of {maxPageNo.current}</span>
                         </div>
                         <div className='flex justify-end'>
                             <button onClick={() => setPageDialogue(false)}
