@@ -1,26 +1,103 @@
-import { useState } from "react"
+import { useUserId } from "@/context/UserContext"
+import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
+import { Account, Transaction } from "@/utils/types"
+import { useEffect, useState } from "react"
+import ExportTable from "./ExportTable"
 
 
 export default function ExportButton() {
     const [exportDialogue, setExportDialogue] = useState(false)
+    const [transactionEntry, setTransaction] = useState<Partial<Transaction>[]>([])
+    const [accountEntry, setAccount] = useState<Partial<Account>[]>([])
+    const EXPORTACCOUNTHEADER = ['Bank Name', 'Account No', 'Account Name', 'Balance', 'Last Recorded Date']
+    const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Category', 'Balance', 'Account No']
 
-    const handleFilter = () => {
-        
+    const [activeTab, setActiveTab] = useState<'account' | 'transaction'>('account')
+
+    const userId = useUserId()
+
+    const exportToFile = () => {
+
     }
 
+    useEffect(() => {
+        setTransaction([])
+        setAccount([])
+        setActiveTab('account')
+        getTransactionDetails(userId).then(arr => arr.forEach(entry => {
+            setTransaction(prev => [...prev, {
+                transaction_date: entry.transaction_date,
+                transaction_description: entry.transaction_description,
+                category: entry.category,
+                withdrawal_amount: entry.withdrawal_amount,
+                deposit_amount: entry.deposit_amount,
+                ending_balance: entry.ending_balance,
+                account_no: entry.account_no,
+            }])
+        }))
+        getAccountDetails(userId).then(arr => arr.forEach(entry => {
+            console.log(accountEntry)
+            setAccount(prev => [...prev, {
+                bank_name: entry.bank_name,
+                account_no: entry.account_no,
+                account_name: entry.account_name,
+                balance: entry.balance,
+            }])
+        }))
+
+        const handleButtonDown = (event: KeyboardEvent) => {
+            if (event.key == 'Escape') {
+                setExportDialogue(false)
+            }
+        }
+        document.addEventListener('keydown', handleButtonDown)
+        return () => {
+            document.removeEventListener('keydown', handleButtonDown)
+        }
+    }, [])
+
     return (
-        <div>
+        transactionEntry && accountEntry && <div>
             <button className='border border-black mx-3 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition'
                 onClick={() => setExportDialogue(true)}>
                 Export
             </button>
-            {exportDialogue && 
+            {exportDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
                     <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-5/6 w-full z-60 max-h-11/12 overflow-y-auto">
                         <p className="text-2xl mb-3">Export</p>
-                        
 
+                        <button
+                            className={`px-4 py-2 border-b-2 ${activeTab === 'account'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-blue-600'
+                                }`}
+                            onClick={() => setActiveTab('account')}
+                        >
+                            Accounts
+                        </button>
+                        <button
+                            className={`px-4 py-2 border-b-2 ${activeTab === 'transaction'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-blue-600'
+                                }`}
+                            onClick={() => setActiveTab('transaction')}
+                        >
+                            Transactions
+                        </button>
+                        {activeTab === 'account' ?
+                            <ExportTable
+                                table={'account'}
+                                data={accountEntry}
+                                dataHeader={EXPORTACCOUNTHEADER}
+                            /> :
+                            <ExportTable
+                                table={'transaction'}
+                                data={transactionEntry}
+                                dataHeader={EXPORTTRANSACTIONHEADER}
+                            />
+                        }
                         <div className="flex justify-end">
                             <button
                                 onClick={() => setExportDialogue(false)}
@@ -29,7 +106,7 @@ export default function ExportButton() {
                                 Close
                             </button>
                             <button
-                                onClick={handleFilter}
+                                onClick={exportToFile}
                                 className="border disabled:border-gray-400 disabled:text-gray-400 border-black mt-4 p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
                             >
                                 Confirm

@@ -1,3 +1,4 @@
+import { useUserId } from "@/context/UserContext";
 import { getTransactionDetails } from "@/lib/supabase_query";
 import { useEffect, useState } from "react";
 import { AiOutlineLineChart } from "react-icons/ai";
@@ -7,9 +8,10 @@ export default function IncomeExpenses() {
     const [expenses, setExpenses] = useState(0.0)
     const savings = income - expenses
     const savingsSign = savings >= 0 ? "+" : "-"
+    const userId = useUserId();
 
     useEffect(() => {
-        getTransactionDetails(['deposit_amount', 'withdrawal_amount'])
+        getTransactionDetails(userId, ['deposit_amount', 'withdrawal_amount'])
             .then(data => {
                 setIncome(data.reduce((x, y) =>  x + y.deposit_amount, 0))
                 setExpenses(data.reduce((x, y) => x + y.withdrawal_amount, 0))

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getTransactionDetails } from "@/lib/supabase_query";
 import { Account, Transaction } from "@/utils/types";
 import TransactionAmount from "./TransactionAmount";
+import { useUserId } from "@/context/UserContext";
 
 interface AccountsTransactionsTableProps {
     account: Account;
@@ -9,9 +10,10 @@ interface AccountsTransactionsTableProps {
 
 export default function AccountsTransactionsTable({ account }: AccountsTransactionsTableProps) {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const userId = useUserId();
 
     useEffect(() => {
-        getTransactionDetails(undefined, [{key: 'account_no', value: [account.account_no]}])
+        getTransactionDetails(userId, undefined, [{key: 'account_no', value: [account.account_no]}])
             .then(data => {
                 if (data != null) {
                     setTransactions(data)

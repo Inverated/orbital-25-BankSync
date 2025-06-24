@@ -1,6 +1,7 @@
 import { Account } from "@/utils/types"
 import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
 import { useEffect, useState } from "react"
+import { useUserId } from "@/context/UserContext"
 
 export default function Overview() {
     const [totalBal, setTotalBal] = useState(0.0)
@@ -9,10 +10,11 @@ export default function Overview() {
     const [isLoaded, setLoadingStatus] = useState(false)
 
     const [accountArray, setAccount] = useState<Partial<Account>[]>([])
+    const userId = useUserId();
 
     //change to store query locally and retrieve instead of querying every time
     useEffect(() => {
-        getAccountDetails().then(arr => {
+        getAccountDetails(userId).then(arr => {
             let totalBalance = 0
             const accountArr: Partial<Account>[] = []
             arr?.forEach(entry => {
@@ -29,7 +31,7 @@ export default function Overview() {
             setLoadingStatus(true)
         })
 
-        getTransactionDetails(['deposit_amount', 'withdrawal_amount'])
+        getTransactionDetails(userId, ['deposit_amount', 'withdrawal_amount'])
             .then(data => {
                 setIncome(data.reduce((x, y) => {
                     if (y.deposit_amount) {

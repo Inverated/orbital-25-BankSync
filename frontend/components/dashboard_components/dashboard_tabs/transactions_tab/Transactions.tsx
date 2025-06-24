@@ -5,6 +5,7 @@ import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from
 import { Transaction } from "@/utils/types";
 import FilterButton from "./FilterButton";
 import ExportButton from "./ExportButton";
+import { useUserId } from "@/context/UserContext";
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
@@ -78,6 +79,8 @@ export default function Transactions() {
         }
     }, [])
 
+    const userId = useUserId();
+
     useEffect(() => {
         setEntry([])
         currPageRef.current = 1
@@ -91,7 +94,7 @@ export default function Transactions() {
         }
 
         const accounts: AccountDetails = {}
-        getAccountDetails().then(arr => {
+        getAccountDetails(userId).then(arr => {
             arr.forEach(entry => {
                 if (entry.account_no && entry.account_name && entry.bank_name) {
                     accounts[entry.account_no] = {
@@ -101,7 +104,7 @@ export default function Transactions() {
                 }
             })
         }).then(() =>
-            getTransactionDetails([], filterCondiction, isAscending).then(arr => {
+            getTransactionDetails(userId, [], filterCondiction, isAscending).then(arr => {
                 maxPageNo.current = (Math.ceil(arr.length / 10))
                 arr.forEach(entry => {
                     if (entry.category) {

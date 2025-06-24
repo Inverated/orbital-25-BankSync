@@ -1,3 +1,4 @@
+import { useUserId } from "@/context/UserContext"
 import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
 import { useEffect, useRef, useState } from "react"
 
@@ -12,15 +13,12 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
     const selectedCategory = useRef<string[]>([])
     const orderDateAscending = useRef(false)
 
-    useEffect(() => {
-        setUniqueAccount([])
-        setUniqueCategory([])
-        setAccountStatus(false)
-        setCategoryStatus(false)
-        selectedAccount.current = []
-        selectedCategory.current = []
+    const userId = useUserId();
 
-        getAccountDetails(['account_name', 'account_no', 'bank_name'])
+    useEffect(() => {
+        resetAll()
+
+        getAccountDetails(userId, ['account_name', 'account_no', 'bank_name'])
             .then(arr => {
                 arr.forEach(entry => {
                     const name = entry.account_name
@@ -31,12 +29,22 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                 setAccountStatus(true)
             })
 
-        getTransactionDetails(['category'])
+        getTransactionDetails(userId, ['category'])
             .then(arr => {
                 setUniqueCategory([...new Set(arr.map(entry => entry.category)
                     .filter(item => item != undefined))])
             })
         setCategoryStatus(true)
+
+        const handleButtonDown = (event: KeyboardEvent) => {
+            if (event.key == 'Escape') {
+                closeAll()
+            }
+        }
+        document.addEventListener('keydown', handleButtonDown)
+        return () => {
+            document.removeEventListener('keydown', handleButtonDown)
+        }
     }, [filterDialogue])
 
     const updateAccountSelection = (account_no: string, checked: boolean) => {
@@ -60,6 +68,20 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
     const handleFilter = () => {
         onFilterSet.setFilter(selectedAccount.current, selectedCategory.current, orderDateAscending.current)
         setFilterDialogue(false)
+    }
+
+    const resetAll = () => {
+        setUniqueAccount([])
+        setUniqueCategory([])
+        setAccountStatus(false)
+        setCategoryStatus(false)
+        selectedAccount.current = []
+        selectedCategory.current = []
+    }
+
+    const closeAll = () => {
+        setFilterDialogue(false)
+        resetAll()
     }
 
     return (
@@ -118,7 +140,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
 
                         <div className="flex justify-end">
                             <button
-                                onClick={() => setFilterDialogue(false)}
+                                onClick={closeAll}
                                 className="border border-black mt-4 mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
                             >
                                 Close
