@@ -19,7 +19,7 @@ export default function AccountsTransactionsTable({ account }: AccountsTransacti
                     setTransactions(data)
                 }
             })
-    }, [])
+    }, [userId])
     
     return (
         <table className="table-fixed" 

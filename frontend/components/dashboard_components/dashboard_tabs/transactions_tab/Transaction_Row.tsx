@@ -126,7 +126,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                     <div className='flex flex-col'>
                         <p className='flex p-3 start-0.5'>
                             <b>Description:</b>
-                            <span className='px-2 break-all'>
+                            <span className='px-2 whitespace-pre-line break-all'>
                                 {details.transaction_description}
                             </span>
                         </p>

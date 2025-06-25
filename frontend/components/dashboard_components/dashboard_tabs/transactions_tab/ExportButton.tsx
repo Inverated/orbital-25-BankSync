@@ -3,27 +3,33 @@ import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
 import { Account, Transaction } from "@/utils/types"
 import { useEffect, useState } from "react"
 import ExportTable from "./ExportTable"
+import exportToXlsx from "@/utils/downloadFile"
 
 
 export default function ExportButton() {
     const [exportDialogue, setExportDialogue] = useState(false)
-    const [transactionEntry, setTransaction] = useState<Partial<Transaction>[]>([])
-    const [accountEntry, setAccount] = useState<Partial<Account>[]>([])
+    const [transactionEntry, setTransaction] = useState<Transaction[]>([])
+    const [accountEntry, setAccount] = useState<Account[]>([])
     const EXPORTACCOUNTHEADER = ['Bank Name', 'Account No', 'Account Name', 'Balance', 'Last Recorded Date']
-    const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Category', 'Balance', 'Account No']
+    const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Category', 'Ending Balance', 'Account No']
 
     const [activeTab, setActiveTab] = useState<'account' | 'transaction'>('account')
 
     const userId = useUserId()
 
     const exportToFile = () => {
-
+        exportToXlsx(accountEntry, transactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
     }
 
-    useEffect(() => {
+    const resetAll = () => {
         setTransaction([])
         setAccount([])
         setActiveTab('account')
+    }
+
+    // query data here. Export only filtered items added later
+    useEffect(() => {
+        resetAll()
         getTransactionDetails(userId).then(arr => arr.forEach(entry => {
             setTransaction(prev => [...prev, {
                 transaction_date: entry.transaction_date,
@@ -36,17 +42,18 @@ export default function ExportButton() {
             }])
         }))
         getAccountDetails(userId).then(arr => arr.forEach(entry => {
-            console.log(accountEntry)
             setAccount(prev => [...prev, {
                 bank_name: entry.bank_name,
                 account_no: entry.account_no,
                 account_name: entry.account_name,
                 balance: entry.balance,
+                latest_recorded_date: entry.latest_recorded_date
             }])
         }))
 
         const handleButtonDown = (event: KeyboardEvent) => {
             if (event.key == 'Escape') {
+                resetAll()
                 setExportDialogue(false)
             }
         }
@@ -54,7 +61,7 @@ export default function ExportButton() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [])
+    }, [userId, exportDialogue])
 
     return (
         transactionEntry && accountEntry && <div>
@@ -65,7 +72,7 @@ export default function ExportButton() {
             {exportDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-5/6 w-full z-60 max-h-11/12 overflow-y-auto">
+                    <div className="bg-white rounded-lg shadow-lg px-8 max-w-5/6 w-full z-60 max-h-11/12 py-5">
                         <p className="text-2xl mb-3">Export</p>
 
                         <button

@@ -14,7 +14,7 @@ export default function Accounts() {
                 setAccounts(data);
             }
         })
-    }, [])
+    }, [userId])
 
     return(
         <div className="items-center justify-center">

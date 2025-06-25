@@ -45,7 +45,7 @@ export default function Overview() {
                 }, 0))
 
             })
-    }, [])
+    }, [userId])
 
     const expandTotalBal = () => {
         const expanded_account = document.getElementById("expanded_account")

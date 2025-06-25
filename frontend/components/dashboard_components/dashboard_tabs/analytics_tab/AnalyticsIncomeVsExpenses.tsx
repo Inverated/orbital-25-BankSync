@@ -16,7 +16,7 @@ export default function IncomeExpenses() {
                 setIncome(data.reduce((x, y) =>  x + y.deposit_amount, 0))
                 setExpenses(data.reduce((x, y) => x + y.withdrawal_amount, 0))
             })
-    }, [])
+    }, [userId])
 
     return (
         <div className="border border-black p-3 rounded-lg flex-1">

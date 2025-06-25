@@ -3,25 +3,25 @@ import { useEffect, useState } from "react";
 
 export default function ExportTable(selectedTable: {
     table: 'account' | 'transaction',
-    data: Partial<Transaction>[] | Partial<Account>[],
+    data: Transaction[] | Account[],
     dataHeader: string[]
 }) {
-    const [transactionEntry, setTransaction] = useState<Partial<Transaction>[]>([])
-    const [accountEntry, setAccount] = useState<Partial<Account>[]>([])
+    const [transactionEntry, setTransaction] = useState<Transaction[]>([])
+    const [accountEntry, setAccount] = useState<Account[]>([])
     const [tableHeader, setHeader] = useState<string[]>([])
 
     useEffect(() => {
         // Data load instantly if set both at once
-        setTransaction(selectedTable.data)
-        setAccount(selectedTable.data)
+        setTransaction(selectedTable.data as Transaction[])
+        setAccount(selectedTable.data as Account[])
         setHeader(selectedTable.dataHeader)
-    }, [selectedTable.table])
+    }, [selectedTable.table, selectedTable.data, selectedTable.dataHeader])
 
     const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit overflow-hidden"
 
     return (
         transactionEntry.length != 0 && accountEntry.length != 0 && <>
-            <div className="overflow-auto shadow-md mt-4 max-h-[400px]">
+            <div className="overflow-auto shadow-md mt-4 max-h-[300px]">
                 {selectedTable.table == 'account' ?
                     <table className="text-xs w-full text-left rtl:text-right text-gray-500">
                         <thead className=" text-gray-700 bg-gray-300">
@@ -76,7 +76,7 @@ export default function ExportTable(selectedTable: {
                                     Category
                                 </th>
                                 <th scope="col" className={rowStyle}>
-                                    Balance
+                                    Ending Balance
                                 </th>
                                 <th scope="col" className={rowStyle}>
                                     Account No
