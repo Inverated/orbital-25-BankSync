@@ -82,6 +82,14 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
             };
 
             fetchData();
+        } else {
+            setLoading(true);
+
+            setDataPoints([]);
+            setTotalIncome(0.0);
+            setTotalExpenses(0.0);
+            
+            setLoading(false);
         }
     }, [startDate, endDate])
 

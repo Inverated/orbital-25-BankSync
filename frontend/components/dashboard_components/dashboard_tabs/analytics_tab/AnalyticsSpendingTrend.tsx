@@ -62,10 +62,17 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
                 );
 
                 setDataPoints(data);
+
                 setLoading(false);
             };
 
             fetchData();
+        } else {
+            setLoading(true);
+
+            setDataPoints([]);
+
+            setLoading(false);
         }
     }, [startDate, endDate])
 

@@ -42,10 +42,17 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
                 );
 
                 setDataPoints(data);
+                
                 setLoading(false);
             };
             
             fetchData();
+        } else {
+            setLoading(true);
+
+            setDataPoints([]);
+
+            setLoading(false);
         }
     }, [startDate, endDate])
 
