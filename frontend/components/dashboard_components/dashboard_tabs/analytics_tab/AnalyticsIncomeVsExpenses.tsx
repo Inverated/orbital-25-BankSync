@@ -24,7 +24,6 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
     const savingsSign = savings >= 0 ? "+" : "-";
 
     const userId = useUserId()
-
     const getMonths = (start: Dayjs | null, end: Dayjs | null) => {
         if (!start || !end || start.isAfter(end)) {
             return [];

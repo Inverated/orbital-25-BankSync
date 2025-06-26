@@ -29,6 +29,7 @@ export default function UploadButton() {
         setUploadingStatus(false)
 
         if (currentFile.current != null) {
+            setQueryPassword(false)
             let parsedData: uploadReturnData | null = await uploadFile(currentFile.current, filePassword.current?.value)
             if (!parsedData) {
                 return
@@ -109,7 +110,6 @@ export default function UploadButton() {
             alert(error.message)
         } else {
             window.location.reload()
-            console.log('done')
         }
     }
 

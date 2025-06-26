@@ -21,7 +21,7 @@ export default function ExportTable(selectedTable: {
 
     return (
         transactionEntry.length != 0 && accountEntry.length != 0 && <>
-            <div className="overflow-auto shadow-md mt-4 max-h-[300px]">
+            <div className="overflow-auto shadow-md mt-4 max-h-[60vh]">
                 {selectedTable.table == 'account' ?
                     <table className="text-xs w-full text-left rtl:text-right text-gray-500">
                         <thead className=" text-gray-700 bg-gray-300">
@@ -57,7 +57,7 @@ export default function ExportTable(selectedTable: {
                             )}
                         </tbody>
                     </table> :
-                    <table className="text-xs w-full text-left rtl:text-right text-gray-500">
+                    <table className="overflow-auto flex-col text-xs w-full text-left rtl:text-right text-gray-500">
                         <thead className=" text-gray-700 bg-gray-300">
                             <tr>
                                 <th scope="col" className={rowStyle}>

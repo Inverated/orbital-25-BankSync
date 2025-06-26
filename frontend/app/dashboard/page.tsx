@@ -58,7 +58,7 @@ export default function Dashboard() {
     const [currentPage, setPage] = useState<Page>("Overview")
     const CurrentComponent = componentSelector[currentPage]
 
-    const tabStyle = "text-2xl mx-1 px-2 py-1  border border-black rounded-md cursor-pointer"
+    const tabStyle = "text-2xl mx-1 px-2 py-1 border-b-2 cursor-pointer"
     
     registerCharts();
     
@@ -68,12 +68,12 @@ export default function Dashboard() {
             <div>
                 <NavBar user={currentSession?.user} />
                 <div className="flex justify-end">
-                    <div className=" border border-black p-2 m-3">
+                    <div className="p-2 m-3">
                         {Object.keys(componentSelector).map((tab) =>
                             <span
                                 onClick={() => setPage(tab as Page)}
                                 key={tab}
-                                className={`${tabStyle} ${currentPage === tab ? "bg-gray-500" : ""}`}>
+                                className={`${tabStyle} ${currentPage === tab ? " border-blue-500 text-blue-600" : "border-transparent text-gray-500 hover:text-blue-600"}`}>
                                 {tab}
                             </span>
                         )}

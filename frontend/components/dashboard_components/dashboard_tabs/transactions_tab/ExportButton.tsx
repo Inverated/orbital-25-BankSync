@@ -72,7 +72,7 @@ export default function ExportButton() {
             {exportDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white rounded-lg shadow-lg px-8 max-w-5/6 w-full z-60 max-h-11/12 py-5">
+                    <div className="bg-white rounded-lg shadow-lg px-8 max-w-5/6 w-full z-60 py-5 max-h-[90vh] overflow-auto">
                         <p className="text-2xl mb-3">Export</p>
 
                         <button
