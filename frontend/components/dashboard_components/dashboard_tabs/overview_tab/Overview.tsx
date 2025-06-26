@@ -1,10 +1,10 @@
 import { Account } from "@/utils/types"
-import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
 import { useEffect, useState } from "react"
 import { useUserId } from "@/context/UserContext"
+import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
 
 export default function Overview() {
-    const [totalBal, setTotalBal] = useState(0.0)
+    const [totalBal, setTotalBal] = useState<number>(0.0)
     const [income, setIncome] = useState(0.0)
     const [expenses, setExpenses] = useState(0.0)
     const [isLoaded, setLoadingStatus] = useState(false)

@@ -19,6 +19,7 @@ export default function Transactions() {
     const pageNoRef = useRef<HTMLInputElement>(null)
     // useState to update html and useRef to get the latest value to run in function
     const currPageRef = useRef(1)
+    const [totalEntries, setTotalEntries] = useState(0)
     const [pageNo, setPageNo] = useState(1)
     const maxPageNo = useRef(Math.ceil(transactionEntry.length / 10))
 
@@ -77,6 +78,7 @@ export default function Transactions() {
         } else {
             setFilterCondition(filter)
         }
+        setPageNo(1)
     }, [])
 
     const userId = useUserId();
@@ -96,16 +98,16 @@ export default function Transactions() {
         const accounts: AccountDetails = {}
         getAccountDetails(userId).then(arr => {
             arr.forEach(entry => {
-                if (entry.account_no && entry.account_name && entry.bank_name) {
-                    accounts[entry.account_no] = {
-                        account_name: entry.account_name,
-                        bank_name: entry.bank_name
-                    }
+                accounts[entry.account_no] = {
+                    account_name: entry.account_name,
+                    bank_name: entry.bank_name
                 }
+
             })
         }).then(() =>
             getTransactionDetails(userId, [], filterCondiction, isAscending).then(arr => {
                 maxPageNo.current = (Math.ceil(arr.length / 10))
+                setTotalEntries(arr.length)
                 arr.forEach(entry => {
                     if (entry.category) {
                         setUnique(uniqueCategory.add(entry.category))
@@ -150,10 +152,9 @@ export default function Transactions() {
                 {
                     transactionEntry.slice(
                         (pageNo - 1) * NUMBER_OF_ENTRIES_PER_PAGE,
-                        pageNo * NUMBER_OF_ENTRIES_PER_PAGE
+                        Math.min(totalEntries , pageNo * NUMBER_OF_ENTRIES_PER_PAGE)
                     )
-                        // Unable to extract you the index
-                        .map(entry =>
+                        .map((entry) =>
                             <Transaction_Row
                                 key={entry.id}
                                 details={{ ...entry }}

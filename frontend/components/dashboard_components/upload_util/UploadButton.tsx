@@ -1,9 +1,14 @@
+'use client'
+
 import { StatementResponse, uploadReturnData } from "@/utils/types";
 import uploadFile from "@/utils/uploadFile";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { MdFileUpload, MdUploadFile } from "react-icons/md";
 import PreviewTable from "./PreviewTable";
 import setStatementCategory from "@/utils/setStatementCategory";
+import { addStatements } from "@/lib/supabase_upload";
+import { useUserId } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 
 export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
@@ -13,10 +18,14 @@ export default function UploadButton() {
     const filePassword = useRef<HTMLInputElement>(null)
     const [statements, setStatements] = useState<StatementResponse[] | null>(null)
     const [activeTab, setActiveTab] = useState(0)
+    const [uploading, setUploadingStatus] = useState(false)
+
+    const router = useRouter()
 
     const handleUploadFile = async () => {
         setActiveTab(0)
         setStatements(null)
+        setUploadingStatus(false)
 
         if (currentFile.current != null) {
             let parsedData: uploadReturnData | null = await uploadFile(currentFile.current, filePassword.current?.value)
@@ -39,7 +48,7 @@ export default function UploadButton() {
                 return
             } else {
                 setQueryPassword(false)
-                // Set category here instead of backend to allow custom cat
+                // Set category here instead of backend to allow custom catEGORY
                 setStatementCategory(parsedData.data)
                 setStatements(parsedData.data)
             }
@@ -47,6 +56,7 @@ export default function UploadButton() {
     }
 
     const closeDialogue = () => {
+        setUploadingStatus(false)
         setDialogueStatus(false)
         setFileError(false)
         currentFile.current = null
@@ -85,9 +95,21 @@ export default function UploadButton() {
         }
     }, [setStatements, statements])
 
-    //to be implemented
-    const handleUploadData = () => {
+    const userId = useUserId();
+    const handleUploadData = async () => {
+        setUploadingStatus(true)
+        if (statements == null || statements?.length == 0) {
+            return
+        }
+        setUploadingStatus(true)
 
+        const error = await addStatements(userId, statements)
+        if (error instanceof Error) {
+            alert(error.message)
+        } else {
+            window.location.reload()
+            console.log('done')
+        }
     }
 
     const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
@@ -113,7 +135,7 @@ export default function UploadButton() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [handleUpdate])
+    }, [handleUpdate, router])
 
     return (
         <div>
@@ -204,7 +226,7 @@ export default function UploadButton() {
                                 Close
                             </button>
                             <button
-                                disabled={statements === null}
+                                disabled={statements === null || uploading}
                                 onClick={handleUploadData}
                                 className="border disabled:border-gray-400 disabled:text-gray-400 border-black mt-4 p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
                             >
