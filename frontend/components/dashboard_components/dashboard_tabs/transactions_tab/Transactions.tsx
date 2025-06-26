@@ -1,7 +1,7 @@
 import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Transaction_Row from "./Transaction_Row";
-import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { ChevronLeft, ChevronsLeft, ChevronRight, ChevronsRight } from "lucide-react";
 import { Transaction } from "@/utils/types";
 import FilterButton from "./FilterButton";
 import ExportButton from "./ExportButton";
@@ -161,13 +161,13 @@ export default function Transactions() {
                                 uniqueCategory={[...uniqueCategory]} />
                         )}
                 <div className='my-10 flex items-center justify-center'>
-                    <FaAngleDoubleLeft className='hover:cursor-pointer' onClick={() => addPageNo(-10)} />
-                    <FaAngleLeft className='hover:cursor-pointer' onClick={() => addPageNo(-1)} />
+                    <ChevronsLeft className='hover:cursor-pointer' onClick={() => addPageNo(-10)} />
+                    <ChevronLeft className='hover:cursor-pointer' onClick={() => addPageNo(-1)} />
                     <div className='px-5 hover:cursor-pointer' onClick={() => setPageDialogue(true)}>
                         {pageNo} of {maxPageNo.current}
                     </div>
-                    <FaAngleRight className='hover:cursor-pointer' onClick={() => addPageNo(1)} />
-                    <FaAngleDoubleRight className='hover:cursor-pointer' onClick={() => addPageNo(10)} />
+                    <ChevronRight className='hover:cursor-pointer' onClick={() => addPageNo(1)} />
+                    <ChevronsRight className='hover:cursor-pointer' onClick={() => addPageNo(10)} />
                 </div>
             </div>
 

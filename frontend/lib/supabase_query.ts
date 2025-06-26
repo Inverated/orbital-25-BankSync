@@ -2,6 +2,7 @@ import { Account, Transaction } from "@/utils/types"
 import { supabase } from "./supabase"
 import decryptData from "@/utils/decryptData"
 import { Timestamp } from "next/dist/server/lib/cache-handlers/types";
+import { Dayjs } from "dayjs";
 
 type EncryptedAccount = {
     id?: number,
@@ -30,7 +31,9 @@ type EncryptedTransaction = {
 export async function getTransactionDetails(
     userId: string,
     selection: (keyof Transaction)[] = [],
-    condition: { key: keyof Transaction, value: string[] }[] = [], ascending_date: true | false = false
+    condition: { key: keyof Transaction, value: string[] }[] = [],
+    ascending_date: true | false = false,
+    date: Dayjs | null = null
 ): Promise<Transaction[]> {
     const query = supabase
         .from('encryptedTransactionDetails')
@@ -40,6 +43,13 @@ export async function getTransactionDetails(
     condition.forEach(({ key, value }) => {
         query.in(key, value)
     })
+
+    if (date != null) {
+        const start = date.startOf("month").toISOString();
+        const end = date.endOf("month").toISOString();
+        query.gte("transaction_date", start)
+            .lte("transaction_date", end)
+    }
 
     const { data: transaction_details, error } = await query
         .order("transaction_date", { ascending: ascending_date })
@@ -58,7 +68,8 @@ export async function getTransactionDetails(
 export async function getAccountDetails(
     userId: string,
     selection: (keyof Account)[] = [],
-    condition: { key: keyof Account, value: string[] }[] = []
+    condition: { key: keyof Account, value: string[] }[] = [],
+    date: Dayjs | null = null
 ): Promise<Account[]> {
     let query = supabase
         .from('encryptedAccountDetails')
@@ -68,6 +79,14 @@ export async function getAccountDetails(
     condition.forEach(({ key, value }) => {
         query = query.in(key, value)
     })
+
+    if (date != null) {
+        const start = date.startOf("month").toISOString();
+        const end = date.endOf("month").toISOString();
+        query.gte("transaction_date", start)
+            .lte("transaction_date", end)
+    }
+    
     const { data: account_details, error } = await query
 
     if (error) {
