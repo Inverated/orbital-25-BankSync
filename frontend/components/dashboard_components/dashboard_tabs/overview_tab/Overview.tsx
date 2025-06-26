@@ -79,13 +79,13 @@ export default function Overview() {
                                 </div>
                             </div>
 
-                            {index < accountArray.length - 1 && <hr />}
-
                             {expandAccount === account.account_no && (
                                 <div>
                                     <MoneyInMoneyOut account_no={account.account_no!} />
                                 </div>
                             )}
+
+                            {index < accountArray.length - 1 && <hr className="my-2"/>}
                         </div>
                     )}
                 </div>
