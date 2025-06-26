@@ -1,8 +1,8 @@
 import { StatementResponse, uploadReturnData } from "@/utils/types";
 import uploadFile from "@/utils/uploadFile";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import { MdFileUpload, MdUploadFile } from "react-icons/md";
 import PreviewTable from "./PreviewTable";
+import { FileUp, Upload } from "lucide-react";
 
 export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
@@ -113,9 +113,9 @@ export default function UploadButton() {
 
     return (
         <div>
-            <MdFileUpload
+            <Upload
                 onClick={() => setDialogueStatus(true)}
-                className={'mx-4 border border-black items-center rounded-lg hover:cursor-pointer'} />
+                className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'} />
             {uploadDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -127,7 +127,7 @@ export default function UploadButton() {
                             htmlFor="dropzone-file"
                             className="z-100 flex flex-col items-center justify-center w-full h-32 border-2 border-black border-dashed rounded-lg cursor-pointer hover:bg-gray-300">
                             <div className="flex flex-col items-center justify-center">
-                                <MdUploadFile />
+                                <FileUp />
                                 <p className="mb-2 text-sm text-gray-500">
                                     <span className="font-semibold">Click to upload</span> drag and drop
                                 </p>
