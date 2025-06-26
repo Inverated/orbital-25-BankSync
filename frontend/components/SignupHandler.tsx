@@ -1,8 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { CiUser } from "react-icons/ci";
-import { RiLockPasswordFill } from "react-icons/ri";
+import { UserRoundPen, KeyRound } from "lucide-react";
 
 export default function Signup() {
     const router = useRouter();
@@ -54,31 +53,30 @@ export default function Signup() {
             </div>
             {/* use form instead of div onclick for keyboard accessibility*/}
             <form onSubmit={signupUser}>
-                <div className="my-3 flex bg-gray-300 rounded-lg">
-                    <CiUser className="text-2xl" />
+                <div className="my-2 flex bg-gray-300 rounded-lg">
+                    <UserRoundPen className="m-1" />
                     <input
                         type="email"
                         id="email"
                         placeholder="example@email.com"
-                        className="mx-2 bg-transparent w-full" />
+                        className="bg-transparent w-full" />
                 </div>
-                <div className="my-3 flex bg-gray-300 rounded-lg">
-                    <RiLockPasswordFill className="text-2xl" />
+                <div className="my-2 flex bg-gray-300 rounded-lg">
+                    <KeyRound className="m-1" />
                     <input
                         type="password"
                         id='password'
                         placeholder="Enter new password"
-                        className="mx-2 bg-transparent w-full"
+                        className="bg-transparent w-full" 
                         onChange={updatePasswordSimilarity} />
-
                 </div>
-                <div className="my-3 flex bg-gray-300 rounded-lg">
-                    <RiLockPasswordFill className="text-2xl" />
+                <div className="my-2 flex bg-gray-300 rounded-lg">
+                    <KeyRound className="m-1" />
                     <input
                         type="password"
                         id='confirmPassword'
                         placeholder='Confirm your password'
-                        className="mx-2 bg-transparent w-full"
+                        className="bg-transparent w-full"
                         onChange={updatePasswordSimilarity} />
                 </div>
                 <div className="my-2">

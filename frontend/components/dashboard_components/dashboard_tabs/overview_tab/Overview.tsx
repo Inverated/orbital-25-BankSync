@@ -1,14 +1,16 @@
 import { Account } from "@/utils/types"
 import { getAccountDetails, getExpenses, getIncome } from "@/lib/supabase_query"
 import { useEffect, useState } from "react"
+import MoneyInMoneyOut from "./MoneyInMoneyOut";
 
 export default function Overview() {
-    const [totalBal, setTotalBal] = useState(0.0)
-    const [income, setIncome] = useState(0.0)
-    const [expenses, setExpenses] = useState(0.0)
-    const [isLoaded, setLoadingStatus] = useState(false)
+    const [totalBal, setTotalBal] = useState(0.0);
+    const [income, setIncome] = useState(0.0);
+    const [expenses, setExpenses] = useState(0.0);
+    const [isLoaded, setLoadingStatus] = useState(false);
 
-    const [accountArray, setAccount] = useState<Partial<Account>[]>([])
+    const [accountArray, setAccount] = useState<Partial<Account>[]>([]);
+    const [expandAccount, setExpandAccount] = useState<string | null>(null);
 
     //change to store query locally and retrieve instead of querying every time
     useEffect(() => {
@@ -43,11 +45,12 @@ export default function Overview() {
     }, [])
 
     const expandTotalBal = () => {
-        const expanded_account = document.getElementById("expanded_account")
+        const expanded_account = document.getElementById("expanded_account");
         if (expanded_account?.className.includes('hidden')) {
-            expanded_account?.classList.remove('hidden')
+            expanded_account?.classList.remove('hidden');
         } else {
-            expanded_account?.classList.add('hidden')
+            expanded_account?.classList.add('hidden');
+            setExpandAccount(null);
         }
     }
 
@@ -58,28 +61,43 @@ export default function Overview() {
                 <label className="text-2xl hover:cursor-pointer">
                     <b>Total balance:</b> ${totalBal.toFixed(2)}
                 </label>
+                
                 <div id="expanded_account" className="hidden">
-                    {accountArray.map((accounts, index) =>
-                        <div key={accounts.id} className="rounded-lg">
-                            <div className="m-2 flex justify-between">
+                    {accountArray.map((account, index) =>
+                        <div key={account.id} className="rounded-lg">
+                            <div className="m-2 flex justify-between hover:cursor-pointer" 
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    setExpandAccount(expandAccount == account.account_no ? null : account.account_no!)
+                                }}>
                                 <div>
-                                    <b>{accounts.account_name}:</b> {accounts.account_no}
+                                    <b>{account.account_name}:</b> {account.account_no}
                                 </div>
+                                
                                 <div>
-                                    ${accounts.balance ? accounts.balance.toFixed(2) : '0.00'}
+                                    ${account.balance ? account.balance.toFixed(2) : '0.00'}
                                 </div>
                             </div>
-                            {index < accountArray.length - 1 && <hr />}
+
+                            {expandAccount === account.account_no && (
+                                <div>
+                                    <MoneyInMoneyOut account_no={account.account_no!} />
+                                </div>
+                            )}
+
+                            {index < accountArray.length - 1 && <hr className="my-2"/>}
                         </div>
                     )}
                 </div>
             </div>
+            
             <div className="flex justify-between w-2/3">
                 <div className="justify-items-start w-1/1 py-3 px-7 mr-3 border border-black rounded-lg">
                     <label className="text-2xl">
                         <b>Income:</b> ${income.toFixed(2)}
                     </label>
                 </div>
+                
                 <div className="justify-items-start w-1/1 py-3 px-7 ml-3 border border-black rounded-lg">
                     <label className="text-2xl">
                         <b>Expenses:</b> ${expenses.toFixed(2)}

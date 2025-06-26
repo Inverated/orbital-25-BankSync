@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { FaGithub } from "react-icons/fa";
-import { FaGoogle } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { redirect, useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js";
 import LoginHandler from "@/components/LoginHandler";
 import { supabase } from "@/lib/supabase";
-import { redirect, useRouter } from "next/navigation";
 
 export default function Login() {
     const [currentSession, setSession] = useState<Session | null>(null)
@@ -50,6 +50,7 @@ export default function Login() {
     }
 
     const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
+    
     return (
         <div className={(currentSession == null && sessionLoaded ? '' : 'hidden ') + "flex justify-center items-center h-screen"}>
             <div className="w-[400]">
@@ -78,7 +79,7 @@ export default function Login() {
 
                 <div className={externalAuthButtonStyle}
                     onClick={() => handleOAuthLogin('google')} >
-                    <FaGoogle />
+                    <FcGoogle />
                     <span className="mx-2">Sign in with Google</span>
                 </div>
                 <div className={externalAuthButtonStyle}
