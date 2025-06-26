@@ -5,6 +5,7 @@ import { Line } from "react-chartjs-2";
 import { useUserId } from "@/context/UserContext";
 import { getTransactionDetails } from "@/lib/supabase_query";
 
+
 interface IncomeExpensesProps {
     startDate: Dayjs | null;
     endDate: Dayjs | null;
@@ -75,6 +76,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                     }
                 }))
                 const data: MonthlyIncomeAndExpenses[] = Array.from(map.entries()).map(([date, { income, expenses }]) => ({ date, income, expenses }))
+
                 setDataPoints(data);
 
                 const totalIncome = data.reduce((sum, d) => sum + d.income, 0);
@@ -93,10 +95,11 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
             setDataPoints([]);
             setTotalIncome(0.0);
             setTotalExpenses(0.0);
-
+          
             setLoading(false);
         }
     }, [userId, startDate, endDate])
+
 
     const chartData = {
         labels: dataPoints.map(d => d.date),

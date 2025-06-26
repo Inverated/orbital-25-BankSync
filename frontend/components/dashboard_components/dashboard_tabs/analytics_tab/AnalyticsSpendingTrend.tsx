@@ -82,6 +82,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
         }
     }, [userId, startDate, endDate])
 
+
     const chartData = {
         labels: dataPoints.map(d => d.date),
         datasets: [

@@ -2,7 +2,6 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { UserRoundPen, KeyRound } from "lucide-react";
 
-
 export default function Login() {
     const router = useRouter()
     

@@ -66,17 +66,6 @@ export async function getTransactionDetails(
     return decrypted
 }
 
-// Analytics tab - Spending by Category
-export async function getTransactionCategories(): Promise<{ category: string }[]> {
-    const { data: transaction_categories, error } = await supabase
-        .rpc("gettransactioncategories");
-
-    if (error) {
-        throw error.message;
-    }
-
-    return transaction_categories;
-}
 
 export async function getAccountDetails(
     userId: string,

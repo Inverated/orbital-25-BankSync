@@ -57,6 +57,7 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
         fetchData();
     }, [userId, account_no]);
 
+
     const chartData = {
         labels: dataPoints.map(d => d.date),
         datasets: [
@@ -94,6 +95,7 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
                 </div>
             ) : (
                 <Bar data={chartData} options={chartOptions} />
+
             )}
         </div>
     )

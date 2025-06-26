@@ -14,8 +14,6 @@ export default function Overview() {
     const [expandAccount, setExpandAccount] = useState<string | null>(null);
     const userId = useUserId();
 
-
-    //change to store query locally and retrieve instead of querying every time
     useEffect(() => {
         getAccountDetails(userId).then(arr => {
             let totalBalance = 0
