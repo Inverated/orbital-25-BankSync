@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { LineChart } from "lucide-react";
 import { Dayjs } from "dayjs";
 import { Line } from "react-chartjs-2";
-import { getDepositsByDate, getTransactionsByDate } from "@/lib/supabase_query";
+import { getDepositsByDate, getTransactionDetailByDate } from "@/lib/supabase_query";
 
 interface IncomeExpensesProps {
     startDate: Dayjs | null;
@@ -58,7 +58,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                         const income = deposits
                             .reduce((sum, deposit) => sum + (Number(deposit.deposit_amount) || 0), 0);
 
-                        const transactions = await getTransactionsByDate(month);
+                        const transactions = await getTransactionDetailByDate(month);
                         const expenses = transactions
                             .reduce((sum, transaction) => sum + (Number(transaction.withdrawal_amount) || 0), 0);
                         

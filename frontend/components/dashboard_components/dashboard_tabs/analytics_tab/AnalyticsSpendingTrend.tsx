@@ -1,4 +1,4 @@
-import { getTransactionsByDate } from "@/lib/supabase_query";
+import { getTransactionDetailByDate } from "@/lib/supabase_query";
 import { Dayjs } from "dayjs";
 import { LineChart } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -50,7 +50,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
 
                 const data = await Promise.all(
                     months.map(async (month) => {
-                        const transactions = await getTransactionsByDate(month);
+                        const transactions = await getTransactionDetailByDate(month);
                         const spending = transactions
                             .reduce((sum, transaction) => sum + (Number(transaction.withdrawal_amount) || 0), 0);
                         
