@@ -2,7 +2,7 @@
 
 import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
-import { MdOutlineSettings } from "react-icons/md";
+import { Settings } from "lucide-react";
 import OptionMenu from "./OptionMenu";
 import UploadButton from "./upload_util/UploadButton";
 
@@ -33,17 +33,21 @@ export default function NavBar(user: { user: User | undefined; }) {
     }, [])
 
     return (
-        <div className='border border-black'>
+        <div>
             <div className='flex justify-between my-7 mx-4'>
                 <div>
                     <div className='text-4xl'>Dashboard</div>
-                    <div className="text-xl pt-3">Welcome {user.user?.email?.slice(0, user.user.email.indexOf('@')).replace(/\d+$/, '')}</div>
+                    <div className="text-xl pt-3">Welcome {user.user?.email?.slice(0, user.user.email.indexOf('@'))}</div>
                 </div>
                 <div className='flex justify-between text-5xl'>
-                    <UploadButton />
+                    <div>
+                        <UploadButton />
+                    </div>
                     <div id='optionMenu'>
-                        <MdOutlineSettings onClick={() => setSettingOpen(!settingsIsOpened)}
-                            className={'mx-4 border border-black items-center rounded-lg hover:cursor-pointer'} />
+                        <Settings 
+                            onClick={() => setSettingOpen(!settingsIsOpened)}
+                            className='mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer' 
+                        />
                         <div className='relative'>
                             {settingsIsOpened && <OptionMenu />}
                         </div>

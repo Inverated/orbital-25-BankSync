@@ -1,24 +1,79 @@
-import AnalyticsDatePicker from "./AnalyticsDatePicker";
+import { useState } from "react";
 import IncomeExpenses from "./AnalyticsIncomeVsExpenses";
 import SpendingCategory from "./AnalyticsSpendingCategory";
 import SpendingTrend from "./AnalyticsSpendingTrend";
-
+import { Dayjs } from "dayjs";
+import { Ban, MousePointer2 } from "lucide-react";
+import { Alert } from "@mui/material";
+import AnalyticsDatePicker from "@/utils/DatePicker";
 
 export default function Analytics() {
+    const [startDate, setStartDate] = useState<Dayjs | null>(null);
+    const [endDate, setEndDate] = useState<Dayjs | null>(null);
+
+    const nullDates = !startDate && !endDate;
+    const invalidDate = 
+        (!startDate && endDate) || 
+        (startDate && !endDate) || 
+        (startDate && endDate && startDate.isAfter(endDate));
+
     return(
-        <div className="flex flex-col relative z-0">
-            <div className="flex flex-row items-center self-start border border-black p-5 m-5 rounded-lg gap-2">
-                <p>Date: </p>
-                <AnalyticsDatePicker label="Start Date" />
-                <p>to</p>
-                <AnalyticsDatePicker label="End Date" />
+        <div className="flex flex-col">
+            <div className="border border-black p-3 m-5 rounded-lg">
+                <div className="flex flex-row items-center p-2 gap-2">
+                    <AnalyticsDatePicker 
+                        label="Start Date"
+                        value={startDate}
+                        onChange={setStartDate} 
+                    />
+
+                    <p>to</p>
+
+                    <AnalyticsDatePicker 
+                        label="End Date" 
+                        value={endDate}
+                        onChange={setEndDate}
+                    />
+                </div>
+
+                {nullDates && (
+                    <Alert
+                        sx={{ 
+                            position: "static",
+                            alignItems: "center",
+                            display: "flex",
+
+                        }}
+                        severity="info"
+                        icon={<MousePointer2 />}
+                        className="mt-2"
+                    >
+                        Please select a date range.
+                    </Alert>
+                )}
+                
+                {invalidDate && (
+                    <Alert
+                        sx={{ 
+                            position: "static",
+                            alignItems: "center",
+                            display: "flex",
+                        }}
+                        severity="error"
+                        icon={<Ban className="w-8 h-8"/>}
+                        className="mt-2"
+                    >
+                        <div className="font-bold">Invalid date</div>
+                        <div className="text-sm">Select a valid date range to see your anlaysis.</div>
+                    </Alert>
+                )}
             </div>
 
-            <SpendingTrend />
+            <SpendingTrend startDate={startDate} endDate={endDate} />
             
-            <div className="flex flex-row justify-center mx-5 my-5 gap-5">
-                <SpendingCategory />
-                <IncomeExpenses />
+            <div className="flex flex-row justify-center m-5 gap-5">
+                <SpendingCategory startDate={startDate} endDate={endDate} />
+                <IncomeExpenses startDate={startDate} endDate={endDate} />
             </div>
         </div>
     )

@@ -33,7 +33,7 @@ export async function getTransactionDetails(
     selection: (keyof Transaction)[] = [],
     condition: { key: keyof Transaction, value: string[] }[] = [],
     ascending_date: true | false = false,
-    date: Dayjs | null = null
+    date: { startDate: Dayjs, endDate: Dayjs } | null = null
 ): Promise<Transaction[]> {
     const query = supabase
         .from('encryptedTransactionDetails')
@@ -45,8 +45,9 @@ export async function getTransactionDetails(
     })
 
     if (date) {
-        const start = date.startOf("month").toISOString();
-        const end = date.endOf("month").toISOString();
+        const start = date.startDate.startOf("month").toISOString();
+        const end = date.endDate.endOf("month").toISOString();
+        console.log(start, end)
         query.gte("transaction_date", start)
             .lte("transaction_date", end)
     }
@@ -63,6 +64,18 @@ export async function getTransactionDetails(
     const fixedTying = transaction_details as unknown as EncryptedTransaction[]
     const decrypted = await decryptTransaction(fixedTying)
     return decrypted
+}
+
+// Analytics tab - Spending by Category
+export async function getTransactionCategories(): Promise<{ category: string }[]> {
+    const { data: transaction_categories, error } = await supabase
+        .rpc("gettransactioncategories");
+
+    if (error) {
+        throw error.message;
+    }
+
+    return transaction_categories;
 }
 
 export async function getAccountDetails(

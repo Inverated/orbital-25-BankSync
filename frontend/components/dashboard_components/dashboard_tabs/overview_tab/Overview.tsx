@@ -48,7 +48,7 @@ export default function Overview() {
                 }, 0))
 
             })
-    }, [userId])
+    }, [userId, expandAccount])
 
     const expandTotalBal = () => {
         const expanded_account = document.getElementById("expanded_account");
@@ -87,7 +87,7 @@ export default function Overview() {
 
                             {expandAccount === account.account_no && (
                                 <div>
-                                    <MoneyInMoneyOut account_no={account.account_no!} />
+                                    <MoneyInMoneyOut account_no={account.account_no} />
                                 </div>
                             )}
 

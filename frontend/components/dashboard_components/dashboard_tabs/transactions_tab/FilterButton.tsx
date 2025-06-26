@@ -45,7 +45,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [filterDialogue])
+    }, [userId, filterDialogue])
 
     const updateAccountSelection = (account_no: string, checked: boolean) => {
         const index = selectedAccount.current.findIndex(no => no == account_no)

@@ -6,8 +6,8 @@ import { useUserId } from "@/context/UserContext";
 
 export default function Accounts() {
     const [accounts, setAccounts] = useState<Account[]>([]);
-    const userId = useUserId();
-    
+
+    const userId = useUserId()
     useEffect(() => {
         getAccountDetails(userId).then(data => {
             if (data != null) {

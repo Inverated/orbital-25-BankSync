@@ -1,11 +1,11 @@
 import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Transaction_Row from "./Transaction_Row";
-import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { Transaction } from "@/utils/types";
 import FilterButton from "./FilterButton";
 import ExportButton from "./ExportButton";
 import { useUserId } from "@/context/UserContext";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
@@ -152,7 +152,7 @@ export default function Transactions() {
                 {
                     transactionEntry.slice(
                         (pageNo - 1) * NUMBER_OF_ENTRIES_PER_PAGE,
-                        Math.min(totalEntries , pageNo * NUMBER_OF_ENTRIES_PER_PAGE)
+                        Math.min(totalEntries, pageNo * NUMBER_OF_ENTRIES_PER_PAGE)
                     )
                         .map((entry) =>
                             <Transaction_Row
@@ -161,13 +161,13 @@ export default function Transactions() {
                                 uniqueCategory={[...uniqueCategory]} />
                         )}
                 <div className='my-10 flex items-center justify-center'>
-                    <FaAngleDoubleLeft className='hover:cursor-pointer' onClick={() => addPageNo(-10)} />
-                    <FaAngleLeft className='hover:cursor-pointer' onClick={() => addPageNo(-1)} />
+                    <ChevronsLeft className='hover:cursor-pointer' onClick={() => addPageNo(-10)} />
+                    <ChevronLeft className='hover:cursor-pointer' onClick={() => addPageNo(-1)} />
                     <div className='px-5 hover:cursor-pointer' onClick={() => setPageDialogue(true)}>
                         {pageNo} of {maxPageNo.current}
                     </div>
-                    <FaAngleRight className='hover:cursor-pointer' onClick={() => addPageNo(1)} />
-                    <FaAngleDoubleRight className='hover:cursor-pointer' onClick={() => addPageNo(10)} />
+                    <ChevronRight className='hover:cursor-pointer' onClick={() => addPageNo(1)} />
+                    <ChevronsRight className='hover:cursor-pointer' onClick={() => addPageNo(10)} />
                 </div>
             </div>
 

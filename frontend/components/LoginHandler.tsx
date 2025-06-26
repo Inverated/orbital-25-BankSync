@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import { CiUser } from "react-icons/ci";
-import { RiLockPasswordFill } from "react-icons/ri";
+import { UserRoundPen, KeyRound } from "lucide-react";
+
 
 export default function Login() {
     const router = useRouter()
@@ -22,7 +22,6 @@ export default function Login() {
 
         router.push('/dashboard')
     }
-
     return (
         <div>
             <div className="text-center py-4">
@@ -30,21 +29,21 @@ export default function Login() {
             </div>
             <form action={loginUser}>
                 <div className="my-2 flex bg-gray-300 rounded-lg">
-                    <CiUser className="text-2xl" />
+                    <UserRoundPen className="m-1"/>
                     <input
                         id='loginEmailInput'
                         type="email"
                         name="email"
                         placeholder="example@email.com"
-                        className="mx-2 bg-transparent w-full" />
+                        className="bg-transparent w-full" />
                 </div>
                 <div className="my-2 flex bg-gray-300 rounded-lg">
-                    <RiLockPasswordFill className="text-2xl" />
+                    <KeyRound className="m-1" />
                     <input
                         type="password"
                         name="password"
                         placeholder="*****"
-                        className="mx-2 bg-transparent w-full" />
+                        className="bg-transparent w-full" />
                 </div>
 
                 <div>
