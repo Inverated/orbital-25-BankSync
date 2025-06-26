@@ -99,15 +99,15 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
             {
                 label: "Income",
                 data: dataPoints.map(d => d.income),
-                borderColor: "#064FF0",
-                backgroundColor: "#064FF0",
+                borderColor: "hsl(219, 87.70%, 61.80%)",
+                backgroundColor: "hsl(219, 87.70%, 61.80%)",
                 fill: false,
             },
             {
                 label: "Expenses",
                 data: dataPoints.map(d => d.expenses),
-                borderColor: "#FF3030",
-                backgroundColor: "#FF3030",
+                borderColor: "hsl(0, 93.50%, 69.60%)",
+                backgroundColor: "hsl(0, 93.50%, 69.60%)",
                 fill: false,
             }
         ],
