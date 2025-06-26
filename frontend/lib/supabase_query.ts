@@ -3,6 +3,7 @@ import { supabase } from "./supabase"
 
 //need to pass in session later for RLS instead of getting session here
 
+// Overview tab - Account Balance & Accounts tab - Balance
 export async function getAccountDetails() {
     const { data: account_details, error } = await supabase
         .from("account_details")
@@ -16,6 +17,7 @@ export async function getAccountDetails() {
     return account_details;
 }                
 
+// Overview tab - Income
 export async function getIncome() {
     const { data: transaction_details, error } = await supabase
         .from("transaction_details")
@@ -29,6 +31,7 @@ export async function getIncome() {
     return transaction_details;
 }
 
+// Overview tab - Expenses
 export async function getExpenses() {
     const { data: transaction_details, error } = await supabase
         .from("transaction_details")
@@ -42,6 +45,7 @@ export async function getExpenses() {
     return transaction_details; 
 }
 
+// Tranactions tab
 export async function getTransactionDetail() {
     const { data: transaction_details, error } = await supabase
         .from("transaction_details")
@@ -56,6 +60,7 @@ export async function getTransactionDetail() {
     return transaction_details;
 }
 
+// Accounts tab - All Transactions
 export async function getTransactionDetailByAccountNo(account_no: string) {
     const { data: transaction_details, error } = await supabase
         .from("transaction_details")
@@ -70,6 +75,7 @@ export async function getTransactionDetailByAccountNo(account_no: string) {
     return transaction_details;
 }
 
+// Analytics tab - Spending Trend, Income vs Expenses
 export async function getTransactionDetailByDate(date: Dayjs) {
     const start = date.startOf("month").toISOString();
     const end = date.endOf("month").toISOString();
@@ -88,6 +94,27 @@ export async function getTransactionDetailByDate(date: Dayjs) {
     return transaction_details;
 }
 
+// Overview tab - Money In Money Out
+export async function getTransactionDetailByAccountAndDate(account_no: string, date: Dayjs) {
+    const start = date.startOf("month").toISOString();
+    const end = date.endOf("month").toISOString();
+
+    const { data: transaction_details, error } = await supabase
+        .from("transaction_details")
+        .select("transaction_date, deposit_amount, withdrawal_amount")
+        .gte("transaction_date", start)
+        .lte("transaction_date", end)
+        // .eq("user_id", session.user.id)
+        .eq("account_no", account_no)
+    
+    if (error) {
+        throw error.message;
+    }
+
+    return transaction_details;
+}
+
+// Analytics tab - Spending by Category
 export async function getTransactionCategories(): Promise<{ category: string }[]> {
     const { data: transaction_categories, error } = await supabase
         .rpc("gettransactioncategories");
@@ -99,6 +126,7 @@ export async function getTransactionCategories(): Promise<{ category: string }[]
     return transaction_categories;
 }
 
+// Analytics tab - Income vs Expenses
 export async function getDepositsByDate(date: Dayjs) {
     const start = date.startOf("month").toISOString();
     const end = date.endOf("month").toISOString();
@@ -117,6 +145,8 @@ export async function getDepositsByDate(date: Dayjs) {
     return transaction_details;
 }
 
+
+// Analytics tab - Spending by Category
 export async function getSpendingByCategory(category: string) {
     const { data: transaction_details, error } = await supabase
         .from("transaction_details")
