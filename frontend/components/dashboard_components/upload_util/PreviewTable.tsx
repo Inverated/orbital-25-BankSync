@@ -11,7 +11,6 @@ interface Props {
 
 export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate }: Props) {
     const [editingId, setEditId] = useState(-1)
-    const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit"
 
     const handleTransactionChange = (index: number, field: keyof Transaction, newValue: string | number) => {
         transactionData[index] = { ...transactionData[index], [field]: newValue }
@@ -30,6 +29,8 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
         const updatedStatement: StatementResponse = { hasData: true, account: accountData, transactions: transactionData }
         onUpdate(currIndex, updatedStatement)
     }
+
+    const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit"
 
     return (
         <>

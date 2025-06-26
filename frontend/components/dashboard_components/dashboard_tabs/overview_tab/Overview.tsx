@@ -1,5 +1,6 @@
+import { useUserId } from "@/context/UserContext";
+import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query";
 import { Account } from "@/utils/types"
-import { getAccountDetails, getExpenses, getIncome } from "@/lib/supabase_query"
 import { useEffect, useState } from "react"
 import MoneyInMoneyOut from "./MoneyInMoneyOut";
 
@@ -11,14 +12,14 @@ export default function Overview() {
 
     const [accountArray, setAccount] = useState<Partial<Account>[]>([]);
     const [expandAccount, setExpandAccount] = useState<string | null>(null);
+    const userId = useUserId();
 
-    //change to store query locally and retrieve instead of querying every time
     useEffect(() => {
-        getAccountDetails().then(arr => {
+        getAccountDetails(userId).then(arr => {
             let totalBalance = 0
             const accountArr: Partial<Account>[] = []
             arr?.forEach(entry => {
-                totalBalance += entry.balance
+                if (entry.balance) totalBalance += entry.balance
                 accountArr.push({
                     id: entry.id,
                     account_name: entry.account_name,
@@ -31,18 +32,21 @@ export default function Overview() {
             setLoadingStatus(true)
         })
 
-        getIncome().then(arr => {
-            if (arr != null) {
-                setIncome(arr.reduce((x, y) => x + y.deposit_amount, 0))
-            }
-        })
+        getTransactionDetails(userId, ['deposit_amount', 'withdrawal_amount'])
+            .then(data => {
+                setIncome(data.reduce((x, y) => {
+                    if (y.deposit_amount) {
+                        return x + y.deposit_amount
+                    } else return x
+                }, 0))
+                setExpenses(data.reduce((x, y) => {
+                    if (y.withdrawal_amount) {
+                        return x + y.withdrawal_amount
+                    } else return x
+                }, 0))
 
-        getExpenses().then(arr => {
-            if (arr != null) {
-                setExpenses(arr.reduce((x, y) => x + y.withdrawal_amount, 0))
-            }
-        })
-    }, [])
+            })
+    }, [userId, expandAccount])
 
     const expandTotalBal = () => {
         const expanded_account = document.getElementById("expanded_account");
@@ -81,7 +85,7 @@ export default function Overview() {
 
                             {expandAccount === account.account_no && (
                                 <div>
-                                    <MoneyInMoneyOut account_no={account.account_no!} />
+                                    <MoneyInMoneyOut account_no={account.account_no} />
                                 </div>
                             )}
 

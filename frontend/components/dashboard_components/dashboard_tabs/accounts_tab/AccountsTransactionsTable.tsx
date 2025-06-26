@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { getTransactionDetailByAccountNo } from "@/lib/supabase_query";
+import { getTransactionDetails } from "@/lib/supabase_query";
 import { Account, Transaction } from "@/utils/types";
 import TransactionAmount from "./TransactionAmount";
+import { useUserId } from "@/context/UserContext";
 
 interface AccountsTransactionsTableProps {
     account: Account;
@@ -9,56 +10,59 @@ interface AccountsTransactionsTableProps {
 
 export default function AccountsTransactionsTable({ account }: AccountsTransactionsTableProps) {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const userId = useUserId();
 
     useEffect(() => {
-        getTransactionDetailByAccountNo(account.account_no).then(data => {
-            if (data != null) {
-                setTransactions(data);
-            }
-        })
-    }, [])
-    
+        getTransactionDetails(userId, undefined, [{ key: 'account_no', value: [account.account_no] }])
+            .then(data => {
+                if (data != null) {
+                    setTransactions(data)
+                }
+            })
+    }, [userId])
+
     return (
-        <table className="table-fixed" 
-            style={{margin: "0 auto", width: "100%"}}>
+        <table className="table-fixed"
+            style={{ margin: "0 auto", width: "100%" }}>
             <thead>
                 <tr>
-                    <th className="p-1 text-left" 
+                    <th className="p-1 text-left"
                         style={{ width: "60%" }}>
-                            Description
+                        Description
                     </th>
-                    
-                    <th className="p-1 text-left" 
+
+                    <th className="p-1 text-left"
                         style={{ width: "20%" }}>
-                            Amount
+                        Amount
                     </th>
-                    
-                    <th className="p-1 text-left" 
+
+                    <th className="p-1 text-left"
                         style={{ width: "20%" }}>
-                            Date
+                        Date
                     </th>
                 </tr>
             </thead>
 
             <tbody>
-                { transactions.map((transaction, index) => (
+                {transactions.map((transaction, index) => (
                     <tr key={index}>
-                        <td className="p-1 text-left" 
-                            style={{ 
-                                width: "60%", 
-                                wordBreak: "break-word", 
-                                overflowWrap: "anywhere" }}>
-                                    {transaction.transaction_description}
+                        <td className="p-1 text-left"
+                            style={{
+                                width: "60%",
+                                wordBreak: "break-word",
+                                overflowWrap: "anywhere"
+                            }}>
+                            {transaction.transaction_description}
                         </td>
-                        
-                        <td className="p-1 text-left" 
+
+                        <td className="p-1 text-left"
                             style={{ width: "20%" }}>
-                                <TransactionAmount transaction={transaction}/>
+                            <TransactionAmount transaction={transaction} />
                         </td>
-                        
-                        <td className="p-1 text-left" 
+
+                        <td className="p-1 text-left"
                             style={{ width: "20%" }}>
-                                {transaction.transaction_date}
+                            {transaction.transaction_date}
                         </td>
                     </tr>
                 ))}

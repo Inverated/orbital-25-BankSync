@@ -2,14 +2,13 @@
 
 import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
-import { Settings, Upload } from "lucide-react";
+import { Settings } from "lucide-react";
 import OptionMenu from "./OptionMenu";
 import UploadButton from "./upload_util/UploadButton";
 
 
 export default function NavBar(user: { user: User | undefined; }) {
     const [settingsIsOpened, setSettingOpen] = useState(false)
-    const logoStyle = 'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'
 
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == 'Escape') {
@@ -42,12 +41,12 @@ export default function NavBar(user: { user: User | undefined; }) {
                 </div>
                 <div className='flex justify-between text-5xl'>
                     <div>
-                        <Upload className={logoStyle} />
+                        <UploadButton />
                     </div>
                     <div id='optionMenu'>
                         <Settings 
                             onClick={() => setSettingOpen(!settingsIsOpened)}
-                            className={logoStyle} 
+                            className='mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer' 
                         />
                         <div className='relative'>
                             {settingsIsOpened && <OptionMenu />}

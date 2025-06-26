@@ -2,17 +2,19 @@ import { useEffect, useState } from "react";
 import { getAccountDetails } from "@/lib/supabase_query";
 import { Account } from "@/utils/types";
 import AccountsExpand from "./AccountsExpand";
+import { useUserId } from "@/context/UserContext";
 
 export default function Accounts() {
     const [accounts, setAccounts] = useState<Account[]>([]);
 
+    const userId = useUserId()
     useEffect(() => {
-        getAccountDetails().then(data => {
+        getAccountDetails(userId).then(data => {
             if (data != null) {
                 setAccounts(data);
             }
         })
-    }, [])
+    }, [userId])
 
     return(
         <div className="items-center justify-center">

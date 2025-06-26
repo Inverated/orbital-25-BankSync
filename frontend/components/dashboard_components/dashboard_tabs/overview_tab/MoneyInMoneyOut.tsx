@@ -1,4 +1,5 @@
-import { getTransactionDetailByAccountAndDate } from "@/lib/supabase_query";
+import { useUserId } from "@/context/UserContext";
+import { getTransactionDetails } from "@/lib/supabase_query";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
@@ -13,34 +14,40 @@ interface MonthlyMoneyInMoneyOut {
     moneyOut: number;
 }
 
-export default function MoneyInMoneyOut({ account_no } : MoneyInMoneyOutProps) {
+export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
     const [loading, setLoading] = useState(true);
 
     const [dataPoints, setDataPoints] = useState<MonthlyMoneyInMoneyOut[]>([]);
+
+    const userId = useUserId()
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
 
-            const months = Array.from({ length: 6 }, 
+            const months = Array.from({ length: 6 },
                 (_, i) => dayjs().subtract(i, "month").startOf("month"));
 
-            const data = await Promise.all(
-                months.map(async (month) => {
-                    const transactions = await getTransactionDetailByAccountAndDate(account_no, month);
-                    
-                    const moneyIn = transactions
-                        .reduce((sum, transaction) => sum + (Number(transaction.deposit_amount) || 0), 0);
-                    const moneyOut = transactions
-                        .reduce((sum, transaction) => sum + (Number(transaction.withdrawal_amount) || 0), 0);
-                    
-                    return {
-                        date: month.format("MMM YY"),
-                        moneyIn,
-                        moneyOut
-                    }
-                })
-            );
+            const depositAndTransactions = await getTransactionDetails(userId,
+                ['transaction_date', 'deposit_amount', 'withdrawal_amount'],
+                [{ key: 'account_no', value: [account_no] }], false,
+                { startDate: months[months.length - 1], endDate: months[0] })
+
+            const map = new Map<string, { moneyIn: number, moneyOut: number }>(
+                months.map(key => [key.format('MMM YY'), ({ moneyIn: 0.0, moneyOut: 0.0 })])
+            )
+            depositAndTransactions.forEach(entry => months.forEach(month => {
+                const start = month.startOf("month").toISOString();
+                const end = month.endOf("month").toISOString();
+                const curr = month.format('MMM YY')
+                if (entry.transaction_date >= start && entry.transaction_date <= end) {
+                    map.set(curr, {
+                        moneyIn: (map.get(curr)?.moneyIn || 0) + entry.deposit_amount,
+                        moneyOut: (map.get(curr)?.moneyOut || 0) + entry.withdrawal_amount
+                    })
+                }
+            }))
+            const data: MonthlyMoneyInMoneyOut[] = Array.from(map.entries()).map(([date, { moneyIn, moneyOut }]) => ({ date, moneyIn, moneyOut }))
 
             setDataPoints(data.reverse());
 
@@ -48,7 +55,8 @@ export default function MoneyInMoneyOut({ account_no } : MoneyInMoneyOutProps) {
         };
 
         fetchData();
-    }, [account_no]);
+    }, [userId, account_no]);
+
 
     const chartData = {
         labels: dataPoints.map(d => d.date),
@@ -78,15 +86,16 @@ export default function MoneyInMoneyOut({ account_no } : MoneyInMoneyOutProps) {
             },
         }
     }
-    
+
     return (
         <div>
             {loading ? (
                 <div className="text-gray-400 flex flex-col justify-center items-center">
                     Loading data...
                 </div>
-            ) : ( 
-                <Bar data={chartData} options={chartOptions} />                
+            ) : (
+                <Bar data={chartData} options={chartOptions} />
+
             )}
         </div>
     )
