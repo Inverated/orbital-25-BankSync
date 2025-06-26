@@ -1,4 +1,4 @@
-import { Account } from "@/components/types"
+import { Account } from "@/utils/types"
 import { getAccountDetails, getExpenses, getIncome } from "@/lib/supabase_query"
 import { useEffect, useState } from "react"
 import MoneyInMoneyOut from "./MoneyInMoneyOut";

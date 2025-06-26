@@ -1,12 +1,12 @@
-import { getTransactionDetail } from "@/lib/supabase_query";
+import { getAccountDetails, getTransactionDetail } from "@/lib/supabase_query";
 import { useEffect, useState } from "react";
 import Transaction_Row from "./Transaction_Row";
 import { ChevronLeft, ChevronsLeft, ChevronRight, ChevronsRight } from "lucide-react";
-import { Transaction } from "@/components/types";
+import { Transaction } from "@/utils/types";
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
-    
+
     const [transactionEntry, setEntry] = useState<Partial<Transaction>[]>([])
     const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
 
@@ -19,21 +19,40 @@ export default function Transactions() {
     }
 
     useEffect(() => {
-        getTransactionDetail().then(arr => {
-            arr?.forEach(entry => {
-                setUnique(uniqueCategory.add(entry.category))
-                setEntry(prev =>
-                    [...prev, {
-                        id: entry.id,
-                        transaction_description: entry.transaction_description,
-                        account_no: entry.account_no,
-                        withdrawal_amount: entry.withdrawal_amount,
-                        deposit_amount: entry.deposit_amount,
-                        category: entry.category,
-                        transaction_date: entry.transaction_date
-                    }])
+        type AccountDetails = {
+            [account_no: string]: {
+                account_name: string;
+                bank_name: string;
+            }
+        }
+        const accounts: AccountDetails = {}
+        getAccountDetails().then(arr => {
+            arr.forEach(entry => {
+                accounts[entry.account_no] = {
+                    account_name: entry.account_name,
+                    bank_name: entry.bank_name
+                }
             })
-        })
+        }).then(() =>
+            getTransactionDetail().then(arr => {
+                arr.forEach(entry => {
+                    setUnique(uniqueCategory.add(entry.category))
+                    setEntry(prev =>
+                        [...prev, {
+                            id: entry.id,
+                            transaction_description: entry.transaction_description,
+                            account_no: entry.account_no,
+                            withdrawal_amount: entry.withdrawal_amount,
+                            deposit_amount: entry.deposit_amount,
+                            category: entry.category,
+                            transaction_date: entry.transaction_date,
+                            ending_balance: entry.ending_balance,
+                            account_name: accounts[entry.account_no].account_name,
+                            bank_name: accounts[entry.account_no].bank_name
+                        }])
+                })
+            }))
+
         document.getElementById('load_transaction_data')?.classList.remove('hidden')
 
         document.addEventListener('keydown', handleButtonDown)

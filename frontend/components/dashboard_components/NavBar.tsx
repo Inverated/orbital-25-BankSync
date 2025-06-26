@@ -4,6 +4,7 @@ import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { Settings, Upload } from "lucide-react";
 import OptionMenu from "./OptionMenu";
+import UploadButton from "./upload_util/UploadButton";
 
 
 export default function NavBar(user: { user: User | undefined; }) {

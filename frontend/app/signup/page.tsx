@@ -17,11 +17,9 @@ export default function Signup() {
         const getData = async () => {
             const { data, error } = await supabase.auth.getSession()
             if (error) {
-                console.log(error.message)
-            } else {
-                console.log("no error")
-            }
-
+                console.error(error.message)
+            } 
+            
             if (data.session != null) {
                 router.push('/dashboard')
             }
@@ -32,7 +30,10 @@ export default function Signup() {
     }, [router])
 
     const handleOAuthLogin = async (provider: 'github' | 'google') => {
-        const { data, error } = await supabase.auth.signInWithOAuth({ provider });
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: provider,
+        });
+        
         if (error) {
             console.error("OAuth error: " + error);
         } else {
@@ -55,12 +56,6 @@ export default function Signup() {
                     <p>Already have an account?</p>
                     <span className="font-semibold underline">
                         Login
-                    </span>
-                </div>
-
-                <div className="my-2 text-sm flex cursor-pointer">
-                    <span className="font-semibold underline ml-auto">
-                        Forgot your password?
                     </span>
                 </div>
 

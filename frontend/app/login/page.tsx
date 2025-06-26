@@ -17,9 +17,7 @@ export default function Login() {
         const getData = async () => {
             const { data, error } = await supabase.auth.getSession()
             if (error) {
-                console.log(error.message)
-            } else {
-                console.log("no error")
+                console.error(error.message)
             }
 
             if (data.session != null) {
@@ -32,7 +30,9 @@ export default function Login() {
     }, [router])
 
     const handleOAuthLogin = async (provider: 'github' | 'google') => {
-        const { data, error } = await supabase.auth.signInWithOAuth({ provider });
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: provider,
+        });
 
         if (error) {
             console.error("OAuth error: " + error);
@@ -43,11 +43,16 @@ export default function Login() {
 
     const redirectToSignUp = () => redirect("/signup")
 
+    const redirectToForgetPassword = () => {
+        const emailLogin = document.getElementById('loginEmailInput') as HTMLInputElement
+        const message = emailLogin.value == '' ? '' : '?email='+emailLogin.value 
+        router.push('/forgetpassword' + message)
+    }
+
     const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
     
     return (
-        currentSession == null && sessionLoaded &&
-        <div className="flex justify-center items-center h-screen">
+        <div className={(currentSession == null && sessionLoaded ? '' : 'hidden ') + "flex justify-center items-center h-screen"}>
             <div className="w-[400]">
                 <LoginHandler />
 
@@ -59,7 +64,8 @@ export default function Login() {
                     </span>
                 </div>
 
-                <div className="my-2 text-sm flex cursor-pointer">
+                <div className="my-2 text-sm flex cursor-pointer"
+                    onClick={redirectToForgetPassword}>
                     <span className="font-semibold underline ml-auto">
                         Forgot your password?
                     </span>

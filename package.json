@@ -1,11 +1,11 @@
 {
-  "_comment": "Run both frontend and backend from root",
+  "_comment": "cant run both frontend and backend from root using concurrently, like to kill itself",
   "name": "banksync",
   "scripts": {
-    "dev": "concurrently \"npm --prefix frontend run dev\" ",
-    "build": "concurrently \"npm --prefix frontend run build\" ",
-    "start": "concurrently \"npm --prefix frontend run start\" ",
-    "lint": "concurrently \"npm --prefix frontend run lint\" "
+    "dev": "concurrently --raw \" cd frontend && npm run dev \" \" bin\\cmd\\run-dev.cmd \"",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "lint": "npm --prefix frontend run lint"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

@@ -1,4 +1,4 @@
-import { Account } from '@/components/types';
+import { Account } from '@/utils/types';
 import AccountsTransactionsTable from "./AccountsTransactionsTable";
 import { ArrowDown } from "lucide-react";
 
