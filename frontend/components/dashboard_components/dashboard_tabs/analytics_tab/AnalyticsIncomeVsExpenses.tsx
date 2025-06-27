@@ -55,26 +55,30 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
             const fetchData = async () => {
                 setLoading(true);
                 
-                const depositAndTransactions = await getTransactionDetails(userId,
-                    ['transaction_date', 'deposit_amount', 'withdrawal_amount'],
-                    [], false,
-                    { startDate: startDate, endDate: endDate })
+                const depositAndTransactions = await getTransactionDetails({
+                    selection: ['transaction_date', 'deposit_amount', 'withdrawal_amount'],
+                    date: { startDate: startDate, endDate: endDate }
+                });
 
                 const map = new Map<string, { income: number, expenses: number }>(
                     months.map(key => [key.format('MMM YY'), ({ income: 0.0, expenses: 0.0 })])
-                )
+                );
+
                 depositAndTransactions.forEach(entry => months.forEach(month => {
                     const start = month.startOf("month").toISOString();
                     const end = month.endOf("month").toISOString();
-                    const curr = month.format('MMM YY')
+                    const curr = month.format('MMM YY');
+                    
                     if (entry.transaction_date >= start && entry.transaction_date <= end) {
                         map.set(curr, {
                             income: (map.get(curr)?.income || 0) + entry.deposit_amount,
                             expenses: (map.get(curr)?.expenses || 0) + entry.withdrawal_amount
                         })
                     }
-                }))
-                const data: MonthlyIncomeAndExpenses[] = Array.from(map.entries()).map(([date, { income, expenses }]) => ({ date, income, expenses }))
+                }));
+                
+                const data: MonthlyIncomeAndExpenses[] = Array.from(map.entries())
+                    .map(([date, { income, expenses }]) => ({ date, income, expenses }));
 
                 setDataPoints(data);
 
@@ -98,7 +102,6 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
             setLoading(false);
         }
     }, [userId, startDate, endDate])
-
 
     const chartData = {
         labels: dataPoints.map(d => d.date),

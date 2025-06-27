@@ -4,13 +4,12 @@ import Transaction_Row from "./Transaction_Row";
 import { Transaction } from "@/utils/types";
 import FilterButton from "./FilterButton";
 import ExportButton from "./ExportButton";
-import { useUserId } from "@/context/UserContext";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
 
-    const [filterCondiction, setFilterCondition] = useState<{ key: keyof Transaction, value: string[] }[] | undefined>(undefined)
+    const [filterCondition, setFilterCondition] = useState<{ key: keyof Transaction, value: string[] }[] | undefined>(undefined)
     const [isAscending, setIsAscending] = useState(false)
 
     const [transactionEntry, setEntry] = useState<Partial<Transaction>[]>([])
@@ -81,8 +80,6 @@ export default function Transactions() {
         setPageNo(1)
     }, [])
 
-    const userId = useUserId();
-
     useEffect(() => {
         setEntry([])
         currPageRef.current = 1
@@ -96,7 +93,7 @@ export default function Transactions() {
         }
 
         const accounts: AccountDetails = {}
-        getAccountDetails(userId).then(arr => {
+        getAccountDetails({}).then(arr => {
             arr.forEach(entry => {
                 accounts[entry.account_no] = {
                     account_name: entry.account_name,
@@ -105,7 +102,10 @@ export default function Transactions() {
 
             })
         }).then(() =>
-            getTransactionDetails(userId, [], filterCondiction, isAscending).then(arr => {
+            getTransactionDetails({
+                condition: filterCondition,
+                ascending_date: isAscending,
+            }).then(arr => {
                 maxPageNo.current = (Math.ceil(arr.length / 10))
                 setTotalEntries(arr.length)
                 arr.forEach(entry => {
@@ -126,7 +126,8 @@ export default function Transactions() {
                             bank_name: entry.account_no ? accounts[entry.account_no].bank_name : ''
                         }])
                 })
-            }))
+            })
+        )
 
         document.getElementById('load_transaction_data')?.classList.remove('hidden')
 
@@ -134,7 +135,7 @@ export default function Transactions() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [filterCondiction, isAscending])
+    }, [filterCondition, isAscending])
 
     const buttonStyle = 'border border-black mx-3 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
 

@@ -47,25 +47,32 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
     useEffect(() => {
         if (startDate && endDate && !startDate.isAfter(endDate)) {
             const months = getMonths(startDate, endDate);
+            
             const fetchData = async () => {
                 setLoading(true);
-                const depositAndTransactions = await getTransactionDetails(userId,
-                    ['transaction_date', 'withdrawal_amount'],
-                    [], false,
-                    { startDate: startDate, endDate: endDate })
+                
+                const depositAndTransactions = await getTransactionDetails({
+                    selection: ['transaction_date', 'withdrawal_amount'],
+                    date: { startDate: startDate, endDate: endDate }
+                });
+                
                 const map = new Map<string, number>(
                     months.map(key => [key.format('MMM YY'), 0.0])
-                )
+                );
+
                 depositAndTransactions.forEach(entry => months.forEach(month => {
                     const start = month.startOf("month").toISOString();
                     const end = month.endOf("month").toISOString();
-                    const curr = month.format("MMM YY")
+                    const curr = month.format("MMM YY");
+
                     if (entry.transaction_date >= start && entry.transaction_date <= end) {
                         map.set(curr, (map.get(curr) || 0) + entry.withdrawal_amount)
                         return
                     }
-                }))
-                const data: MonthlySpending[] = Array.from(map.entries()).map(([date, spending]) => ({ date, spending }))
+                }));
+
+                const data: MonthlySpending[] = Array.from(map.entries())
+                    .map(([date, spending]) => ({ date, spending }));
 
                 setDataPoints(data);
 
@@ -81,7 +88,6 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
             setLoading(false);
         }
     }, [userId, startDate, endDate])
-
 
     const chartData = {
         labels: dataPoints.map(d => d.date),

@@ -30,7 +30,7 @@ export default function ExportButton() {
     // query data here. Export only filtered items added later
     useEffect(() => {
         resetAll()
-        getTransactionDetails(userId).then(arr => arr.forEach(entry => {
+        getTransactionDetails({}).then(arr => arr.forEach(entry => {
             setTransaction(prev => [...prev, {
                 transaction_date: entry.transaction_date,
                 transaction_description: entry.transaction_description,
@@ -41,7 +41,7 @@ export default function ExportButton() {
                 account_no: entry.account_no,
             }])
         }))
-        getAccountDetails(userId).then(arr => arr.forEach(entry => {
+        getAccountDetails({}).then(arr => arr.forEach(entry => {
             setAccount(prev => [...prev, {
                 bank_name: entry.bank_name,
                 account_no: entry.account_no,

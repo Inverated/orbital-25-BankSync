@@ -13,12 +13,13 @@ export default function AccountsTransactionsTable({ account }: AccountsTransacti
     const userId = useUserId();
 
     useEffect(() => {
-        getTransactionDetails(userId, undefined, [{ key: 'account_no', value: [account.account_no] }])
-            .then(data => {
-                if (data != null) {
-                    setTransactions(data)
-                }
-            })
+        getTransactionDetails({
+            condition: [{ key: 'account_no', value: [account.account_no] }]
+        }).then(data => {
+            if (data != null) {
+                setTransactions(data)
+            }
+        })
     }, [userId])
 
     return (

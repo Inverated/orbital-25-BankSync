@@ -4,15 +4,16 @@ import decryptData from "@/utils/decryptData"
 import { Timestamp } from "next/dist/server/lib/cache-handlers/types";
 import { Dayjs } from "dayjs";
 
-type EncryptedAccount = {
-    id?: number,
-    created_at?: Timestamp;
-    account_no: string;
-    account_name: string;
-    bank_name: string;
-    balance: string;
-    user_id?: string;
-    latest_recorded_date: string;
+type TransactionDetails = {
+    selection?: (keyof Transaction)[];
+    condition?: { key: keyof Transaction, value: string[] }[];
+    ascending_date?: boolean;
+    date?: { startDate: Dayjs, endDate: Dayjs } | null;
+}
+
+type AccountDetails = {
+    selection?: (keyof Account)[];
+    condition?: { key: keyof Account, value: string[] }[];
 }
 
 type EncryptedTransaction = {
@@ -28,17 +29,26 @@ type EncryptedTransaction = {
     ending_balance: string;
 }
 
-export async function getTransactionDetails(
-    userId: string,
-    selection: (keyof Transaction)[] = [],
-    condition: { key: keyof Transaction, value: string[] }[] = [],
-    ascending_date: true | false = false,
-    date: { startDate: Dayjs, endDate: Dayjs } | null = null
-): Promise<Transaction[]> {
+type EncryptedAccount = {
+    id?: number,
+    created_at?: Timestamp;
+    account_no: string;
+    account_name: string;
+    bank_name: string;
+    balance: string;
+    user_id?: string;
+    latest_recorded_date: string;
+}
+
+export async function getTransactionDetails({
+    selection = [],
+    condition = [],
+    ascending_date = false,
+    date = null
+} : TransactionDetails): Promise<Transaction[]> {
     const query = supabase
         .from('encryptedTransactionDetails')
         .select(selection.length == 0 ? '*' : selection.join(','))
-        .eq("user_id", userId)
 
     condition.forEach(({ key, value }) => {
         query.in(key, value)
@@ -47,7 +57,7 @@ export async function getTransactionDetails(
     if (date) {
         const start = date.startDate.startOf("month").toISOString();
         const end = date.endDate.endOf("month").toISOString();
-        console.log(start, end)
+        
         query.gte("transaction_date", start)
             .lte("transaction_date", end)
     }
@@ -63,41 +73,44 @@ export async function getTransactionDetails(
     // no easy workaround that works cause supabase returns GenericStringError as data type when selecting columns dynamically
     const fixedTying = transaction_details as unknown as EncryptedTransaction[]
     const decrypted = await decryptTransaction(fixedTying)
+    
     return decrypted
 }
 
-
-export async function getAccountDetails(
-    userId: string,
-    selection: (keyof Account)[] = [],
-    condition: { key: keyof Account, value: string[] }[] = []
-): Promise<Account[]> {
+export async function getAccountDetails({
+    selection = [],
+    condition = []
+} : AccountDetails): Promise<Account[]> {
     let query = supabase
         .from('encryptedAccountDetails')
         .select(selection.length == 0 ? '*' : selection.join(','))
-        .eq("user_id", userId)
 
     condition.forEach(({ key, value }) => {
         query = query.in(key, value)
     })
+
     const { data: account_details, error } = await query
 
     if (error) {
         throw error.message
     }
+    
     const fixedTyping = account_details as unknown as EncryptedAccount[]
-    const decrypted = await decryptAccounts(fixedTyping)
+    const decrypted = await decryptAccount(fixedTyping)
+    
     return decrypted
 }
 
 async function decryptTransaction(transactions: EncryptedTransaction[]): Promise<Transaction[]> {
     const toBeDecrypted: string[][] = []
+    
     transactions.forEach(transaction => toBeDecrypted.push([
         transaction.transaction_description,
         transaction.withdrawal_amount,
         transaction.deposit_amount,
         transaction.ending_balance
     ]))
+    
     const decryptedList = await decryptData(toBeDecrypted)
 
     const decryptedTransaction: Transaction[] = []
@@ -119,8 +132,9 @@ async function decryptTransaction(transactions: EncryptedTransaction[]): Promise
     return decryptedTransaction
 }
 
-async function decryptAccounts(accounts: EncryptedAccount[]): Promise<Account[]> {
+async function decryptAccount(accounts: EncryptedAccount[]): Promise<Account[]> {
     const toBeDecrypted: string[][] = []
+    
     accounts.forEach(account => toBeDecrypted.push([
         account.balance
     ]))

@@ -1,7 +1,6 @@
 import { Account, Transaction } from "@/utils/types"
 import { supabase } from "./supabase"
 
-
 export async function getTransactionDetails<TransKey extends (keyof Transaction)[]>(
     userId: string,
     selection: (keyof Transaction)[] = [],
