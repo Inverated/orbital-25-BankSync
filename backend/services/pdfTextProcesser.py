@@ -60,9 +60,12 @@ def processDBS(textList: list[str]) -> list[Statement]:
         while len(textList[index]) > 3:
             accountDetail = rmSpaceFromList(textList[index].split('  '))
             try:
-                float(accountDetail[-1].replace(',', ''))
+                float(accountDetail[-1].split(' ')[-1].replace(',', ''))
             except ValueError:
                 # break if last item is not balance value
+                break
+            
+            if ('account summary' in accountDetail[0].lower()):
                 break
             
             accountList.append(
@@ -70,7 +73,7 @@ def processDBS(textList: list[str]) -> list[Statement]:
                     account_name=accountDetail[0],
                     bank_name="DBS",
                     account_no=accountDetail[1],
-                    balance=accountDetail[-1].replace(',', '')
+                    balance=accountDetail[-1].split(' ')[-1].replace(',', '')
                 )
             )
             index += 1
@@ -169,9 +172,9 @@ def processDBS(textList: list[str]) -> list[Statement]:
                 
                 #why the fhell dbs put -ve sign behind of bal
                 if tempBal.replace(',', '')[-1] == '-':
-                    balance = -float(tempBal.replace(',', '')[:-1])
+                    balance = -float(tempBal.split(' ')[-1].replace(',', '')[:-1])
                 else:
-                    balance = float(tempBal.replace(',', ''))
+                    balance = float(tempBal.split(' ')[-1].replace(',', ''))
                     
                 index += 1
                 
