@@ -15,7 +15,9 @@ export default function Overview() {
     const userId = useUserId();
 
     useEffect(() => {
-        getAccountDetails({}).then(arr => {
+        getAccountDetails({
+            userId: userId
+        }).then(arr => {
             let totalBalance = 0
             const accountArr: Partial<Account>[] = []
             arr?.forEach(entry => {
@@ -33,6 +35,7 @@ export default function Overview() {
         })
 
         getTransactionDetails({
+            userId: userId,
             selection: ['deposit_amount', 'withdrawal_amount']
         }).then(data => {
             setIncome(data.reduce((x, y) => {

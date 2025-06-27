@@ -29,6 +29,7 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
                 (_, i) => dayjs().subtract(i, "month").startOf("month"));
 
             const depositAndTransactions = await getTransactionDetails({
+                userId: userId,
                 selection: ['transaction_date', 'deposit_amount', 'withdrawal_amount'],
                 condition: [{ key: 'account_no', value: [account_no] }],
                 date: { startDate: months[months.length - 1], endDate: months[0]}

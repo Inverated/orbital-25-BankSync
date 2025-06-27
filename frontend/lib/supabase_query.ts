@@ -5,6 +5,7 @@ import { Timestamp } from "next/dist/server/lib/cache-handlers/types";
 import { Dayjs } from "dayjs";
 
 type TransactionDetails = {
+    userId: string;
     selection?: (keyof Transaction)[];
     condition?: { key: keyof Transaction, value: string[] }[];
     ascending_date?: boolean;
@@ -12,6 +13,7 @@ type TransactionDetails = {
 }
 
 type AccountDetails = {
+    userId: string;
     selection?: (keyof Account)[];
     condition?: { key: keyof Account, value: string[] }[];
 }
@@ -41,6 +43,7 @@ type EncryptedAccount = {
 }
 
 export async function getTransactionDetails({
+    userId,
     selection = [],
     condition = [],
     ascending_date = false,
@@ -49,6 +52,7 @@ export async function getTransactionDetails({
     const query = supabase
         .from('encryptedTransactionDetails')
         .select(selection.length == 0 ? '*' : selection.join(','))
+        .eq('user_id', userId)
 
     condition.forEach(({ key, value }) => {
         query.in(key, value)
@@ -78,12 +82,14 @@ export async function getTransactionDetails({
 }
 
 export async function getAccountDetails({
+    userId,
     selection = [],
     condition = []
 } : AccountDetails): Promise<Account[]> {
     let query = supabase
         .from('encryptedAccountDetails')
         .select(selection.length == 0 ? '*' : selection.join(','))
+        .eq('user_id', userId)
 
     condition.forEach(({ key, value }) => {
         query = query.in(key, value)

@@ -52,6 +52,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
                 setLoading(true);
                 
                 const depositAndTransactions = await getTransactionDetails({
+                    userId: userId,
                     selection: ['transaction_date', 'withdrawal_amount'],
                     date: { startDate: startDate, endDate: endDate }
                 });
