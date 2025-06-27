@@ -77,7 +77,6 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
                 display: false,
             },
         },
-        maintainAspectRatio: false,
     }
 
     const generateChartLegend = () => {
@@ -107,23 +106,22 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
     }
 
     return (
-        <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-5">
+        <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-3">
             <h1 className="font-bold text-xl">Spending by Category</h1>
-
-            <div className="flex flex-col justify-center items-center gap-2">
+        
+            <div className="flex flex-col justify-center items-center gap-2 h-full w-full">
                 {showChart ? (
                     loading ? (
                         <div className="text-gray-400 h-[500px] flex flex-col justify-center items-center">
                             Loading data...
                         </div>
                     ) : (
-                        <div className="flex flex-col justify-center items-center gap-4 h-full">
-                            <div className="flex flex-col justify-center items-center
-                                w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] md:w-[300px] md:h-[300px]">
+                        <div className="flex flex-col justify-center items-center gap-4 h-full w-full">
+                            <div className="flex flex-col justify-center items-center h-3/4 max-h-md w-3/4">
                                 <Pie data={chartData} options={chartOptions} />
                             </div>
 
-                            <div className="flex flex-col gap-1 w-full">
+                            <div className="flex flex-col gap-1 w-full max-w-lg">
                                 {generateChartLegend()}
                             </div>
                         </div>

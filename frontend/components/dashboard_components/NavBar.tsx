@@ -6,7 +6,6 @@ import { Settings } from "lucide-react";
 import OptionMenu from "./OptionMenu";
 import UploadButton from "./upload_util/UploadButton";
 
-
 export default function NavBar(user: { user: User | undefined; }) {
     const [settingsIsOpened, setSettingOpen] = useState(false)
 
