@@ -14,6 +14,7 @@ export default function AccountsTransactionsTable({ account }: AccountsTransacti
 
     useEffect(() => {
         getTransactionDetails({
+            userId: userId,
             condition: [{ key: 'account_no', value: [account.account_no] }]
         }).then(data => {
             if (data != null) {

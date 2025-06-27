@@ -5,6 +5,7 @@ import { Transaction } from "@/utils/types";
 import FilterButton from "./FilterButton";
 import ExportButton from "./ExportButton";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { useUserId } from "@/context/UserContext";
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
@@ -80,6 +81,8 @@ export default function Transactions() {
         setPageNo(1)
     }, [])
 
+    const userId = useUserId();
+
     useEffect(() => {
         setEntry([])
         currPageRef.current = 1
@@ -93,7 +96,9 @@ export default function Transactions() {
         }
 
         const accounts: AccountDetails = {}
-        getAccountDetails({}).then(arr => {
+        getAccountDetails({
+            userId: userId
+        }).then(arr => {
             arr.forEach(entry => {
                 accounts[entry.account_no] = {
                     account_name: entry.account_name,
@@ -103,6 +108,7 @@ export default function Transactions() {
             })
         }).then(() =>
             getTransactionDetails({
+                userId: userId,
                 condition: filterCondition,
                 ascending_date: isAscending,
             }).then(arr => {

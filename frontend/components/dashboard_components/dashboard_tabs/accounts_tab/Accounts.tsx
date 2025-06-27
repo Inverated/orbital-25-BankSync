@@ -9,7 +9,9 @@ export default function Accounts() {
 
     const userId = useUserId()
     useEffect(() => {
-        getAccountDetails({}).then(data => {
+        getAccountDetails({
+            userId: userId
+        }).then(data => {
             if (data != null) {
                 setAccounts(data);
             }

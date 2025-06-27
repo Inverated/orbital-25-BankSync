@@ -30,6 +30,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
                 setLoading(true);
 
                 const transactionCatergoryList = await getTransactionDetails({
+                    userId: userId,
                     selection: ['category', 'withdrawal_amount'],
                     date: { startDate: startDate, endDate: endDate }
                 });
@@ -102,7 +103,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
                             className="inline-block w-3 h-3 rounded-full"
                             style={{ backgroundColor: color }} />
 
-                        <span>{label}</span>
+                        <span className="text-md">{label}</span>
                     </div>
 
                     <span>{percentage} %</span>
@@ -123,7 +124,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
                         </div>
                     ) : (
                         <div className="flex flex-col justify-center items-center gap-4 h-full w-full">
-                            <div className="flex flex-col justify-center items-center h-3/4 max-h-md w-3/4">
+                            <div className="flex flex-col justify-center items-center h-3/4 max-h-md w-5/8">
                                 <Pie data={chartData} options={chartOptions} />
                             </div>
 

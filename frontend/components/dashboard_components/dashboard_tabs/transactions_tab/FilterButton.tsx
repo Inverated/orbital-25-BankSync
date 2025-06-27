@@ -19,6 +19,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
         resetAll()
 
         getAccountDetails({
+            userId: userId,
             selection: ['account_name', 'account_no', 'bank_name']
         }).then(arr => {
             arr.forEach(entry => {
@@ -31,6 +32,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
         })
 
         getTransactionDetails({
+            userId: userId,
             selection: ['category']
         }).then(arr => {
             setUniqueCategory([...new Set(arr.map(entry => entry.category)

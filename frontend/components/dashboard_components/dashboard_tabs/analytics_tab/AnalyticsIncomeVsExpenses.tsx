@@ -56,6 +56,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                 setLoading(true);
                 
                 const depositAndTransactions = await getTransactionDetails({
+                    userId: userId,
                     selection: ['transaction_date', 'deposit_amount', 'withdrawal_amount'],
                     date: { startDate: startDate, endDate: endDate }
                 });
