@@ -15,7 +15,7 @@ export default function Overview() {
     const userId = useUserId();
 
     useEffect(() => {
-        getAccountDetails(userId).then(arr => {
+        getAccountDetails({}).then(arr => {
             let totalBalance = 0
             const accountArr: Partial<Account>[] = []
             arr?.forEach(entry => {
@@ -32,20 +32,20 @@ export default function Overview() {
             setLoadingStatus(true)
         })
 
-        getTransactionDetails(userId, ['deposit_amount', 'withdrawal_amount'])
-            .then(data => {
-                setIncome(data.reduce((x, y) => {
-                    if (y.deposit_amount) {
-                        return x + y.deposit_amount
-                    } else return x
-                }, 0))
-                setExpenses(data.reduce((x, y) => {
-                    if (y.withdrawal_amount) {
-                        return x + y.withdrawal_amount
-                    } else return x
-                }, 0))
-
-            })
+        getTransactionDetails({
+            selection: ['deposit_amount', 'withdrawal_amount']
+        }).then(data => {
+            setIncome(data.reduce((x, y) => {
+                if (y.deposit_amount) {
+                    return x + y.deposit_amount
+                } else return x
+            }, 0))
+            setExpenses(data.reduce((x, y) => {
+                if (y.withdrawal_amount) {
+                    return x + y.withdrawal_amount
+                } else return x
+            }, 0))
+        })
     }, [userId, expandAccount])
 
     const expandTotalBal = () => {

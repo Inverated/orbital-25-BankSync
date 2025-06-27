@@ -29,14 +29,21 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
             const fetchData = async () => {
                 setLoading(true);
 
-                const transactionCatergoryList = await getTransactionDetails(userId, ['category', 'withdrawal_amount']);
-                const map = new Map<string, number>()
+                const transactionCatergoryList = await getTransactionDetails({
+                    selection: ['category', 'withdrawal_amount'],
+                    date: { startDate: startDate, endDate: endDate }
+                });
+
+                const map = new Map<string, number>();
 
                 transactionCatergoryList.forEach(entry =>
                     map.set(entry.category, (map.get(entry.category) || 0) + entry.withdrawal_amount)
-                )
-                const data: CategorySpending[] = Array.from(map.entries()).map(([category, spending]) => ({ category, spending }))
-                setDataPoints(data)
+                );
+
+                const data: CategorySpending[] = Array.from(map.entries())
+                    .map(([category, spending]) => ({ category, spending }));
+                
+                setDataPoints(data);
 
                 setLoading(false);
             };
@@ -50,7 +57,6 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
             setLoading(false);
         }
     }, [userId, startDate, endDate])
-
 
     const generateSliceColors = (index: number, total: number) => {
         const hue = (index * (360 / total)) % 360;

@@ -28,18 +28,21 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
             const months = Array.from({ length: 6 },
                 (_, i) => dayjs().subtract(i, "month").startOf("month"));
 
-            const depositAndTransactions = await getTransactionDetails(userId,
-                ['transaction_date', 'deposit_amount', 'withdrawal_amount'],
-                [{ key: 'account_no', value: [account_no] }], false,
-                { startDate: months[months.length - 1], endDate: months[0] })
+            const depositAndTransactions = await getTransactionDetails({
+                selection: ['transaction_date', 'deposit_amount', 'withdrawal_amount'],
+                condition: [{ key: 'account_no', value: [account_no] }],
+                date: { startDate: months[months.length - 1], endDate: months[0]}
+            })
 
             const map = new Map<string, { moneyIn: number, moneyOut: number }>(
                 months.map(key => [key.format('MMM YY'), ({ moneyIn: 0.0, moneyOut: 0.0 })])
             )
+
             depositAndTransactions.forEach(entry => months.forEach(month => {
                 const start = month.startOf("month").toISOString();
                 const end = month.endOf("month").toISOString();
-                const curr = month.format('MMM YY')
+                const curr = month.format('MMM YY');
+
                 if (entry.transaction_date >= start && entry.transaction_date <= end) {
                     map.set(curr, {
                         moneyIn: (map.get(curr)?.moneyIn || 0) + entry.deposit_amount,
@@ -47,7 +50,9 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
                     })
                 }
             }))
-            const data: MonthlyMoneyInMoneyOut[] = Array.from(map.entries()).map(([date, { moneyIn, moneyOut }]) => ({ date, moneyIn, moneyOut }))
+
+            const data: MonthlyMoneyInMoneyOut[] = Array.from(map.entries())
+                .map(([date, { moneyIn, moneyOut }]) => ({ date, moneyIn, moneyOut }));
 
             setDataPoints(data.reverse());
 

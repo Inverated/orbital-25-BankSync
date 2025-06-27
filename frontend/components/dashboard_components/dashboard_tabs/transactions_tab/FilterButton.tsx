@@ -18,22 +18,25 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
     useEffect(() => {
         resetAll()
 
-        getAccountDetails(userId, ['account_name', 'account_no', 'bank_name'])
-            .then(arr => {
-                arr.forEach(entry => {
-                    const name = entry.account_name
-                    const no = entry.account_no
-                    const bank = entry.bank_name
-                    setUniqueAccount(prev => [...prev, { account_name: name, account_no: no, bank_name: bank }])
-                })
-                setAccountStatus(true)
+        getAccountDetails({
+            selection: ['account_name', 'account_no', 'bank_name']
+        }).then(arr => {
+            arr.forEach(entry => {
+                const name = entry.account_name
+                const no = entry.account_no
+                const bank = entry.bank_name
+                setUniqueAccount(prev => [...prev, { account_name: name, account_no: no, bank_name: bank }])
             })
+            setAccountStatus(true)
+        })
 
-        getTransactionDetails(userId, ['category'])
-            .then(arr => {
-                setUniqueCategory([...new Set(arr.map(entry => entry.category)
-                    .filter(item => item != undefined))])
-            })
+        getTransactionDetails({
+            selection: ['category']
+        }).then(arr => {
+            setUniqueCategory([...new Set(arr.map(entry => entry.category)
+                .filter(item => item != undefined))])
+        })
+        
         setCategoryStatus(true)
 
         const handleButtonDown = (event: KeyboardEvent) => {

@@ -10,3 +10,6 @@ next-env.d.ts
 # vscode
 /.vscode
 .vercel
+
+# virtual environment
+venv/
