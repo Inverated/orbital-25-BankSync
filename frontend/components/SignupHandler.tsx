@@ -32,7 +32,7 @@ export default function Signup() {
         }
 
         setIsSuccess(true)
-        setTimeout(() => router.push('/login'), 2000)
+        setTimeout(() => router.push('/registration/login'), 2000)
     }
 
     const updatePasswordSimilarity = () => {

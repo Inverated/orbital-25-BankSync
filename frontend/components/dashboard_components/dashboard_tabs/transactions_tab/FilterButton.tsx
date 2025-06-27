@@ -15,8 +15,22 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
 
     const userId = useUserId();
 
+    const resetAllValues = () => {
+        setUniqueAccount([])
+        setUniqueCategory([])
+        setAccountStatus(false)
+        setCategoryStatus(false)
+        selectedAccount.current = []
+        selectedCategory.current = []
+    }
+
+    const closeAll = () => {
+        setFilterDialogue(false)
+        resetAllValues()
+    }
+
     useEffect(() => {
-        resetAll()
+        resetAllValues()
 
         getAccountDetails({
             userId: userId,
@@ -38,7 +52,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
             setUniqueCategory([...new Set(arr.map(entry => entry.category)
                 .filter(item => item != undefined))])
         })
-        
+
         setCategoryStatus(true)
 
         const handleButtonDown = (event: KeyboardEvent) => {
@@ -75,19 +89,6 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
         setFilterDialogue(false)
     }
 
-    const resetAll = () => {
-        setUniqueAccount([])
-        setUniqueCategory([])
-        setAccountStatus(false)
-        setCategoryStatus(false)
-        selectedAccount.current = []
-        selectedCategory.current = []
-    }
-
-    const closeAll = () => {
-        setFilterDialogue(false)
-        resetAll()
-    }
 
     return (
         <div>

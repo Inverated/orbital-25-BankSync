@@ -21,7 +21,7 @@ export default function ExportButton() {
         exportToXlsx(accountEntry, transactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
     }
 
-    const resetAll = () => {
+    const resetAllValues = () => {
         setTransaction([])
         setAccount([])
         setActiveTab('account')
@@ -29,7 +29,7 @@ export default function ExportButton() {
 
     // query data here. Export only filtered items added later
     useEffect(() => {
-        resetAll()
+        resetAllValues()
         getTransactionDetails({
             userId: userId
         }).then(arr => arr.forEach(entry => {
@@ -57,7 +57,7 @@ export default function ExportButton() {
 
         const handleButtonDown = (event: KeyboardEvent) => {
             if (event.key == 'Escape') {
-                resetAll()
+                resetAllValues()
                 setExportDialogue(false)
             }
         }

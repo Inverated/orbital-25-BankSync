@@ -13,14 +13,20 @@ export default function ResetPassword() {
     const router = useRouter()
 
     useEffect(() => {
-        messageElement.current = document.getElementById('message')
-        newPassword.current = document.getElementById('newPassword') as HTMLInputElement
-        confirmNewPassword.current = document.getElementById('confirmNewPassword') as HTMLInputElement
+        const getTokens = (): { access_token: string | null, refresh_token: string | null } => {
+            messageElement.current = document.getElementById('message')
+            newPassword.current = document.getElementById('newPassword') as HTMLInputElement
+            confirmNewPassword.current = document.getElementById('confirmNewPassword') as HTMLInputElement
 
-        const hash = window.location.hash
-        const hashParams = new URLSearchParams(hash.substring(1))
-        const access_token = hashParams.get('access_token')
-        const refresh_token = hashParams.get('refresh_token')
+            const hash = window.location.hash
+            const hashParams = new URLSearchParams(hash.substring(1))
+            const access_token = hashParams.get('access_token')
+            const refresh_token = hashParams.get('refresh_token')
+            return { access_token: access_token, refresh_token: refresh_token }
+        }
+
+        const { access_token, refresh_token } = getTokens()
+
         if (access_token && refresh_token) {
             supabase.auth.setSession({
                 access_token: access_token,

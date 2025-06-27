@@ -37,13 +37,15 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
 
                 const map = new Map<string, number>();
 
-                transactionCatergoryList.forEach(entry =>
-                    map.set(entry.category, (map.get(entry.category) || 0) + entry.withdrawal_amount)
-                );
+                transactionCatergoryList
+                    .filter(entry => entry.withdrawal_amount != 0.0)
+                    .forEach(entry =>
+                        map.set(entry.category, (map.get(entry.category) || 0) + entry.withdrawal_amount)
+                    );
 
                 const data: CategorySpending[] = Array.from(map.entries())
                     .map(([category, spending]) => ({ category, spending }));
-                
+
                 setDataPoints(data);
 
                 setLoading(false);
@@ -115,7 +117,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
     return (
         <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-3">
             <h1 className="font-bold text-xl">Spending by Category</h1>
-        
+
             <div className="flex flex-col justify-center items-center gap-2 h-full w-full">
                 {showChart ? (
                     loading ? (

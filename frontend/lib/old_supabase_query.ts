@@ -1,4 +1,4 @@
-import { Account, Transaction } from "@/utils/types"
+/* import { Account, Transaction } from "@/utils/types"
 import { supabase } from "./supabase"
 
 export async function getTransactionDetails<TransKey extends (keyof Transaction)[]>(
@@ -44,4 +44,4 @@ export async function getAccountDetails<AccKeys extends (keyof Account)[]>(
         throw error.message
     }
     return account_details as unknown as Pick<Account, AccKeys[number]>[]
-}
+} */
