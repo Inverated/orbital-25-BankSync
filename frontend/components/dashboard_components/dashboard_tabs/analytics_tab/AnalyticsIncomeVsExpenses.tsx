@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { LineChart } from "lucide-react";
 import { Dayjs } from "dayjs";
 import { Line } from "react-chartjs-2";
-import { getDepositsByDate, getTransactionDetailByDate } from "@/lib/supabase_query";
+import { useUserId } from "@/context/UserContext";
+import { getTransactionDetails } from "@/lib/supabase_query";
+
 
 interface IncomeExpensesProps {
     startDate: Dayjs | null;
@@ -21,6 +23,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
     const savings = totalIncome - totalExpenses;
     const savingsSign = savings >= 0 ? "+" : "-";
 
+    const userId = useUserId()
     const getMonths = (start: Dayjs | null, end: Dayjs | null) => {
         if (!start || !end || start.isAfter(end)) {
             return [];
@@ -38,7 +41,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
 
         return months;
     }
-    
+
     const showChart = startDate && endDate && !startDate.isAfter(endDate);
 
     const [loading, setLoading] = useState(true);
@@ -51,24 +54,27 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
 
             const fetchData = async () => {
                 setLoading(true);
+                
+                const depositAndTransactions = await getTransactionDetails(userId,
+                    ['transaction_date', 'deposit_amount', 'withdrawal_amount'],
+                    [], false,
+                    { startDate: startDate, endDate: endDate })
 
-                const data = await Promise.all(
-                    months.map(async (month) => {
-                        const deposits = await getDepositsByDate(month);
-                        const income = deposits
-                            .reduce((sum, deposit) => sum + (Number(deposit.deposit_amount) || 0), 0);
-
-                        const transactions = await getTransactionDetailByDate(month);
-                        const expenses = transactions
-                            .reduce((sum, transaction) => sum + (Number(transaction.withdrawal_amount) || 0), 0);
-                        
-                        return {
-                            date: month.format("MMM YY"),
-                            income,
-                            expenses
-                        };
-                    })
-                );
+                const map = new Map<string, { income: number, expenses: number }>(
+                    months.map(key => [key.format('MMM YY'), ({ income: 0.0, expenses: 0.0 })])
+                )
+                depositAndTransactions.forEach(entry => months.forEach(month => {
+                    const start = month.startOf("month").toISOString();
+                    const end = month.endOf("month").toISOString();
+                    const curr = month.format('MMM YY')
+                    if (entry.transaction_date >= start && entry.transaction_date <= end) {
+                        map.set(curr, {
+                            income: (map.get(curr)?.income || 0) + entry.deposit_amount,
+                            expenses: (map.get(curr)?.expenses || 0) + entry.withdrawal_amount
+                        })
+                    }
+                }))
+                const data: MonthlyIncomeAndExpenses[] = Array.from(map.entries()).map(([date, { income, expenses }]) => ({ date, income, expenses }))
 
                 setDataPoints(data);
 
@@ -88,10 +94,11 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
             setDataPoints([]);
             setTotalIncome(0.0);
             setTotalExpenses(0.0);
-            
+          
             setLoading(false);
         }
-    }, [startDate, endDate])
+    }, [userId, startDate, endDate])
+
 
     const chartData = {
         labels: dataPoints.map(d => d.date),
@@ -121,7 +128,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
             },
         },
     }
-    
+
     return (
         <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-5">
             <h1 className="font-bold text-xl">Income vs. Expenses</h1>
@@ -134,12 +141,12 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                         </div>
                     ) : (
                         <div className="flex flex-col justify-center items-center w-full">
-                            <Line data={chartData} options={chartOptions}/>
+                            <Line data={chartData} options={chartOptions} />
                         </div>
                     )
                 ) : (
                     <div className="flex flex-col justify-center items-center gap-2 h-[500px]">
-                        <LineChart className="h-12 w-12"/>
+                        <LineChart className="h-12 w-12" />
                         <p className="text-sm text-gray-400">Income vs. Expenses Chart</p>
                     </div>
                 )}
@@ -160,12 +167,12 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                             }}
                         />
                     </div>
-                    
+
                     <div className="flex justify-between">
                         <p>Expenses</p>
                         <p>${totalExpenses.toFixed(2)}</p>
                     </div>
-                    
+
                     <div className="w-full h-4 bg-gray-200 rounded-lg overflow-hidden">
                         <div
                             className="h-full rounded-lg transition-all duration-300 bg-black"

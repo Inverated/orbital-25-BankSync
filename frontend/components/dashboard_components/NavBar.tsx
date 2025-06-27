@@ -8,7 +8,6 @@ import UploadButton from "./upload_util/UploadButton";
 
 export default function NavBar(user: { user: User | undefined; }) {
     const [settingsIsOpened, setSettingOpen] = useState(false)
-    const logoStyle = 'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'
 
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == 'Escape') {
@@ -46,7 +45,7 @@ export default function NavBar(user: { user: User | undefined; }) {
                     <div id='optionMenu'>
                         <Settings 
                             onClick={() => setSettingOpen(!settingsIsOpened)}
-                            className={logoStyle} 
+                            className='mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer' 
                         />
                         <div className='relative'>
                             {settingsIsOpened && <OptionMenu />}

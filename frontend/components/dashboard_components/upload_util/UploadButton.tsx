@@ -1,8 +1,14 @@
+'use client'
+
 import { StatementResponse, uploadReturnData } from "@/utils/types";
 import uploadFile from "@/utils/uploadFile";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import PreviewTable from "./PreviewTable";
 import { FileUp, Upload } from "lucide-react";
+import setStatementCategory from "@/utils/setStatementCategory";
+import { addStatements } from "@/lib/supabase_upload";
+import { useUserId } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 
 export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
@@ -12,12 +18,17 @@ export default function UploadButton() {
     const filePassword = useRef<HTMLInputElement>(null)
     const [statements, setStatements] = useState<StatementResponse[] | null>(null)
     const [activeTab, setActiveTab] = useState(0)
+    const [uploading, setUploadingStatus] = useState(false)
+
+    const router = useRouter()
 
     const handleUploadFile = async () => {
         setActiveTab(0)
         setStatements(null)
+        setUploadingStatus(false)
 
         if (currentFile.current != null) {
+            setQueryPassword(false)
             let parsedData: uploadReturnData | null = await uploadFile(currentFile.current, filePassword.current?.value)
             if (!parsedData) {
                 return
@@ -38,12 +49,15 @@ export default function UploadButton() {
                 return
             } else {
                 setQueryPassword(false)
+                // Set category here instead of backend to allow custom catEGORY
+                setStatementCategory(parsedData.data)
                 setStatements(parsedData.data)
             }
         }
     }
 
     const closeDialogue = () => {
+        setUploadingStatus(false)
         setDialogueStatus(false)
         setFileError(false)
         currentFile.current = null
@@ -54,6 +68,7 @@ export default function UploadButton() {
 
     const setCurrentFile = async (element: ChangeEvent<HTMLInputElement>) => {
         const files = element.target.files
+        // Only picking first file if multiple dragged 
         if (files && files.length > 0) {
             checkFileType(files[0])
         } else {
@@ -63,7 +78,7 @@ export default function UploadButton() {
 
     const checkFileType = (file: File) => {
         const fileExt = file.name.slice(file.name.lastIndexOf(".") + 1)
-        if (['pdf', 'csv'].includes(fileExt.toLowerCase())) {
+        if (['pdf', 'xlsx'].includes(fileExt.toLowerCase())) {
             currentFile.current = file
             setFileError(false)
             return
@@ -81,9 +96,20 @@ export default function UploadButton() {
         }
     }, [setStatements, statements])
 
-    //to be implemented
-    const handleUploadData = () => {
+    const userId = useUserId();
+    const handleUploadData = async () => {
+        setUploadingStatus(true)
+        if (statements == null || statements?.length == 0) {
+            return
+        }
+        setUploadingStatus(true)
 
+        const error = await addStatements(userId, statements)
+        if (error instanceof Error) {
+            alert(error.message)
+        } else {
+            window.location.reload()
+        }
     }
 
     const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
@@ -109,7 +135,7 @@ export default function UploadButton() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [handleUpdate])
+    }, [handleUpdate, router])
 
     return (
         <div>
@@ -119,7 +145,7 @@ export default function UploadButton() {
             {uploadDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-5/6 w-full z-60 max-h-11/12 overflow-y-auto">
+                    <div className="bg-white rounded-lg shadow-lg px-8 py-5 max-w-5/6 w-full z-60 max-h-11/12 overflow-y-auto">
                         <p className="text-2xl mb-3">File Upload</p>
                         <label
                             onDrop={handleDrop}
@@ -132,7 +158,7 @@ export default function UploadButton() {
                                     <span className="font-semibold">Click to upload</span> drag and drop
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                    PDF or CSV
+                                    PDF or XLSX
                                 </p>
                             </div>
                             <input id="dropzone-file" type="file"
@@ -200,7 +226,7 @@ export default function UploadButton() {
                                 Close
                             </button>
                             <button
-                                disabled={statements === null}
+                                disabled={statements === null || uploading}
                                 onClick={handleUploadData}
                                 className="border disabled:border-gray-400 disabled:text-gray-400 border-black mt-4 p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
                             >

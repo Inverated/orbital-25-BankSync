@@ -9,13 +9,14 @@ import Analytics from "@/components/dashboard_components/dashboard_tabs/analytic
 import { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { UserProvider } from "@/context/UserContext";
 import { registerCharts } from "@/utils/RegisterCharts";
+
 
 export default function Dashboard() {
     const [currentSession, setSession] = useState<Session | null>(null)
     const router = useRouter()
     const [isLoaded, setLoadingStatus] = useState(false)
-
 
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -30,13 +31,14 @@ export default function Dashboard() {
         );
 
         supabase.auth.getSession()
-            .then(({ data: { session } }) => {
+            .then(({ data: { session }, error }) => {
                 if (!session) {
                     router.push('/login')
                 } else {
                     setSession(session)
                     setLoadingStatus(true)
                 }
+                if (error) console.error(error)
             })
 
         return () => {
@@ -45,7 +47,7 @@ export default function Dashboard() {
     }, [router])
 
     type Page = "Overview" | "Accounts" | "Transactions" | "Analytics"
-    
+
     const componentSelector: Record<Page, React.FC> = {
         Overview: Overview,
         Accounts: Accounts,
@@ -55,29 +57,32 @@ export default function Dashboard() {
 
     const [currentPage, setPage] = useState<Page>("Overview")
     const CurrentComponent = componentSelector[currentPage]
-    //const CurrentComponent = componentSelector["Transactions"]
 
-    const tabStyle = "text-2xl mx-1 px-2 py-1  border border-black rounded-md cursor-pointer"
+    const tabStyle = "text-2xl mx-1 px-2 py-1 border-b-2 cursor-pointer"
     
     registerCharts();
     
     return (
-        isLoaded && currentSession && <div>
-            <NavBar user={currentSession?.user} />
-            <div className="flex justify-end">
-                <div className=" border border-black p-2 m-3">
-                    {Object.keys(componentSelector).map((tab) =>
-                        <span
-                            onClick={() => setPage(tab as Page)}
-                            key={tab}
-                            className={`${tabStyle} ${currentPage === tab ? "bg-gray-500" : ""}`}>
-                            {tab}
-                        </span>
-                    )}
-                </div>
+        isLoaded && currentSession &&
+        <UserProvider userId={currentSession.user.id}>
+            <div>
+                <NavBar user={currentSession?.user} />
+                <div className="flex justify-end">
+                    <div className="p-2 m-3">
+                        {Object.keys(componentSelector).map((tab) =>
+                            <span
+                                onClick={() => setPage(tab as Page)}
+                                key={tab}
+                                className={`${tabStyle} ${currentPage === tab ? " border-blue-500 text-blue-600" : "border-transparent text-gray-500 hover:text-blue-600"}`}>
+                                {tab}
+                            </span>
+                        )}
+                    </div>
 
+                </div>
+                <div><CurrentComponent /></div>
             </div>
-            <div><CurrentComponent /></div>
-        </div>
+        </UserProvider>
+
     )
 }

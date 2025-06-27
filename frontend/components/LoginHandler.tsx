@@ -21,7 +21,6 @@ export default function Login() {
 
         router.push('/dashboard')
     }
-
     return (
         <div>
             <div className="text-center py-4">

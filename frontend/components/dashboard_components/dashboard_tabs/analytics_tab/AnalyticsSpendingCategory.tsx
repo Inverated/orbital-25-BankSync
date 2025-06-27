@@ -1,4 +1,5 @@
-import { getSpendingByCategory, getTransactionCategories } from "@/lib/supabase_query";
+import { useUserId } from "@/context/UserContext";
+import { getTransactionDetails } from "@/lib/supabase_query";
 import { Dayjs } from "dayjs";
 import { PieChart } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -18,34 +19,28 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
     const showChart = startDate && endDate && !startDate.isAfter(endDate);
 
     const [loading, setLoading] = useState(true);
-    
+
     const [dataPoints, setDataPoints] = useState<CategorySpending[]>([]);
+
+    const userId = useUserId()
 
     useEffect(() => {
         if (startDate && endDate && !startDate.isAfter(endDate)) {
             const fetchData = async () => {
                 setLoading(true);
 
-                const categories = await getTransactionCategories();
+                const transactionCatergoryList = await getTransactionDetails(userId, ['category', 'withdrawal_amount']);
+                const map = new Map<string, number>()
 
-                const data = await Promise.all(
-                    categories.map(async ({ category }) => {
-                        const transactions = await getSpendingByCategory(category);
-                        const spending = transactions
-                            .reduce((sum, transaction) => sum + (Number(transaction.withdrawal_amount) || 0), 0);
-                        
-                        return {
-                            category: category,
-                            spending
-                        };
-                    })
-                );
+                transactionCatergoryList.forEach(entry =>
+                    map.set(entry.category, (map.get(entry.category) || 0) + entry.withdrawal_amount)
+                )
+                const data: CategorySpending[] = Array.from(map.entries()).map(([category, spending]) => ({ category, spending }))
+                setDataPoints(data)
 
-                setDataPoints(data);
-                
                 setLoading(false);
             };
-            
+
             fetchData();
         } else {
             setLoading(true);
@@ -54,7 +49,8 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
 
             setLoading(false);
         }
-    }, [startDate, endDate])
+    }, [userId, startDate, endDate])
+
 
     const generateSliceColors = (index: number, total: number) => {
         const hue = (index * (360 / total)) % 360;
@@ -96,10 +92,10 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
             return (
                 <div key={index} className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
-                        <span 
+                        <span
                             className="inline-block w-3 h-3 rounded-full"
-                            style={{ backgroundColor: color}}/>
-                        
+                            style={{ backgroundColor: color }} />
+
                         <span>{label}</span>
                     </div>
 
@@ -132,7 +128,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
                     )
                 ) : (
                     <div className="flex flex-col justify-center items-center gap-2 h-[500px]">
-                        <PieChart className="h-12 w-12"/>
+                        <PieChart className="h-12 w-12" />
                         <p className="text-sm text-gray-400">Category Breakdown Chart</p>
                     </div>
                 )}

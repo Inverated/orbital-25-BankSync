@@ -164,13 +164,17 @@ def processDBS(textList: list[str]) -> list[Statement]:
                     change = balance = 0.0
                     index += 1
                     continue
-
                 tempChange, tempBal = amountBalList
                 change = float(tempChange.replace(',', ''))
-                balance = float(tempBal.replace(',', ''))
+                
+                #why the fhell dbs put -ve sign behind of bal
+                if tempBal.replace(',', '')[-1] == '-':
+                    balance = -float(tempBal.replace(',', '')[:-1])
+                else:
+                    balance = float(tempBal.replace(',', ''))
+                    
                 index += 1
-        # compiled list of all transactions for this account
-
+                
         assignWithdrawDeposit(statement, initialBal)
 
     return (True, statements)

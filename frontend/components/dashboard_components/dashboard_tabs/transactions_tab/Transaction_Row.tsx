@@ -14,24 +14,6 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
 
     const clickStartTime = useRef<number | null>(null);
 
-    const handleButtonDown = (event: KeyboardEvent) => {
-        if (event.key == 'Shift') {
-            isShiftPressed.current = true
-        } else if (event.key == 'Escape') {
-            // Collapse all row when pressed
-            updateExpandStatus(false)
-        } else if (event.key == 'Enter') {
-            event.preventDefault()
-            document.getElementById('submitButton')?.click()
-        }
-    }
-
-    const handleButtonUp = (event: KeyboardEvent) => {
-        if (event.key == 'Shift') {
-            isShiftPressed.current = false
-        }
-    }
-
     const updateExpandStatus = (isExpanded: boolean) => {
         setEditActive(isExpanded)
         refIsRowExpanded.current = isExpanded
@@ -39,6 +21,24 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
     }
 
     useEffect(() => {
+        const handleButtonDown = (event: KeyboardEvent) => {
+            if (event.key == 'Shift') {
+                isShiftPressed.current = true
+            } else if (event.key == 'Escape') {
+                // Collapse all row when pressed
+                updateExpandStatus(false)
+            } else if (event.key == 'Enter') {
+                event.preventDefault()
+                document.getElementById('submitButton')?.click()
+            }
+        }
+
+        const handleButtonUp = (event: KeyboardEvent) => {
+            if (event.key == 'Shift') {
+                isShiftPressed.current = false
+            }
+        }
+        
         const handleMouseDown = () => {
             clickStartTime.current = Date.now();
         };
@@ -83,7 +83,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
             document.removeEventListener('keydown', handleButtonDown)
             document.removeEventListener('keyup', handleButtonUp)
         }
-    }, [])
+    }, [details.id])
 
     // Handle edit dialogue display
     const [showEditDialogue, setEditActive] = useState(false)
@@ -106,7 +106,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                         <p className='p-3 truncate break-after-all'>{details.transaction_description}</p>
                     </div>
                     <div className={'p-3 flex justify-between'}>
-                        <p>{details.account_no}</p>
+                        <p>{details.account_name}</p>
                         <p className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>
                             {details.withdrawal_amount == 0 ? '+$' + details.deposit_amount?.toFixed(2) : '-$' + details.withdrawal_amount?.toFixed(2)}
                         </p>
@@ -126,7 +126,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                     <div className='flex flex-col'>
                         <p className='flex p-3 start-0.5'>
                             <b>Description:</b>
-                            <span className='px-2 break-all'>
+                            <span className='px-2 whitespace-pre-line break-all'>
                                 {details.transaction_description}
                             </span>
                         </p>

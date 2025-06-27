@@ -67,7 +67,7 @@ export default function Signup() {
                         type="password"
                         id='password'
                         placeholder="Enter new password"
-                        className="bg-transparent w-full" 
+                        className="bg-transparent w-full"
                         onChange={updatePasswordSimilarity} />
                 </div>
                 <div className="my-2 flex bg-gray-300 rounded-lg">
