@@ -36,6 +36,7 @@ export default async function exportToXlsx(accountEntry: Account[], transactionE
     accountSheet.getColumn('Balance').numFmt = '0.00'
     accountSheet.getRow(1).font = { bold: true }
 
+    // Manually add details based on header order
     accountEntry.forEach(entry => {
         accountSheet.addRow([
             entry.bank_name, entry.account_no, entry.account_name, entry.balance, entry.latest_recorded_date
@@ -86,7 +87,7 @@ export default async function exportToXlsx(accountEntry: Account[], transactionE
     transactionSheet.getColumn('Deposit').numFmt = '0.00'
     transactionSheet.getColumn('Ending Balance').numFmt = '0.00'
     transactionSheet.getColumn('Description').alignment = { wrapText: true }
-    accountSheet.getRow(1).font = { bold: true }
+    transactionSheet.getRow(1).font = { bold: true }
 
     transactionEntry.forEach(entry => {
         transactionSheet.addRow([

@@ -22,7 +22,7 @@ export default function Dashboard() {
         const { data: authListener } = supabase.auth.onAuthStateChange(
             (_, session) => {
                 if (!session) {
-                    router.push('/login');
+                    router.push('/registration/login');
                 } else {
                     setSession(session)
                     setLoadingStatus(true);
@@ -33,7 +33,7 @@ export default function Dashboard() {
         supabase.auth.getSession()
             .then(({ data: { session }, error }) => {
                 if (!session) {
-                    router.push('/login')
+                    router.push('/registration/login')
                 } else {
                     setSession(session)
                     setLoadingStatus(true)

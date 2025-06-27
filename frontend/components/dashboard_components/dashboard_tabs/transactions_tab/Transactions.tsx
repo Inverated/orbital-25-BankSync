@@ -1,6 +1,6 @@
 import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Transaction_Row from "./Transaction_Row";
+import Transaction_Row from "./TransactionRow";
 import { Transaction } from "@/utils/types";
 import FilterButton from "./FilterButton";
 import ExportButton from "./ExportButton";
@@ -16,13 +16,23 @@ export default function Transactions() {
     const [transactionEntry, setEntry] = useState<Partial<Transaction>[]>([])
     const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
 
-    const pageNoRef = useRef<HTMLInputElement>(null)
     // useState to update html and useRef to get the latest value to run in function
+    const pageNoRef = useRef<HTMLInputElement>(null)
     const currPageRef = useRef(1)
     const [totalEntries, setTotalEntries] = useState(0)
     const [pageNo, setPageNo] = useState(1)
     const maxPageNo = useRef(Math.ceil(transactionEntry.length / 10))
+    const [selPageDialogue, setPageDialogue] = useState(false)
 
+    const userId = useUserId();
+
+    const resetAllValues = () => {
+        setEntry([])
+        currPageRef.current = 1
+        setPageNo(1)
+        setUnique(new Set())
+        setFilterCondition(undefined)
+    }
     const addPageNo = (num: number) => {
         const newNum = currPageRef.current + num
         if (newNum > maxPageNo.current) {
@@ -37,7 +47,6 @@ export default function Transactions() {
         }
     }
 
-    const [selPageDialogue, setPageDialogue] = useState(false)
     const jumpToPage = () => {
         const userInput = Number(pageNoRef.current?.value)
         if (!userInput || userInput < 1) {
@@ -81,12 +90,9 @@ export default function Transactions() {
         setPageNo(1)
     }, [])
 
-    const userId = useUserId();
 
     useEffect(() => {
-        setEntry([])
-        currPageRef.current = 1
-        setUnique(new Set())
+        resetAllValues()
         pageNoRef.current = document.getElementById('select_page_num') as HTMLInputElement
         type AccountDetails = {
             [account_no: string]: {
@@ -104,7 +110,6 @@ export default function Transactions() {
                     account_name: entry.account_name,
                     bank_name: entry.bank_name
                 }
-
             })
         }).then(() =>
             getTransactionDetails({

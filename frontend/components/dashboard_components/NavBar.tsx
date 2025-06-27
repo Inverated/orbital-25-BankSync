@@ -32,7 +32,6 @@ export default function NavBar(user: { user: User | undefined; }) {
     }, [])
 
     return (
-        <div>
             <div className='flex justify-between my-7 mx-4'>
                 <div>
                     <div className='text-4xl'>Dashboard</div>
@@ -53,6 +52,5 @@ export default function NavBar(user: { user: User | undefined; }) {
                     </div>
                 </div>
             </div>
-        </div>
     )
 }

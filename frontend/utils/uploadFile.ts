@@ -1,4 +1,4 @@
-import api from "../lib/api.js"
+import api from "../lib/FastAPI.js"
 
 async function uploadFile(file: File, password?: string) {
     const formData = new FormData()

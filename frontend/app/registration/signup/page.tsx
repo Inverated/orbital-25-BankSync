@@ -5,10 +5,10 @@ import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { redirect, useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js";
-import LoginHandler from "@/components/LoginHandler";
+import SignupHandler from "@/components/SignupHandler";
 import { supabase } from "@/lib/supabase";
 
-export default function Login() {
+export default function Signup() {
     const [currentSession, setSession] = useState<Session | null>(null)
     const [sessionLoaded, setLoadedStatus] = useState(false)
     const router = useRouter()
@@ -18,8 +18,8 @@ export default function Login() {
             const { data, error } = await supabase.auth.getSession()
             if (error) {
                 console.error(error.message)
-            }
-
+            } 
+            
             if (data.session != null) {
                 router.push('/dashboard')
             }
@@ -30,44 +30,30 @@ export default function Login() {
     }, [router])
 
     const handleOAuthLogin = async (provider: 'github' | 'google') => {
-        const { data, error } = await supabase.auth.signInWithOAuth({
+        const { error } = await supabase.auth.signInWithOAuth({
             provider: provider,
         });
-
+        
         if (error) {
             console.error("OAuth error: " + error);
-        } else {
-            console.log("OAuth data: " + data);
         }
     };
 
-    const redirectToSignUp = () => redirect("/signup")
-
-    const redirectToForgetPassword = () => {
-        const emailLogin = document.getElementById('loginEmailInput') as HTMLInputElement
-        const message = emailLogin.value == '' ? '' : '?email='+emailLogin.value 
-        router.push('/forgetpassword' + message)
-    }
+    const redirectToLogin = () => redirect('/registration/login')
 
     const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
     
     return (
-        <div className={(currentSession == null && sessionLoaded ? '' : 'hidden ') + "flex justify-center items-center h-screen"}>
+        currentSession == null && sessionLoaded &&
+        <div className="flex justify-center items-center h-screen">
             <div className="w-[400]">
-                <LoginHandler />
+                <SignupHandler />
 
                 <div className="my-2 text-sm flex justify-between cursor-pointer"
-                    onClick={redirectToSignUp}>
-                    <p>Don&#39;t have an account?</p>
+                    onClick={redirectToLogin}>
+                    <p>Already have an account?</p>
                     <span className="font-semibold underline">
-                        Signup
-                    </span>
-                </div>
-
-                <div className="my-2 text-sm flex cursor-pointer"
-                    onClick={redirectToForgetPassword}>
-                    <span className="font-semibold underline ml-auto">
-                        Forgot your password?
+                        Login
                     </span>
                 </div>
 
