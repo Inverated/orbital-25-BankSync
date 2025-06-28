@@ -1,3 +1,4 @@
+import axios, { AxiosError } from "axios";
 import api from "../lib/FastAPI.js"
 
 async function uploadFile(file: File, password?: string) {
@@ -8,10 +9,14 @@ async function uploadFile(file: File, password?: string) {
     }
     try {
         const response = await api.post('/dashboard', formData);
-        return(response.data);
-    } catch (error) {
+        return (response.data);
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            console.error("Upload failed:", error.message);
+            return null
+        }
         console.error("Upload failed:", error);
-        return null
+        return error
     }
 }
 

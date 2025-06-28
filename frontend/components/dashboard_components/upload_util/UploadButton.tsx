@@ -4,7 +4,7 @@ import { StatementResponse, uploadReturnData } from "@/utils/types";
 import uploadFile from "@/utils/uploadFile";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import PreviewTable from "./PreviewTable";
-import { FileUp, Upload } from "lucide-react";
+import { FileUp, Loader, Upload } from "lucide-react";
 import setStatementCategory from "@/utils/setStatementCategory";
 import { addStatements } from "@/lib/supabase_upload";
 import { useUserId } from "@/context/UserContext";
@@ -16,23 +16,49 @@ export default function UploadButton() {
     const currentFile = useRef<File | null>(null)
     const [passwordQuery, setQueryPassword] = useState(false)
     const filePassword = useRef<HTMLInputElement>(null)
+    const passwordConfirmRef = useRef<HTMLButtonElement>(null)
     const [statements, setStatements] = useState<StatementResponse[] | null>(null)
     const [activeTab, setActiveTab] = useState(0)
     const [uploading, setUploadingStatus] = useState(false)
+    const [showParsingLoading, setParsingLoading] = useState(false)
 
     const router = useRouter()
+    const userId = useUserId();
 
-    const handleUploadFile = async () => {
+    const closeDialogue = () => {
+        resetValues()
+        setDialogueStatus(false)
+        setFileError(false)
+        currentFile.current = null
+        setQueryPassword(false)
+    }
+
+    const resetValues = () => {
+        setParsingLoading(false)
         setActiveTab(0)
         setStatements(null)
         setUploadingStatus(false)
+    }
+
+    const handleUploadFile = async () => {
+        resetValues()
 
         if (currentFile.current != null) {
             setQueryPassword(false)
+
+            if (passwordConfirmRef.current) {
+                passwordConfirmRef.current.disabled = true
+            }
+
+            setParsingLoading(true)
             let parsedData: uploadReturnData | null = await uploadFile(currentFile.current, filePassword.current?.value)
-            if (!parsedData) {
+            setParsingLoading(false)
+
+            if (parsedData == null) {
+                resetValues()
                 return
             }
+            
             if (!parsedData.success) {
                 const errorMessage = parsedData.error
                 if (errorMessage == 'Require Password') {
@@ -41,10 +67,14 @@ export default function UploadButton() {
                     setQueryPassword(true)
                     alert('Wrong password')
                 } else {
+                    if (passwordConfirmRef.current) {
+                        passwordConfirmRef.current.disabled = true
+                    }
+
                     alert(errorMessage)
                     console.error(errorMessage)
                 }
-                setStatements(null)
+                resetValues()
                 parsedData = null
                 return
             } else {
@@ -56,34 +86,26 @@ export default function UploadButton() {
         }
     }
 
-    const closeDialogue = () => {
-        setUploadingStatus(false)
-        setDialogueStatus(false)
-        setFileError(false)
-        currentFile.current = null
-        setStatements(null)
-        setActiveTab(0)
-        setQueryPassword(false)
-    }
-
     const setCurrentFile = async (element: ChangeEvent<HTMLInputElement>) => {
         const files = element.target.files
         // Only picking first file if multiple dragged 
         if (files && files.length > 0) {
             checkFileType(files[0])
         } else {
+            resetValues()
             currentFile.current = null
         }
     }
 
     const checkFileType = (file: File) => {
         const fileExt = file.name.slice(file.name.lastIndexOf(".") + 1)
-        if (['pdf', 'xlsx'].includes(fileExt.toLowerCase())) {
+        if (['pdf', 'xlsx', 'txt'].includes(fileExt.toLowerCase())) {
             currentFile.current = file
             setFileError(false)
             return
         } else {
             setFileError(true)
+            resetValues()
             currentFile.current = null
         }
     }
@@ -96,13 +118,11 @@ export default function UploadButton() {
         }
     }, [setStatements, statements])
 
-    const userId = useUserId();
     const handleUploadData = async () => {
         setUploadingStatus(true)
         if (statements == null || statements?.length == 0) {
             return
         }
-        setUploadingStatus(true)
 
         const error = await addStatements(userId, statements)
         if (error instanceof Error) {
@@ -172,6 +192,10 @@ export default function UploadButton() {
                         {currentFile.current &&
                             <div className="text-sm">
                                 <p><b>Uploaded file: </b>{currentFile.current.name}</p>
+                                <div className="flex items-center justify-center"
+                                    hidden={!showParsingLoading}>
+                                    <Loader className="animate-spin w-12 h-12 text-blue-500" />
+                                </div>
                                 {passwordQuery &&
                                     <form onSubmit={(event) => {
                                         event.preventDefault()
@@ -184,6 +208,7 @@ export default function UploadButton() {
                                             <input className='border border-black' ref={filePassword} type="password" />
                                         </span>
                                         <button
+                                            ref={passwordConfirmRef}
                                             className="border border-black items-center rounded-sm px-2 flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
                                             type='submit'>Confirm</button>
                                     </form>

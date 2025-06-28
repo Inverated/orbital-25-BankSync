@@ -30,7 +30,7 @@ def decryptPdf(pdf: PdfReader, password: str):
     success = pdf.decrypt(password)
     return pdf if success else None
 
-def extractText(pdf: PdfReader):
+def extractPdfText(pdf: PdfReader):
     writer = PdfWriter()
     for page in pdf.pages:
         writer.add_page(page)
@@ -44,6 +44,7 @@ def extractText(pdf: PdfReader):
     for page in pages:
         text = page.extract_text(layout=True)     
         
+        # removes invalid non ascii char
         text = re.sub(r'[^\x20-\x7E\n\r\t]', '', text)
         lines = text.split('\n')
         for line in lines:
