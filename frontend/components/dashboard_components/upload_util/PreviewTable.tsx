@@ -1,16 +1,18 @@
 import { Account, StatementResponse, Transaction } from "@/utils/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
     currIndex: number
     transactionData: Transaction[];
     accountData: Account;
-    onUpdate: (index: number, updatedItem: StatementResponse) => void
+    onUpdate: (index: number, updatedItem: StatementResponse) => void;
+    currAccount: Account | undefined
 }
 
 
-export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate }: Props) {
+export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate, currAccount }: Props) {
     const [editingId, setEditId] = useState(-1)
+    const [isLatest, setIsLatest] = useState(true)
 
     const handleTransactionChange = (index: number, field: keyof Transaction, newValue: string | number) => {
         transactionData[index] = { ...transactionData[index], [field]: newValue }
@@ -30,6 +32,13 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
         onUpdate(currIndex, updatedStatement)
     }
 
+    useEffect(() => {
+        if (!currAccount) {
+            setIsLatest(false)
+        } else if (accountData.latest_recorded_date < currAccount.latest_recorded_date) {
+            setIsLatest(false)
+        }
+    }, [])
     const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit"
 
     return (
@@ -43,9 +52,23 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                     <b>Account number: </b>
                     {accountData?.account_no}
                 </p>
-                <p>
-                    <b>Balance: </b>
-                    ${accountData?.balance?.toFixed(2)}
+                <p className="span flex flex-row justify-between">
+                    <span>
+                        <b>Balance: </b>
+                        <span className={!isLatest ? "text-red-600 line-through" : "text-green-600"}>
+                            ${accountData?.balance?.toFixed(2)}
+                        </span>
+                    </span>
+                    {
+                        currAccount?.latest_recorded_date &&
+                        <span>
+                            <b>{isLatest ? "Previous Balance " : "Latest Balance "}
+                                {new Date(currAccount.latest_recorded_date).toLocaleDateString('en-GB')}: </b>
+                            <span className={isLatest ? "text-red-600 line-through" : "text-green-600"}>
+                                ${currAccount.balance}
+                            </span>
+                        </span>
+                    }
                 </p>
             </div>
             <div className="overflow-auto shadow-md mt-4 max-h-[400px]">

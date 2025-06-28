@@ -8,6 +8,7 @@ class Account(BaseModel):
     account_name: str = ''
     bank_name: str = ''
     balance: float = 0.0
+    latest_recorded_date: str = ''
     
 class Statement(BaseModel):
     hasData: bool = False
