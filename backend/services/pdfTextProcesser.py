@@ -50,6 +50,14 @@ def assignWithdrawDeposit(statement: Statement, initialBal: float):
         else:
             transaction.withdrawal_amount = transaction.amount_changed
 
+def setLatestDate(transaction: Statement):
+    fst = transaction.transactions[0].transaction_date
+    snd = transaction.transactions[-1].transaction_date
+    if fst > snd: 
+        transaction.account.latest_recorded_date = fst
+    else:
+        transaction.account.latest_recorded_date = snd
+
 def processDBS(textList: list[str]) -> list[Statement]:
     # acc list starts from +2 index
     accountTableIndex = [
@@ -165,6 +173,7 @@ def processDBS(textList: list[str]) -> list[Statement]:
                 index += 1
                 
         assignWithdrawDeposit(statement, initialBal)
+        setLatestDate(statement)
 
     return (True, statements)
 
@@ -262,6 +271,8 @@ def processUOB(textList: list[str]) -> list[Statement]:
                 index += 1
                                 
         assignWithdrawDeposit(statement, initialBal)
+        setLatestDate(statement)
+
     return (True, statements)
 
 def processOCBC(textList: list[str]) -> list[Statement]:
@@ -370,6 +381,7 @@ def processOCBC(textList: list[str]) -> list[Statement]:
                 index += 1
                 
         assignWithdrawDeposit(statement, initialBal)
+        setLatestDate(statement)
         
         if (statement.hasData):
             statement.account.balance = statement.transactions[-1].ending_balance
@@ -484,6 +496,7 @@ def processSC(textList: list[str]) -> list[Statement]:
                 index += 1
                 
         assignWithdrawDeposit(statement, initialBal)
+        setLatestDate(statement)
         
         if (statement.hasData):
             statement.account.balance = statement.transactions[-1].ending_balance

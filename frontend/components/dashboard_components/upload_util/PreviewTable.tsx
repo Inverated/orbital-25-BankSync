@@ -1,21 +1,32 @@
 import { Account, StatementResponse, Transaction } from "@/utils/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
     currIndex: number
     transactionData: Transaction[];
     accountData: Account;
-    onUpdate: (index: number, updatedItem: StatementResponse) => void
+    onUpdate: (index: number, updatedItem: StatementResponse) => void;
+    onDelete: (updatedItem: StatementResponse) => void;
+    currAccount: Account | undefined
 }
 
 
-export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate }: Props) {
+export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate, onDelete, currAccount }: Props) {
     const [editingId, setEditId] = useState(-1)
-
+    const [isLatest, setIsLatest] = useState(true)
+    const [loadedTransactionData, setLoadingData] = useState<Transaction[]>(transactionData)
+    
     const handleTransactionChange = (index: number, field: keyof Transaction, newValue: string | number) => {
         transactionData[index] = { ...transactionData[index], [field]: newValue }
+        setLoadingData(transactionData)
         const updatedStatement: StatementResponse = { hasData: true, account: accountData, transactions: transactionData }
         onUpdate(currIndex, updatedStatement)
+    }
+
+    const handleDelete = (index: number) => {
+        setLoadingData(transactionData.splice(index, 1) )
+        const updatedStatement: StatementResponse = { hasData: true, account: accountData, transactions: transactionData }
+        onDelete(updatedStatement)
     }
 
     const fixDecimalPlace = (index: number) => {
@@ -26,10 +37,19 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
             ['deposit_amount']: Number(transactionRow.deposit_amount.toFixed(2).split('.').join('.')),
             ['ending_balance']: Number(transactionRow.ending_balance.toFixed(2).split('.').join('.')),
         }
+        setLoadingData(transactionData)
         const updatedStatement: StatementResponse = { hasData: true, account: accountData, transactions: transactionData }
         onUpdate(currIndex, updatedStatement)
     }
 
+    useEffect(() => {
+        setLoadingData(transactionData)
+        if (!currAccount) {
+            setIsLatest(false)
+        } else if (accountData.latest_recorded_date < currAccount.latest_recorded_date) {
+            setIsLatest(false)
+        }
+    }, [loadedTransactionData])
     const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit"
 
     return (
@@ -43,9 +63,23 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                     <b>Account number: </b>
                     {accountData?.account_no}
                 </p>
-                <p>
-                    <b>Balance: </b>
-                    ${accountData?.balance?.toFixed(2)}
+                <p className="span flex flex-row justify-between">
+                    <span>
+                        <b>Balance: </b>
+                        <span className={!isLatest ? "text-red-600 line-through" : "text-green-600"}>
+                            ${accountData?.balance?.toFixed(2)}
+                        </span>
+                    </span>
+                    {
+                        currAccount?.latest_recorded_date &&
+                        <span>
+                            <b>{isLatest ? "Previous Balance " : "Latest Balance "}
+                                {new Date(currAccount.latest_recorded_date).toLocaleDateString('en-GB')}: </b>
+                            <span className={isLatest ? "text-red-600 line-through" : "text-green-600"}>
+                                ${currAccount.balance}
+                            </span>
+                        </span>
+                    }
                 </p>
             </div>
             <div className="overflow-auto shadow-md mt-4 max-h-[400px]">
@@ -153,7 +187,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                         />
                                     }
                                 </td>
-                                <td className={rowStyle}>
+                                <td className={rowStyle + ' space-x-1.5'}>
                                     <a
                                         className="font-medium text-blue-600 hover:underline hover:cursor-pointer"
                                         onClick={() => {
@@ -161,6 +195,11 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                             setEditId(editingId == index ? -1 : index)
                                         }}>
                                         {editingId != index ? 'Edit' : 'Confirm'}
+                                    </a>
+                                    <a
+                                        className="font-medium text-blue-600 hover:underline hover:cursor-pointer"
+                                        onMouseUp={() => handleDelete(index)}>
+                                        Delete
                                     </a>
                                 </td>
                             </tr>

@@ -25,7 +25,7 @@ async function addAccountDetails(userId: string, account: Account) {
         account_name: account.account_name,
         bank_name: account.bank_name,
         balance: encrypted[0][0],
-        latest_recorded_month: account.latest_recorded_date
+        latest_recorded_date: account.latest_recorded_date
     }
 
     const { error } = await supabase

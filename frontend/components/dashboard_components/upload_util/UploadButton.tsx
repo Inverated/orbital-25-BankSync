@@ -1,14 +1,15 @@
 'use client'
 
-import { StatementResponse, uploadReturnData } from "@/utils/types";
+import { Account, StatementResponse, uploadReturnData } from "@/utils/types";
 import uploadFile from "@/utils/uploadFile";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import PreviewTable from "./PreviewTable";
-import { FileUp, Loader, Upload } from "lucide-react";
+import { FileUp, Info, Loader, Upload } from "lucide-react";
 import setStatementCategory from "@/utils/setStatementCategory";
 import { addStatements } from "@/lib/supabase_upload";
 import { useUserId } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import { getAccountDetails } from "@/lib/supabase_query";
 
 export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
@@ -21,6 +22,8 @@ export default function UploadButton() {
     const [activeTab, setActiveTab] = useState(0)
     const [uploading, setUploadingStatus] = useState(false)
     const [showParsingLoading, setParsingLoading] = useState(false)
+
+    const [currAccount, setCurrAccount] = useState<Account[] | undefined>()
 
     const router = useRouter()
     const userId = useUserId();
@@ -58,7 +61,7 @@ export default function UploadButton() {
                 resetValues()
                 return
             }
-            
+
             if (!parsedData.success) {
                 const errorMessage = parsedData.error
                 if (errorMessage == 'Require Password') {
@@ -118,12 +121,23 @@ export default function UploadButton() {
         }
     }, [setStatements, statements])
 
+    const handleDelete = useCallback((updatedStatements: StatementResponse) => {
+        if (statements) {
+            statements.map(each => each.account.account_no == updatedStatements.account.account_no ? updatedStatements : each)
+        }
+    }, [setStatements, statements])
+
     const handleUploadData = async () => {
         setUploadingStatus(true)
         if (statements == null || statements?.length == 0) {
             return
         }
-
+        statements.map(newStatement => {
+            const latestAcc = currAccount?.filter(curr => curr.account_no == newStatement.account.account_no)[0]
+            if (latestAcc && (newStatement.account.latest_recorded_date < latestAcc.latest_recorded_date)) {
+                newStatement.account.balance = latestAcc.balance
+            }
+        })
         const error = await addStatements(userId, statements)
         if (error instanceof Error) {
             alert(error.message)
@@ -146,6 +160,13 @@ export default function UploadButton() {
     }
 
     useEffect(() => {
+        getAccountDetails({
+            userId: userId,
+            selection: ['latest_recorded_date', 'balance', 'account_no']
+        }).then(acc => {
+            setCurrAccount(acc)
+        })
+
         const handleButtonDown = (event: KeyboardEvent) => {
             if (event.key == 'Escape') {
                 closeDialogue()
@@ -166,7 +187,10 @@ export default function UploadButton() {
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
                     <div className="bg-white rounded-lg shadow-lg px-8 py-5 max-w-5/6 w-full z-60 max-h-11/12 overflow-y-auto">
-                        <p className="text-2xl mb-3">File Upload</p>
+                        <div className="flex flex-row space-x-2">
+                            <p className="text-2xl mb-3">File Upload</p>
+                            <Info onClick={() => alert('Current supported bank: DBS/POSB, OCBC, UOB and SC pdf only')} className='h-5 hover:cursor-pointer'/>
+                        </div>
                         <label
                             onDrop={handleDrop}
                             onDragOver={handleDragOver}
@@ -238,6 +262,8 @@ export default function UploadButton() {
                                     transactionData={statements[activeTab].transactions}
                                     accountData={statements[activeTab].account}
                                     onUpdate={handleUpdate}
+                                    onDelete={handleDelete}
+                                    currAccount={currAccount?.filter(acc => acc.account_no == statements[activeTab].account.account_no)[0]}
                                 />
                             </div>
                         }
