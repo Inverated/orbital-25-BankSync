@@ -5,6 +5,7 @@ python-multipart
 
 pypdf
 pdfplumber
+python-dateutil
 
 pytest
 pytest-html
