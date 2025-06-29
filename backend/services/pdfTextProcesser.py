@@ -51,6 +51,8 @@ def assignWithdrawDeposit(statement: Statement, initialBal: float):
             transaction.withdrawal_amount = transaction.amount_changed
 
 def setLatestDate(transaction: Statement):
+    if len(transaction.transactions) == 0:
+        return 
     fst = transaction.transactions[0].transaction_date
     snd = transaction.transactions[-1].transaction_date
     if fst > snd: 
@@ -110,7 +112,6 @@ def processDBS(textList: list[str]) -> list[Statement]:
         if len(transactionStartIndex) == 0:
             continue
         
-        statement.hasData = True
         initialBal = None
 
         for index in transactionStartIndex:
@@ -141,15 +142,16 @@ def processDBS(textList: list[str]) -> list[Statement]:
                     index += 1
                     continue
 
-                splitted = rmSpaceFromList(row.split(' '))
-
                 rowBreakdown = standardRowBreakdown(row)
-                
+
                 if not rowBreakdown:
                     try:
                         # stupid statement sometime have last row of just date and bal
-                        float(rmSpaceFromList(row.split(' ')))
-                        continue
+                        splitted = rmSpaceFromList(row.split(' '))
+                        if len(splitted) == 2: 
+                            float(splitted[1])
+                            index += 1                        
+                            continue
                     except:
                         None
                     description += '\n' + row
@@ -172,8 +174,10 @@ def processDBS(textList: list[str]) -> list[Statement]:
                 date, description, change, balance = rowBreakdown                 
                 index += 1
                 
-        assignWithdrawDeposit(statement, initialBal)
-        setLatestDate(statement)
+        if len(statement.transactions) != 0:
+            statement.hasData = True
+            assignWithdrawDeposit(statement, initialBal)
+            setLatestDate(statement) 
 
     return (True, statements)
 
@@ -218,7 +222,6 @@ def processUOB(textList: list[str]) -> list[Statement]:
         if len(transactionStartIndex) == 0:
             continue
         
-        statement.hasData = True
         initialBal = None
         
         for index in transactionStartIndex:
@@ -270,33 +273,41 @@ def processUOB(textList: list[str]) -> list[Statement]:
                 date, description, change, balance = rowBreakdown
                 index += 1
                                 
-        assignWithdrawDeposit(statement, initialBal)
-        setLatestDate(statement)
+        if len(statement.transactions) != 0:
+            statement.hasData = True
+            assignWithdrawDeposit(statement, initialBal)
+            setLatestDate(statement)  
 
     return (True, statements)
 
 def processOCBC(textList: list[str]) -> list[Statement]:
     accountNumList = []
     accountList = []
-    stupidIdRuinThings = None
+    stupidIdRuinThings = ''
     yyyy = '1900'
     
     #no account table
     for index, line in enumerate(textList):
         row = rmSpaceFromList(line.split('  '))
-        lastIndexed = row[-1].split(' ')
-        
-        if (len(lastIndexed) > 3) and (monthLookup.get(lastIndexed[-2].lower()) != None):
-            account_name=row[0].strip()
-            match = re.search(r'\b\d{4}\b', row[-1])
-            if match:
-                yyyy = match.group()
-
-            
         if ('OF ACCOUNT' in line) or ('TRANSACTION CODE DESCRIPTION' in line):
             stupidIdRuinThings = textList[index - 1].split('\\')[0]
+        else:
+            if len(stupidIdRuinThings) > 9 and stupidIdRuinThings[0] != 'R' and stupidIdRuinThings[-2] != '\\':
+                stupidIdRuinThings = 'Deposit Insurance Scheme'
     
-        if 'Account No.' in textList[index]:
+        if 'account no.' in line.lower():
+            accNameRow = rmSpaceFromList(textList[index - 1].split(' '))
+            newDateRow = rmSpaceFromList(textList[index - 2].split(' '))
+            
+            account_name = rmSpaceFromList(textList[index - 1].split('  '))[0]
+
+            if monthLookup.get(accNameRow[-2].lower()) != None:
+                yyyy = accNameRow[-1]
+            elif monthLookup.get(newDateRow[-2].lower()) != None:
+                yyyy = newDateRow[-1]
+            else:
+                continue
+            
             account_no = textList[index].replace('Account No. ', '').strip()
             if account_no in accountNumList:
                 continue
@@ -326,7 +337,6 @@ def processOCBC(textList: list[str]) -> list[Statement]:
         if len(transactionStartIndex) == 0:
             continue
         
-        statement.hasData = True
         initialBal = None
         
         for index in transactionStartIndex:
@@ -335,7 +345,7 @@ def processOCBC(textList: list[str]) -> list[Statement]:
             
             while True:
                 row = textList[index]
-                if ((stupidIdRuinThings != '') and (stupidIdRuinThings in row)) or ('BALANCE C/F' in row) or ('TRANSACTION CODE DESCRIPTION' in row):
+                if ((stupidIdRuinThings != '') and (stupidIdRuinThings in row)) or ('Deposit Insurance Scheme' in row) or ('BALANCE C/F' in row) or ('TRANSACTION CODE DESCRIPTION' in row):
                     if date != '':
                         statement.transactions.append(Transaction(
                             transaction_date=date,
@@ -380,10 +390,10 @@ def processOCBC(textList: list[str]) -> list[Statement]:
                 date, description, change, balance = rowBreakdown
                 index += 1
                 
-        assignWithdrawDeposit(statement, initialBal)
-        setLatestDate(statement)
-        
-        if (statement.hasData):
+        if len(statement.transactions) != 0:
+            statement.hasData = True
+            assignWithdrawDeposit(statement, initialBal)
+            setLatestDate(statement)
             statement.account.balance = statement.transactions[-1].ending_balance
         
     return (True, statements)
@@ -426,7 +436,6 @@ def processSC(textList: list[str]) -> list[Statement]:
         if len(transactionStartIndex) == 0:
             continue
         
-        statement.hasData = True
         initialBal = None
         
         for index in transactionStartIndex:
@@ -495,10 +504,10 @@ def processSC(textList: list[str]) -> list[Statement]:
                 date, description, change, balance = rowBreakdown
                 index += 1
                 
-        assignWithdrawDeposit(statement, initialBal)
-        setLatestDate(statement)
-        
-        if (statement.hasData):
+        if len(statement.transactions) != 0:
+            statement.hasData = True
+            assignWithdrawDeposit(statement, initialBal)
+            setLatestDate(statement)  
             statement.account.balance = statement.transactions[-1].ending_balance
         
     return (True, statements)  

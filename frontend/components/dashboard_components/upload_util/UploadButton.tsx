@@ -263,7 +263,7 @@ export default function UploadButton() {
                                     accountData={statements[activeTab].account}
                                     onUpdate={handleUpdate}
                                     onDelete={handleDelete}
-                                    currAccount={currAccount?.filter(acc => acc.account_no == statements[activeTab].account.account_no)[0]}
+                                    accountInDatabase={currAccount?.filter(acc => acc.account_no == statements[activeTab].account.account_no)[0]}
                                 />
                             </div>
                         }
