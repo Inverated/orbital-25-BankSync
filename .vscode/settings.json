@@ -6,5 +6,10 @@
     },
     "editor.quickSuggestions": {
         "strings": true
+    },
+    "yaml.schemas": {
+        "http://json.schemastore.org/composer": [
+            "composer.yaml"
+        ],
     }
 }

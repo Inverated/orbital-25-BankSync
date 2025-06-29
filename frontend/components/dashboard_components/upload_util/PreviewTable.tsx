@@ -7,13 +7,13 @@ interface Props {
     accountData: Account;
     onUpdate: (index: number, updatedItem: StatementResponse) => void;
     onDelete: (updatedItem: StatementResponse) => void;
-    currAccount: Account | undefined
+    accountInDatabase: Account | undefined
 }
 
 
-export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate, onDelete, currAccount }: Props) {
+export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate, onDelete, accountInDatabase }: Props) {
     const [editingId, setEditId] = useState(-1)
-    const [isLatest, setIsLatest] = useState(true)
+    const [isLatest, setIsLatest] = useState<'This Latest' | 'Equal' | 'This Older'>('Equal')
     const [loadedTransactionData, setLoadingData] = useState<Transaction[]>(transactionData)
     
     const handleTransactionChange = (index: number, field: keyof Transaction, newValue: string | number) => {
@@ -44,10 +44,15 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
 
     useEffect(() => {
         setLoadingData(transactionData)
-        if (!currAccount) {
-            setIsLatest(false)
-        } else if (accountData.latest_recorded_date < currAccount.latest_recorded_date) {
-            setIsLatest(false)
+        if (!accountInDatabase) {
+            console.log(accountInDatabase)
+            setIsLatest('Equal')
+        } else if (accountData.latest_recorded_date == accountInDatabase.latest_recorded_date) {
+            setIsLatest('Equal')
+        } else if (accountData.latest_recorded_date < accountInDatabase.latest_recorded_date) {
+            setIsLatest('This Older')
+        } else {
+            setIsLatest('This Latest')
         }
     }, [loadedTransactionData])
     const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit"
@@ -66,17 +71,17 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                 <p className="span flex flex-row justify-between">
                     <span>
                         <b>Balance: </b>
-                        <span className={!isLatest ? "text-red-600 line-through" : "text-green-600"}>
+                        <span className={isLatest=='Equal' ? '' : isLatest=='This Latest' ? "text-green-600" : "text-red-600 line-through"}>
                             ${accountData?.balance?.toFixed(2)}
                         </span>
                     </span>
                     {
-                        currAccount?.latest_recorded_date &&
+                        accountInDatabase?.latest_recorded_date &&
                         <span>
-                            <b>{isLatest ? "Previous Balance " : "Latest Balance "}
-                                {new Date(currAccount.latest_recorded_date).toLocaleDateString('en-GB')}: </b>
-                            <span className={isLatest ? "text-red-600 line-through" : "text-green-600"}>
-                                ${currAccount.balance}
+                            <b>{isLatest=='This Older' ? "Latest Balance " : "Previous Balance "}
+                                {new Date(accountInDatabase.latest_recorded_date).toLocaleDateString('en-GB')}: </b>
+                            <span className={isLatest=='Equal' ? '' : isLatest=='This Latest' ? "text-red-600 line-through" : "text-green-600"}>
+                                ${accountInDatabase.balance}
                             </span>
                         </span>
                     }

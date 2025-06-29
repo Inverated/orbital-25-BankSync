@@ -5,3 +5,7 @@ python-multipart
 
 pypdf
 pdfplumber
+
+pytest
+pytest-html
+httpx

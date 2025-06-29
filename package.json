@@ -5,7 +5,8 @@
     "dev": "concurrently --raw \" cd frontend && npm run dev \" \" bin\\cmd\\run-dev.cmd \"",
     "build": "npm --prefix frontend run build",
     "start": "npm --prefix frontend run start",
-    "lint": "npm --prefix frontend run lint"
+    "lint": "npm --prefix frontend run lint",
+    "test": "python -m pytest --html=report.html --self-contained-html"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
