@@ -6,10 +6,16 @@ import ExportTable from "./ExportTable"
 import exportToXlsx from "@/utils/downloadFile"
 
 
-export default function ExportButton() {
+export default function ExportButton({ filteredAccount, filteredTransaction }: { filteredAccount: Account[], filteredTransaction: Transaction[] }) {
     const [exportDialogue, setExportDialogue] = useState(false)
     const [transactionEntry, setTransaction] = useState<Transaction[]>([])
     const [accountEntry, setAccount] = useState<Account[]>([])
+
+    const [filteredTransactionEntry, setFilteredTransaction] = useState<Transaction[]>([])
+    const [filteredAccountEntry, setFilteredAccount] = useState<Account[]>([])
+
+    const [useFiltered, setUsingFiltered] = useState(false)
+
     const EXPORTACCOUNTHEADER = ['Bank Name', 'Account No', 'Account Name', 'Balance', 'Last Recorded Date']
     const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Category', 'Ending Balance', 'Account No']
 
@@ -18,10 +24,16 @@ export default function ExportButton() {
     const userId = useUserId()
 
     const exportToFile = () => {
-        exportToXlsx(accountEntry, transactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
+        if (useFiltered) {
+            exportToXlsx(filteredAccountEntry, filteredTransactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
+        } else {
+            exportToXlsx(accountEntry, transactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
+        }
     }
 
     const resetAllValues = () => {
+        setFilteredAccount([])
+        setFilteredAccount([])
         setTransaction([])
         setAccount([])
         setActiveTab('account')
@@ -30,6 +42,10 @@ export default function ExportButton() {
     // query data here. Export only filtered items added later
     useEffect(() => {
         resetAllValues()
+
+        setFilteredTransaction(filteredTransaction)
+        setFilteredAccount(filteredAccount)
+
         getTransactionDetails({
             userId: userId
         }).then(arr => arr.forEach(entry => {
@@ -77,8 +93,13 @@ export default function ExportButton() {
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
                     <div className="bg-white rounded-lg shadow-lg px-8 max-w-5/6 w-full z-60 py-5 max-h-[90vh] overflow-auto">
-                        <p className="text-2xl mb-3">Export</p>
-
+                        <div className="flex flex-row justify-between">
+                            <p className="text-2xl">Export</p>
+                            <label className="text-sm flex flex-row space-x-2 py-1">
+                                <p>Use filtered data</p>
+                                <input id='filterCheck' checked={useFiltered} onChange={() => setUsingFiltered(!useFiltered)} type="checkbox" />
+                            </label>
+                        </div>
                         <button
                             className={`px-4 py-2 border-b-2 ${activeTab === 'account'
                                 ? 'border-blue-500 text-blue-600'
@@ -100,12 +121,12 @@ export default function ExportButton() {
                         {activeTab === 'account' ?
                             <ExportTable
                                 table={'account'}
-                                data={accountEntry}
+                                data={!useFiltered ? accountEntry : filteredAccountEntry}
                                 dataHeader={EXPORTACCOUNTHEADER}
                             /> :
                             <ExportTable
                                 table={'transaction'}
-                                data={transactionEntry}
+                                data={!useFiltered ? transactionEntry : filteredTransactionEntry}
                                 dataHeader={EXPORTTRANSACTIONHEADER}
                             />
                         }

@@ -12,7 +12,7 @@ export type TransactionDetails = {
     date?: { startDate: Dayjs | null, endDate: Dayjs | null } | null;
 }
 
-type AccountDetails = {
+export type AccountDetails = {
     userId: string;
     selection?: (keyof Account)[];
     condition?: { key: keyof Account, value: string[] }[];

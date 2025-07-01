@@ -45,7 +45,6 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
     useEffect(() => {
         setLoadingData(transactionData)
         if (!accountInDatabase) {
-            console.log(accountInDatabase)
             setIsLatest('Equal')
         } else if (accountData.latest_recorded_date == accountInDatabase.latest_recorded_date) {
             setIsLatest('Equal')

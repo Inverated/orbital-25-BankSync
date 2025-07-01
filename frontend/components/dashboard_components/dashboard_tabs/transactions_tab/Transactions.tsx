@@ -1,7 +1,7 @@
-import { getAccountDetails, getTransactionDetails, TransactionDetails } from "@/lib/supabase_query";
+import { AccountDetails, getAccountDetails, getTransactionDetails, TransactionDetails } from "@/lib/supabase_query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Transaction_Row from "./TransactionRow";
-import { Transaction } from "@/utils/types";
+import { Account, Transaction } from "@/utils/types";
 import FilterButton from "./FilterButton";
 import ExportButton from "./ExportButton";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
@@ -11,10 +11,12 @@ import { Dayjs } from "dayjs";
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
 
-    const [filterCondition, setFilterCondition] = useState<TransactionDetails | undefined>(undefined)
+    const [transFilterCondition, setTransFilterCondition] = useState<TransactionDetails | undefined>(undefined)
+    const [accFilterCondition, setAccFilterCondition] = useState<AccountDetails | undefined>(undefined)
     const [isAscending, setIsAscending] = useState(false)
 
-    const [transactionEntry, setEntry] = useState<Partial<Transaction>[]>([])
+    const [transactionEntry, setEntry] = useState<Transaction[]>([])
+    const [accountEntry, setAccount] = useState<Account[]>([])
     const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
 
     // useState to update html and useRef to get the latest value to run in function
@@ -29,6 +31,7 @@ export default function Transactions() {
 
     const resetAllValues = () => {
         setEntry([])
+        setAccount([])
         currPageRef.current = 1
         setPageNo(1)
         setUnique(new Set())
@@ -76,22 +79,25 @@ export default function Transactions() {
     const handleFilterQuery = useCallback((accountSelection: string[], categorySelection: string[], ascendingSelection: boolean,
         date: { startDate: Dayjs | null, endDate: Dayjs | null } | null) => {
         setIsAscending(ascendingSelection)
-        const conditionFilter: { key: keyof Transaction, value: string[] }[] = []
+        const transConditionFilter: { key: keyof Transaction, value: string[] }[] = []
         const transactionFilter: TransactionDetails = { userId: userId }
+        const accountFilter: AccountDetails = { userId: userId }
         if (accountSelection.length != 0) {
-            conditionFilter.push({ key: 'account_no', value: accountSelection })
+            transConditionFilter.push({ key: 'account_no', value: accountSelection })
+            accountFilter.condition = [{ key: 'account_no', value: accountSelection }]
+            setAccFilterCondition(accountFilter)
         }
         if (categorySelection.length != 0) {
-            conditionFilter.push({ key: 'category', value: categorySelection })
+            transConditionFilter.push({ key: 'category', value: categorySelection })
         }
 
-        if (conditionFilter.length != 0) {
-            transactionFilter.condition = conditionFilter
-        } 
+        if (transConditionFilter.length != 0) {
+            transactionFilter.condition = transConditionFilter
+        }
         if (date) {
             transactionFilter.date = date
         }
-        setFilterCondition(transactionFilter)
+        setTransFilterCondition(transactionFilter)
         setPageNo(1)
     }, [])
 
@@ -107,17 +113,23 @@ export default function Transactions() {
         }
 
         const accounts: AccountDetails = {}
-        getAccountDetails({
-            userId: userId
-        }).then(arr => {
+        getAccountDetails(accFilterCondition ? accFilterCondition : { userId: userId }).then(arr => {
             arr.forEach(entry => {
                 accounts[entry.account_no] = {
                     account_name: entry.account_name,
                     bank_name: entry.bank_name
                 }
+                setAccount(prev => [...prev, {
+                    user_id: userId,
+                    bank_name: entry.bank_name,
+                    account_no: entry.account_no,
+                    account_name: entry.account_name,
+                    balance: entry.balance,
+                    latest_recorded_date: entry.latest_recorded_date
+                }])
             })
         }).then(() =>
-            getTransactionDetails(filterCondition ? filterCondition : { userId: userId }).then(arr => {
+            getTransactionDetails(transFilterCondition ? transFilterCondition : { userId: userId }).then(arr => {
                 maxPageNo.current = (Math.ceil(arr.length / 10))
                 setTotalEntries(arr.length)
                 arr.forEach(entry => {
@@ -127,6 +139,7 @@ export default function Transactions() {
                     setEntry(prev =>
                         [...prev, {
                             id: entry.id,
+                            user_id: userId,
                             transaction_description: entry.transaction_description,
                             account_no: entry.account_no,
                             withdrawal_amount: entry.withdrawal_amount,
@@ -147,7 +160,7 @@ export default function Transactions() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [filterCondition])
+    }, [transFilterCondition])
 
     const buttonStyle = 'border border-black mx-3 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
 
@@ -156,7 +169,9 @@ export default function Transactions() {
             <div className='text-2xl flex justify-between'>
                 <p className='p-4'>All Transactions</p>
                 <div className=" flex justify-between">
-                    <ExportButton />
+                    <ExportButton
+                        filteredAccount={accountEntry} 
+                        filteredTransaction={transactionEntry}/>
                     <FilterButton
                         setFilter={handleFilterQuery} />
                 </div>
