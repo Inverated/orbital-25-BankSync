@@ -4,12 +4,12 @@ import decryptData from "@/utils/decryptData"
 import { Timestamp } from "next/dist/server/lib/cache-handlers/types";
 import { Dayjs } from "dayjs";
 
-type TransactionDetails = {
+export type TransactionDetails = {
     userId: string;
     selection?: (keyof Transaction)[];
     condition?: { key: keyof Transaction, value: string[] }[];
     ascending_date?: boolean;
-    date?: { startDate: Dayjs, endDate: Dayjs } | null;
+    date?: { startDate: Dayjs | null, endDate: Dayjs | null } | null;
 }
 
 type AccountDetails = {
@@ -48,7 +48,7 @@ export async function getTransactionDetails({
     condition = [],
     ascending_date = false,
     date = null
-} : TransactionDetails): Promise<Transaction[]> {
+}: TransactionDetails): Promise<Transaction[]> {
     const query = supabase
         .from('encryptedTransactionDetails')
         .select(selection.length == 0 ? '*' : selection.join(','))
@@ -59,11 +59,15 @@ export async function getTransactionDetails({
     })
 
     if (date) {
-        const start = date.startDate.startOf("month").toISOString();
-        const end = date.endDate.endOf("month").toISOString();
-        
-        query.gte("transaction_date", start)
-            .lte("transaction_date", end)
+        if (date.startDate) {
+            const start = date.startDate.startOf("month").toISOString();
+            query.gte("transaction_date", start)
+
+        }
+        if (date.endDate) {
+            const end = date.endDate.endOf("month").toISOString();
+            query.lte("transaction_date", end)
+        }
     }
 
     const { data: transaction_details, error } = await query
@@ -77,7 +81,7 @@ export async function getTransactionDetails({
     // no easy workaround that works cause supabase returns GenericStringError as data type when selecting columns dynamically
     const fixedTying = transaction_details as unknown as EncryptedTransaction[]
     const decrypted = await decryptTransaction(fixedTying)
-    
+
     return decrypted
 }
 
@@ -85,7 +89,7 @@ export async function getAccountDetails({
     userId,
     selection = [],
     condition = []
-} : AccountDetails): Promise<Account[]> {
+}: AccountDetails): Promise<Account[]> {
     let query = supabase
         .from('encryptedAccountDetails')
         .select(selection.length == 0 ? '*' : selection.join(','))
@@ -100,23 +104,23 @@ export async function getAccountDetails({
     if (error) {
         throw error.message
     }
-    
+
     const fixedTyping = account_details as unknown as EncryptedAccount[]
     const decrypted = await decryptAccount(fixedTyping)
-    
+
     return decrypted
 }
 
 async function decryptTransaction(transactions: EncryptedTransaction[]): Promise<Transaction[]> {
     const toBeDecrypted: string[][] = []
-    
+
     transactions.forEach(transaction => toBeDecrypted.push([
         transaction.transaction_description,
         transaction.withdrawal_amount,
         transaction.deposit_amount,
         transaction.ending_balance
     ]))
-    
+
     const decryptedList = await decryptData(toBeDecrypted)
 
     const decryptedTransaction: Transaction[] = []
@@ -140,7 +144,7 @@ async function decryptTransaction(transactions: EncryptedTransaction[]): Promise
 
 async function decryptAccount(accounts: EncryptedAccount[]): Promise<Account[]> {
     const toBeDecrypted: string[][] = []
-    
+
     accounts.forEach(account => toBeDecrypted.push([
         account.balance
     ]))

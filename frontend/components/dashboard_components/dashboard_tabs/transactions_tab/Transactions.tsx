@@ -1,4 +1,4 @@
-import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query";
+import { getAccountDetails, getTransactionDetails, TransactionDetails } from "@/lib/supabase_query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Transaction_Row from "./TransactionRow";
 import { Transaction } from "@/utils/types";
@@ -6,11 +6,12 @@ import FilterButton from "./FilterButton";
 import ExportButton from "./ExportButton";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useUserId } from "@/context/UserContext";
+import { Dayjs } from "dayjs";
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
 
-    const [filterCondition, setFilterCondition] = useState<{ key: keyof Transaction, value: string[] }[] | undefined>(undefined)
+    const [filterCondition, setFilterCondition] = useState<TransactionDetails | undefined>(undefined)
     const [isAscending, setIsAscending] = useState(false)
 
     const [transactionEntry, setEntry] = useState<Partial<Transaction>[]>([])
@@ -31,7 +32,6 @@ export default function Transactions() {
         currPageRef.current = 1
         setPageNo(1)
         setUnique(new Set())
-        setFilterCondition(undefined)
     }
     const addPageNo = (num: number) => {
         const newNum = currPageRef.current + num
@@ -73,20 +73,25 @@ export default function Transactions() {
             addPageNo(-1)
         }
     }
-    const handleFilterQuery = useCallback((accountSelection: string[], categorySelection: string[], ascendingSelection: boolean) => {
+    const handleFilterQuery = useCallback((accountSelection: string[], categorySelection: string[], ascendingSelection: boolean,
+        date: { startDate: Dayjs | null, endDate: Dayjs | null } | null) => {
         setIsAscending(ascendingSelection)
-        const filter: { key: keyof Transaction, value: string[] }[] = []
+        const conditionFilter: { key: keyof Transaction, value: string[] }[] = []
+        const transactionFilter: TransactionDetails = { userId: userId }
         if (accountSelection.length != 0) {
-            filter.push({ key: 'account_no', value: accountSelection })
+            conditionFilter.push({ key: 'account_no', value: accountSelection })
         }
         if (categorySelection.length != 0) {
-            filter.push({ key: 'category', value: categorySelection })
+            conditionFilter.push({ key: 'category', value: categorySelection })
         }
-        if (filter.length == 0) {
-            setFilterCondition(undefined)
-        } else {
-            setFilterCondition(filter)
+
+        if (conditionFilter.length != 0) {
+            transactionFilter.condition = conditionFilter
+        } 
+        if (date) {
+            transactionFilter.date = date
         }
+        setFilterCondition(transactionFilter)
         setPageNo(1)
     }, [])
 
@@ -112,11 +117,7 @@ export default function Transactions() {
                 }
             })
         }).then(() =>
-            getTransactionDetails({
-                userId: userId,
-                condition: filterCondition,
-                ascending_date: isAscending,
-            }).then(arr => {
+            getTransactionDetails(filterCondition ? filterCondition : { userId: userId }).then(arr => {
                 maxPageNo.current = (Math.ceil(arr.length / 10))
                 setTotalEntries(arr.length)
                 arr.forEach(entry => {
@@ -146,7 +147,7 @@ export default function Transactions() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [filterCondition, isAscending])
+    }, [filterCondition])
 
     const buttonStyle = 'border border-black mx-3 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
 
