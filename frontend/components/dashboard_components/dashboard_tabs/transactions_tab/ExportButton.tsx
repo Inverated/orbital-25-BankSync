@@ -3,7 +3,8 @@ import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
 import { Account, Transaction } from "@/utils/types"
 import { useEffect, useState } from "react"
 import ExportTable from "./ExportTable"
-import exportToXlsx from "@/utils/downloadFile"
+import { exportToXlsx, exportToPdf } from "@/utils/downloadFile"
+import { ChevronDown, ChevronUp } from "lucide-react"
 
 
 export default function ExportButton({ filteredAccount, filteredTransaction }: { filteredAccount: Account[], filteredTransaction: Transaction[] }) {
@@ -18,16 +19,27 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
 
     const EXPORTACCOUNTHEADER = ['Bank Name', 'Account No', 'Account Name', 'Balance', 'Last Recorded Date']
     const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Category', 'Ending Balance', 'Account No']
+    const EXPORTOPTIONS = ['EXCEL', 'PDF'] as const
+    const [exportType, setExporttype] = useState<typeof EXPORTOPTIONS[number]>('EXCEL')
+    const [showTypeDropdown, setShowTypeDropdown] = useState(false)
 
     const [activeTab, setActiveTab] = useState<'account' | 'transaction'>('account')
 
     const userId = useUserId()
 
     const exportToFile = () => {
-        if (useFiltered) {
-            exportToXlsx(filteredAccountEntry, filteredTransactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
-        } else {
-            exportToXlsx(accountEntry, transactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
+        if (exportType == 'EXCEL') {
+            if (useFiltered) {
+                exportToXlsx(filteredAccountEntry, filteredTransactionEntry)
+            } else {
+                exportToXlsx(accountEntry, transactionEntry)
+            }
+        } else if (exportType == 'PDF') {
+            if (useFiltered) {
+                exportToPdf(filteredAccountEntry, filteredTransactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
+            } else {
+                exportToPdf(accountEntry, transactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
+            }
         }
     }
 
@@ -37,6 +49,11 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
         setTransaction([])
         setAccount([])
         setActiveTab('account')
+    }
+
+    const updateExportType = (type: typeof EXPORTOPTIONS[number]) => {
+        setExporttype(type)
+        setShowTypeDropdown(false)
     }
 
     // query data here. Export only filtered items added later
@@ -77,9 +94,17 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                 setExportDialogue(false)
             }
         }
+        const handleClick = (event: MouseEvent) => {
+            if (!(event.target && document.getElementById('exportType')?.contains(event.target as Node))) {
+                setShowTypeDropdown(false)
+            }
+        }
+
+        document.addEventListener('click', handleClick)
         document.addEventListener('keydown', handleButtonDown)
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
+            document.removeEventListener('click', handleClick)
         }
     }, [userId, exportDialogue])
 
@@ -131,6 +156,29 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                             />
                         }
                         <div className="flex justify-end">
+                            <div className="flex flex-col text-sm scale-90" id="exportType">
+                                <button
+                                    onClick={() => setShowTypeDropdown(!showTypeDropdown)}
+                                    className="hover:bg-gray-300 focus:outline-none font-medium bg-white border-b-2 mt-4 mx-2 p-1 text-center inline-flex justify-between" type="button">
+                                    {exportType}
+                                    <div>
+                                        <div className="absolute inset-0 z-1"></div>
+                                        {showTypeDropdown ? <ChevronUp /> : <ChevronDown />}
+                                    </div>
+                                </button>
+                                <div hidden={!showTypeDropdown} className="absolute self-center z-5 bg-white rounded-sm">
+                                    {EXPORTOPTIONS.map((type, index) =>
+                                        <ul key={index}
+                                            className="hover:bg-gray-300 text-center py-2 px-4 focus:outline-none"
+                                            onClick={() => updateExportType(type)}>
+                                            <label>
+                                                <button key={index} hidden={type == exportType} />
+                                                {type}
+                                            </label>
+                                        </ul>
+                                    )}
+                                </div>
+                            </div>
                             <button
                                 onClick={() => setExportDialogue(false)}
                                 className="border border-black mt-4 mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"

@@ -1,8 +1,10 @@
 import { Account, Transaction } from "./types";
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import jsPDF from "jspdf";
+import autoTable from 'jspdf-autotable';
 
-export default async function exportToXlsx(accountEntry: Account[], transactionEntry: Transaction[], accountHeader: string[], transactionHeader: string[]) {
+export async function exportToXlsx(accountEntry: Account[], transactionEntry: Transaction[]) {
     const workbook = new ExcelJS.Workbook()
     const accountSheet = workbook.addWorksheet("Accounts")
     accountSheet.columns = [
@@ -98,4 +100,63 @@ export default async function exportToXlsx(accountEntry: Account[], transactionE
     const buffer = await workbook.xlsx.writeBuffer()
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, 'Transaction History');
+}
+
+export async function exportToPdf(accountEntry: Account[], transactionEntry: Transaction[], accountHeader: string[], transactionHeader: string[]) {
+    //const EXPORTACCOUNTHEADER = ['Bank Name', 'Account No', 'Account Name', 'Balance', 'Last Recorded Date']
+    //const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Category', 'Ending Balance', 'Account No']
+
+    const unit = 'pt'
+    const size = 'A4'
+    const orientation = 'landscape'
+
+    const marginLeft = 40
+    const doc = new jsPDF(orientation, unit, size)
+    doc.setFontSize(17)
+
+    const accountTitle = 'Accounts'
+    doc.text(accountTitle, marginLeft, 40)
+
+    doc.setLineWidth(0.5)
+    doc.line(30, 50, 810, 50)
+
+    const setAccHeaders = [accountHeader]
+    const accContent = {
+        startY: 60,
+        head: setAccHeaders,
+        body: accountEntry.map(each => [
+            each.bank_name,
+            each.account_no,
+            each.account_name,
+            each.balance.toFixed(2),
+            each.latest_recorded_date
+        ])
+    }
+    autoTable(doc, accContent)
+
+    doc.addPage()
+
+    const transactionTitle = 'Transactions'
+    doc.text(transactionTitle, marginLeft, 40)
+
+    doc.setLineWidth(0.5)
+    doc.line(30, 50, 810, 50)
+
+    const setTransHeaders = [transactionHeader]
+    const transContent = {
+        startY: 60,
+        head: setTransHeaders,
+        body: transactionEntry.map(each => [
+            each.transaction_date,
+            each.transaction_description,
+            each.deposit_amount.toFixed(2),
+            each.withdrawal_amount.toFixed(2),
+            each.category,
+            each.ending_balance.toFixed(2),
+            each.account_no
+        ])
+    }
+    autoTable(doc, transContent)
+
+    doc.save('Transaction History.pdf')
 }

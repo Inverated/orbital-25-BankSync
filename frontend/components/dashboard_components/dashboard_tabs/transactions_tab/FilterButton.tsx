@@ -102,6 +102,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
         if (filterEndDate) {
             endDate = filterEndDate.endOf('month')
         }
+
         onFilterSet.setFilter(selectedAccount.current, selectedCategory.current, orderDateAscending.current,
             { startDate: startDate, endDate: endDate })
         setFilterDialogue(false)
@@ -119,7 +120,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                     <div className="absolute inset-0 bg-black opacity-50"></div>
                     <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-full w-3/4 z-60 max-h-11/12 overflow-y-auto">
                         <p className="text-2xl mb-3">Filter</p>
-                        <div className="text-sm space-y-2 flex-col inline-flex min-w-full">
+                        <div className="text-sm space-y-2 flex-col inline-flex min-w-full max-w-full">
 
                             <button
                                 onClick={() => setDropdownAccount(!showDropdownAccount)}
@@ -148,7 +149,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                                 onClick={() => setDropdownCategory(!showDropdownCategory)}
                                 className="hover:bg-gray-300 focus:outline-none font-medium border-b-2 text-sm px-5 py-2.5 text-center inline-flex justify-between" type="button">
                                 Category
-                                {showDropdownAccount ? <ChevronUp /> : <ChevronDown />}
+                                {showDropdownCategory ? <ChevronUp /> : <ChevronDown />}
                             </button>
                             <div>
                                 <div className="rounded-lg" hidden={!showDropdownCategory}>
@@ -174,10 +175,10 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                                 onClick={() => setDropdownDate(!showDropdownDate)}
                                 className="hover:bg-gray-300 focus:outline-none font-medium border-b-2 text-sm px-5 py-2.5 text-center inline-flex justify-between" type="button">
                                 Date Range
-                                {showDropdownAccount ? <ChevronUp /> : <ChevronDown />}
+                                {showDropdownDate ? <ChevronUp /> : <ChevronDown />}
                             </button>
                             <div hidden={!showDropdownDate}>
-                                <div className="flex flex-row items-center space-x-2">
+                                <div className="flex flex-col sm:flex-row items-center space-x-2">
                                     <div className="rounded-lg scale-80" >
                                         <AnalyticsDatePicker
                                             label="Start Date"
@@ -216,7 +217,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                             </div>
                         </div>
 
-                        <div className="flex justify-end">
+                        <div className="flex justify-end sticky">
                             <button
                                 onClick={closeAll}
                                 className="border border-black mt-4 mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"

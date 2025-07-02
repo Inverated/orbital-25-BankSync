@@ -78,14 +78,15 @@ export default function Transactions() {
     }
     const handleFilterQuery = useCallback((accountSelection: string[], categorySelection: string[], ascendingSelection: boolean,
         date: { startDate: Dayjs | null, endDate: Dayjs | null } | null) => {
-        setIsAscending(ascendingSelection)
+
         const transConditionFilter: { key: keyof Transaction, value: string[] }[] = []
-        const transactionFilter: TransactionDetails = { userId: userId }
+        const transactionFilter: TransactionDetails = { userId: userId, ascending_date: ascendingSelection }
         const accountFilter: AccountDetails = { userId: userId }
+        setIsAscending(isAscending)
+        
         if (accountSelection.length != 0) {
             transConditionFilter.push({ key: 'account_no', value: accountSelection })
             accountFilter.condition = [{ key: 'account_no', value: accountSelection }]
-            setAccFilterCondition(accountFilter)
         }
         if (categorySelection.length != 0) {
             transConditionFilter.push({ key: 'category', value: categorySelection })
@@ -97,6 +98,7 @@ export default function Transactions() {
         if (date) {
             transactionFilter.date = date
         }
+        setAccFilterCondition(accountFilter)
         setTransFilterCondition(transactionFilter)
         setPageNo(1)
     }, [])
@@ -129,7 +131,7 @@ export default function Transactions() {
                 }])
             })
         }).then(() =>
-            getTransactionDetails(transFilterCondition ? transFilterCondition : { userId: userId }).then(arr => {
+            getTransactionDetails(transFilterCondition ? transFilterCondition : { userId: userId, ascending_date: isAscending }).then(arr => {
                 maxPageNo.current = (Math.ceil(arr.length / 10))
                 setTotalEntries(arr.length)
                 arr.forEach(entry => {
@@ -170,8 +172,8 @@ export default function Transactions() {
                 <p className='p-4'>All Transactions</p>
                 <div className=" flex justify-between">
                     <ExportButton
-                        filteredAccount={accountEntry} 
-                        filteredTransaction={transactionEntry}/>
+                        filteredAccount={accountEntry}
+                        filteredTransaction={transactionEntry} />
                     <FilterButton
                         setFilter={handleFilterQuery} />
                 </div>
