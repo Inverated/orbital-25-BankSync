@@ -1,9 +1,10 @@
 from typing import Optional
 import uvicorn
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.services import fileProcesser
+from backend.services.passwordProtect import protectPdf, protectExcel
 
 '''
 Initialise backend:
@@ -46,11 +47,29 @@ async def upload_file(file: UploadFile = File(...), password: Optional[str] = Fo
     (success, jsonData) = fileProcesser.fileParser(contents, extension, password)
 
     if success:
-        statement_data = jsonData 
+        statement_data = jsonData
     else:
         error_message = jsonData
-    
+
     return {"filename": file.filename, "content_type": file.content_type, 'success': success, "error": error_message, "data": statement_data}
+
+
+@app.post("/encryptFile")
+async def encrypt_file(file: UploadFile = File(...), password: str = Form(None)):
+    print(file.content_type)
+    content = await file.read()
+    if file.content_type == 'application/pdf':
+        return Response(
+            protectPdf(content, password),
+            media_type='application/pdf',
+        )
+    elif file.content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        return Response(
+            protectExcel(content, password),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+    else:
+        return
 
 
 @app.get("/")

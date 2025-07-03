@@ -1,9 +1,9 @@
 import { useUserId } from "@/context/UserContext"
 import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
 import { Account, Transaction } from "@/utils/types"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import ExportTable from "./ExportTable"
-import { exportToXlsx, exportToPdf } from "@/utils/downloadFile"
+import { exportToXlsx, exportToPdf, downloadBlob, passwordProtect } from "@/utils/downloadFile"
 import { ChevronDown, ChevronUp } from "lucide-react"
 
 
@@ -23,23 +23,41 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
     const [exportType, setExporttype] = useState<typeof EXPORTOPTIONS[number]>('EXCEL')
     const [showTypeDropdown, setShowTypeDropdown] = useState(false)
 
+    const passwordRef = useRef<HTMLInputElement>(null)
     const [activeTab, setActiveTab] = useState<'account' | 'transaction'>('account')
 
     const userId = useUserId()
 
-    const exportToFile = () => {
+    const exportToFile = async () => {
+        let blob: Blob | null = null
         if (exportType == 'EXCEL') {
             if (useFiltered) {
-                exportToXlsx(filteredAccountEntry, filteredTransactionEntry)
+                blob = await exportToXlsx(filteredAccountEntry, filteredTransactionEntry)
             } else {
-                exportToXlsx(accountEntry, transactionEntry)
+                blob = await exportToXlsx(accountEntry, transactionEntry)
             }
         } else if (exportType == 'PDF') {
             if (useFiltered) {
-                exportToPdf(filteredAccountEntry, filteredTransactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
+                blob = await exportToPdf(filteredAccountEntry, filteredTransactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
             } else {
-                exportToPdf(accountEntry, transactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
+                blob = await exportToPdf(accountEntry, transactionEntry, EXPORTACCOUNTHEADER, EXPORTTRANSACTIONHEADER)
             }
+        }
+        if (blob) {
+            console.log(passwordRef.current?.value)
+            if (passwordRef.current?.value) {
+                const response = await passwordProtect(blob, exportType, passwordRef.current.value)
+                if (response?.status == 200 && response.data) {
+                    if (exportType == 'EXCEL') {
+                        downloadBlob(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))
+                    } else if (exportType == 'PDF') {
+                        downloadBlob(new Blob([response.data], { type: 'application/pdf' }))
+                    }
+                } else if (response?.status == 404) {
+                    downloadBlob(await blob)
+                }
+            }
+            //down load if not password
         }
     }
 
@@ -59,34 +77,37 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
     // query data here. Export only filtered items added later
     useEffect(() => {
         resetAllValues()
-
         setFilteredTransaction(filteredTransaction)
         setFilteredAccount(filteredAccount)
 
-        getTransactionDetails({
-            userId: userId
-        }).then(arr => arr.forEach(entry => {
-            setTransaction(prev => [...prev, {
-                transaction_date: entry.transaction_date,
-                transaction_description: entry.transaction_description,
-                category: entry.category,
-                withdrawal_amount: entry.withdrawal_amount,
-                deposit_amount: entry.deposit_amount,
-                ending_balance: entry.ending_balance,
-                account_no: entry.account_no,
-            }])
-        }))
-        getAccountDetails({
-            userId: userId
-        }).then(arr => arr.forEach(entry => {
-            setAccount(prev => [...prev, {
-                bank_name: entry.bank_name,
-                account_no: entry.account_no,
-                account_name: entry.account_name,
-                balance: entry.balance,
-                latest_recorded_date: entry.latest_recorded_date
-            }])
-        }))
+        const initializeEntries = async () => {
+            await getTransactionDetails({
+                userId: userId
+            }).then(arr => arr.forEach(entry => {
+                setTransaction(prev => [...prev, {
+                    transaction_date: entry.transaction_date,
+                    transaction_description: entry.transaction_description,
+                    category: entry.category,
+                    withdrawal_amount: entry.withdrawal_amount,
+                    deposit_amount: entry.deposit_amount,
+                    ending_balance: entry.ending_balance,
+                    account_no: entry.account_no,
+                }])
+            }))
+            getAccountDetails({
+                userId: userId
+            }).then(arr => arr.forEach(entry => {
+                setAccount(prev => [...prev, {
+                    bank_name: entry.bank_name,
+                    account_no: entry.account_no,
+                    account_name: entry.account_name,
+                    balance: entry.balance,
+                    latest_recorded_date: entry.latest_recorded_date
+                }])
+            }))
+        }
+
+        initializeEntries()
 
         const handleButtonDown = (event: KeyboardEvent) => {
             if (event.key == 'Escape') {
@@ -155,11 +176,15 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                                 dataHeader={EXPORTTRANSACTIONHEADER}
                             />
                         }
+                        <div className="text-sm flex pt-3 pb-1 space-x-2">
+                            <b>Password: </b>
+                            <input type="text" ref={passwordRef} className="border rounded-sm"></input>
+                        </div>
                         <div className="flex justify-end">
                             <div className="flex flex-col text-sm scale-90" id="exportType">
                                 <button
                                     onClick={() => setShowTypeDropdown(!showTypeDropdown)}
-                                    className="hover:bg-gray-300 focus:outline-none font-medium bg-white border-b-2 mt-4 mx-2 p-1 text-center inline-flex justify-between" type="button">
+                                    className="hover:bg-gray-300 focus:outline-none font-medium bg-white border-b-2 mx-2 p-1 text-center inline-flex justify-between" type="button">
                                     {exportType}
                                     <div>
                                         <div className="absolute inset-0 z-1"></div>
@@ -181,13 +206,13 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                             </div>
                             <button
                                 onClick={() => setExportDialogue(false)}
-                                className="border border-black mt-4 mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                                className="border border-black mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
                             >
                                 Close
                             </button>
                             <button
                                 onClick={exportToFile}
-                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black mt-4 p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
+                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
                             >
                                 Confirm
                             </button>

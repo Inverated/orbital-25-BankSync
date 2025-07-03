@@ -1,7 +1,7 @@
 'use client'
 
 import { Account, StatementResponse, uploadReturnData } from "@/utils/types";
-import uploadFile from "@/utils/uploadFile";
+import { uploadNewFile } from "@/utils/uploadFile";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import PreviewTable from "./PreviewTable";
 import { FileUp, Info, Loader, Upload } from "lucide-react";
@@ -54,11 +54,17 @@ export default function UploadButton() {
             }
 
             setParsingLoading(true)
-            let parsedData: uploadReturnData | null = await uploadFile(currentFile.current, filePassword.current?.value)
+            const result: { status: number, data: uploadReturnData | null, error: Error | null } = await uploadNewFile(currentFile.current, filePassword.current?.value)
             setParsingLoading(false)
 
-            if (parsedData == null) {
+            if (result.status == 404) {
+                alert(result.error)
                 resetValues()
+                return
+            }
+            let parsedData = result.data
+
+            if (!parsedData) {
                 return
             }
 
@@ -189,7 +195,7 @@ export default function UploadButton() {
                     <div className="bg-white rounded-lg shadow-lg px-8 py-5 max-w-5/6 w-full z-60 max-h-11/12 overflow-y-auto">
                         <div className="flex flex-row space-x-2">
                             <p className="text-2xl mb-3">File Upload</p>
-                            <Info onClick={() => alert('Current supported bank: DBS/POSB, OCBC, UOB and SC pdf only')} className='h-5 hover:cursor-pointer'/>
+                            <Info onClick={() => alert('Current supported bank: DBS/POSB, OCBC, UOB and SC pdf only')} className='h-5 hover:cursor-pointer' />
                         </div>
                         <label
                             onDrop={handleDrop}

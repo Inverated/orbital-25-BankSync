@@ -8,16 +8,26 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-r
 import { useUserId } from "@/context/UserContext";
 import { Dayjs } from "dayjs";
 
+type AccountMap = {
+    [account_no: string]: {
+        account_name: string;
+        bank_name: string;
+    }
+}
+
+
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
+    const userId = useUserId();
 
-    const [transFilterCondition, setTransFilterCondition] = useState<TransactionDetails | undefined>(undefined)
-    const [accFilterCondition, setAccFilterCondition] = useState<AccountDetails | undefined>(undefined)
     const [isAscending, setIsAscending] = useState(false)
+    const [transFilterCondition, setTransFilterCondition] = useState<TransactionDetails>({ userId: userId, ascending_date: isAscending })
+    const [accFilterCondition, setAccFilterCondition] = useState<AccountDetails>({ userId: userId })
 
     const [transactionEntry, setEntry] = useState<Transaction[]>([])
     const [accountEntry, setAccount] = useState<Account[]>([])
     const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
+    const accounts: AccountMap = {}
 
     // useState to update html and useRef to get the latest value to run in function
     const pageNoRef = useRef<HTMLInputElement>(null)
@@ -27,7 +37,6 @@ export default function Transactions() {
     const maxPageNo = useRef(Math.ceil(transactionEntry.length / 10))
     const [selPageDialogue, setPageDialogue] = useState(false)
 
-    const userId = useUserId();
 
     const resetAllValues = () => {
         setEntry([])
@@ -78,12 +87,11 @@ export default function Transactions() {
     }
     const handleFilterQuery = useCallback((accountSelection: string[], categorySelection: string[], ascendingSelection: boolean,
         date: { startDate: Dayjs | null, endDate: Dayjs | null } | null) => {
-
         const transConditionFilter: { key: keyof Transaction, value: string[] }[] = []
         const transactionFilter: TransactionDetails = { userId: userId, ascending_date: ascendingSelection }
         const accountFilter: AccountDetails = { userId: userId }
         setIsAscending(isAscending)
-        
+
         if (accountSelection.length != 0) {
             transConditionFilter.push({ key: 'account_no', value: accountSelection })
             accountFilter.condition = [{ key: 'account_no', value: accountSelection }]
@@ -98,6 +106,7 @@ export default function Transactions() {
         if (date) {
             transactionFilter.date = date
         }
+        console.log(transactionFilter)
         setAccFilterCondition(accountFilter)
         setTransFilterCondition(transactionFilter)
         setPageNo(1)
@@ -107,31 +116,32 @@ export default function Transactions() {
     useEffect(() => {
         resetAllValues()
         pageNoRef.current = document.getElementById('select_page_num') as HTMLInputElement
-        type AccountDetails = {
-            [account_no: string]: {
-                account_name: string;
-                bank_name: string;
-            }
-        }
 
-        const accounts: AccountDetails = {}
-        getAccountDetails(accFilterCondition ? accFilterCondition : { userId: userId }).then(arr => {
+        getAccountDetails(accFilterCondition).then(arr => {
             arr.forEach(entry => {
                 accounts[entry.account_no] = {
                     account_name: entry.account_name,
                     bank_name: entry.bank_name
                 }
-                setAccount(prev => [...prev, {
-                    user_id: userId,
-                    bank_name: entry.bank_name,
-                    account_no: entry.account_no,
-                    account_name: entry.account_name,
-                    balance: entry.balance,
-                    latest_recorded_date: entry.latest_recorded_date
-                }])
+                setAccount(prev => {
+                    console.log(prev.filter(e => e.account_no == entry.account_no).length)
+                    if (prev.filter(e => e.account_no == entry.account_no).length == 0) {
+                        console.log(entry, prev)
+                        return [...prev, {
+                            user_id: userId,
+                            bank_name: entry.bank_name,
+                            account_no: entry.account_no,
+                            account_name: entry.account_name,
+                            balance: entry.balance,
+                            latest_recorded_date: entry.latest_recorded_date
+                        }]
+                    } else {
+                        return prev
+                    }
+                })
             })
         }).then(() =>
-            getTransactionDetails(transFilterCondition ? transFilterCondition : { userId: userId, ascending_date: isAscending }).then(arr => {
+            getTransactionDetails(transFilterCondition).then(arr => {
                 maxPageNo.current = (Math.ceil(arr.length / 10))
                 setTotalEntries(arr.length)
                 arr.forEach(entry => {
@@ -149,8 +159,8 @@ export default function Transactions() {
                             category: entry.category,
                             transaction_date: entry.transaction_date,
                             ending_balance: entry.ending_balance,
-                            account_name: entry.account_no ? accounts[entry.account_no].account_name : '',
-                            bank_name: entry.account_no ? accounts[entry.account_no].bank_name : ''
+                            account_name: accounts[entry.account_no] ? accounts[entry.account_no].account_name : '',
+                            bank_name: accounts[entry.account_no] ? accounts[entry.account_no].bank_name : '',
                         }])
                 })
             })

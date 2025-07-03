@@ -6,6 +6,7 @@ python-multipart
 pypdf
 pdfplumber
 python-dateutil
+msoffcrypto-tool
 
 pytest
 pytest-html

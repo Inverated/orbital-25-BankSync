@@ -3,8 +3,9 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
+import { uploadFileToEncrypt } from "./uploadFile";
 
-export async function exportToXlsx(accountEntry: Account[], transactionEntry: Transaction[]) {
+export async function exportToXlsx(accountEntry: Account[], transactionEntry: Transaction[]): Promise<Blob> {
     const workbook = new ExcelJS.Workbook()
     const accountSheet = workbook.addWorksheet("Accounts")
     accountSheet.columns = [
@@ -99,10 +100,10 @@ export async function exportToXlsx(accountEntry: Account[], transactionEntry: Tr
 
     const buffer = await workbook.xlsx.writeBuffer()
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, 'Transaction History');
+    return blob
 }
 
-export async function exportToPdf(accountEntry: Account[], transactionEntry: Transaction[], accountHeader: string[], transactionHeader: string[]) {
+export async function exportToPdf(accountEntry: Account[], transactionEntry: Transaction[], accountHeader: string[], transactionHeader: string[]): Promise<Blob> {
     //const EXPORTACCOUNTHEADER = ['Bank Name', 'Account No', 'Account Name', 'Balance', 'Last Recorded Date']
     //const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Category', 'Ending Balance', 'Account No']
 
@@ -158,5 +159,25 @@ export async function exportToPdf(accountEntry: Account[], transactionEntry: Tra
     }
     autoTable(doc, transContent)
 
-    doc.save('Transaction History.pdf')
+    const blob = doc.output('blob')
+
+    return blob
+}
+
+export async function downloadBlob(blob: Blob) {
+    saveAs(await blob, 'Transaction History')
+}
+
+export function passwordProtect(blob: Blob, exportOption: 'EXCEL' | "PDF", password: string) {
+    const fileName = 'Transaction History'
+    let file: File
+    if (exportOption == 'PDF') {
+        file = new File([blob], fileName, { type: 'application/pdf' })
+    } else if (exportOption == 'EXCEL') {
+        file = new File([blob], fileName, { type:  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    } else {
+        return null
+    }
+
+    return uploadFileToEncrypt(file, password)
 }
