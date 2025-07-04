@@ -5,21 +5,32 @@ from backend.models.keywordDict import monthLookup
 from dateutil.parser import parse
 
 
-def parseDate(text: str, yyyy: str) -> bool | tuple[str, str]:
+def parseDate(splitted: list[str], yyyy: str) -> bool | tuple[str, str]:
     '''
         Converts:
             12 Mar, 12 Mar 2025, 12/03/2025, 12-03-2025
         Into:
             yyyy-mm-dd
     '''
-    splitted = text.split(' ')
     defaultDate = datetime(int(yyyy), 1, 1)
     
     if monthLookup.get(splitted[3].lower()) != None and splitted[2].isdigit():
-        #OCBC format hotfix for double dates
+        # OCBC format fix for double dates
+        # dd mmm dd mmm ...
         try:
             date = parse(' '.join(splitted[:2]), dayfirst=True, default=defaultDate)
             return (date.date().isoformat(), splitted[4])
+        except:
+            None
+    elif len(splitted[0]) == len(splitted[1]) and len(splitted[0]) > 2 and monthLookup.get(splitted[1]) == None:
+        # length of transaction and credited date same, shortest possible d/m d/m, ensure 2nd d/m is not month
+        # 1/1 1/1 ...,  not 1 May ... 
+        # dd/mm dd/mm ...
+        try:
+            date = parse(splitted[0], dayfirst=True, default=defaultDate)
+            date2 = parse(splitted[0], dayfirst=True, default=defaultDate)
+            if date.month == date2.month:
+                return (date.date().isoformat(), splitted[2])
         except:
             None
             
@@ -47,12 +58,12 @@ def standardRowBreakdown(row: str, yyyy: str = '1900') -> list[str] | bool:
         For row arrangement: date    description    deposit/empty   withdrawal/empty   balance
         Converts row into a list of [date, description, deposit/withdrawal, balance]
     '''
-    splitted: list[str] = rmSpaceFromList(row.split(' '))
+    splitted: list[str] = rmSpaceFromList(row.strip().split(' '))
 
     if len(splitted) < 4:
         return False
 
-    dateResult = parseDate(row.strip(), yyyy)
+    dateResult = parseDate(splitted, yyyy)
     if not dateResult:
         return False
     date, descriptionStartWord = dateResult

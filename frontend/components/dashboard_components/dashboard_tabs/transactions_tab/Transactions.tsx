@@ -1,20 +1,33 @@
-import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query";
+import { AccountDetails, getAccountDetails, getTransactionDetails, TransactionDetails } from "@/lib/supabase_query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Transaction_Row from "./TransactionRow";
-import { Transaction } from "@/utils/types";
+import { Account, Transaction } from "@/utils/types";
 import FilterButton from "./FilterButton";
 import ExportButton from "./ExportButton";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useUserId } from "@/context/UserContext";
+import { Dayjs } from "dayjs";
+
+type AccountMap = {
+    [account_no: string]: {
+        account_name: string;
+        bank_name: string;
+    }
+}
+
 
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
+    const userId = useUserId();
 
-    const [filterCondition, setFilterCondition] = useState<{ key: keyof Transaction, value: string[] }[] | undefined>(undefined)
     const [isAscending, setIsAscending] = useState(false)
+    const [transFilterCondition, setTransFilterCondition] = useState<TransactionDetails>({ userId: userId, ascending_date: isAscending })
+    const [accFilterCondition, setAccFilterCondition] = useState<AccountDetails>({ userId: userId })
 
-    const [transactionEntry, setEntry] = useState<Partial<Transaction>[]>([])
+    const [transactionEntry, setEntry] = useState<Transaction[]>([])
+    const [accountEntry, setAccount] = useState<Account[]>([])
     const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
+    const accounts: AccountMap = {}
 
     // useState to update html and useRef to get the latest value to run in function
     const pageNoRef = useRef<HTMLInputElement>(null)
@@ -24,14 +37,13 @@ export default function Transactions() {
     const maxPageNo = useRef(Math.ceil(transactionEntry.length / 10))
     const [selPageDialogue, setPageDialogue] = useState(false)
 
-    const userId = useUserId();
 
     const resetAllValues = () => {
         setEntry([])
+        setAccount([])
         currPageRef.current = 1
         setPageNo(1)
         setUnique(new Set())
-        setFilterCondition(undefined)
     }
     const addPageNo = (num: number) => {
         const newNum = currPageRef.current + num
@@ -73,20 +85,29 @@ export default function Transactions() {
             addPageNo(-1)
         }
     }
-    const handleFilterQuery = useCallback((accountSelection: string[], categorySelection: string[], ascendingSelection: boolean) => {
-        setIsAscending(ascendingSelection)
-        const filter: { key: keyof Transaction, value: string[] }[] = []
+    const handleFilterQuery = useCallback((accountSelection: string[], categorySelection: string[], ascendingSelection: boolean,
+        date: { startDate: Dayjs | null, endDate: Dayjs | null } | null) => {
+        const transConditionFilter: { key: keyof Transaction, value: string[] }[] = []
+        const transactionFilter: TransactionDetails = { userId: userId, ascending_date: ascendingSelection }
+        const accountFilter: AccountDetails = { userId: userId }
+        setIsAscending(isAscending)
+
         if (accountSelection.length != 0) {
-            filter.push({ key: 'account_no', value: accountSelection })
+            transConditionFilter.push({ key: 'account_no', value: accountSelection })
+            accountFilter.condition = [{ key: 'account_no', value: accountSelection }]
         }
         if (categorySelection.length != 0) {
-            filter.push({ key: 'category', value: categorySelection })
+            transConditionFilter.push({ key: 'category', value: categorySelection })
         }
-        if (filter.length == 0) {
-            setFilterCondition(undefined)
-        } else {
-            setFilterCondition(filter)
+
+        if (transConditionFilter.length != 0) {
+            transactionFilter.condition = transConditionFilter
         }
+        if (date) {
+            transactionFilter.date = date
+        }
+        setAccFilterCondition(accountFilter)
+        setTransFilterCondition(transactionFilter)
         setPageNo(1)
     }, [])
 
@@ -94,29 +115,30 @@ export default function Transactions() {
     useEffect(() => {
         resetAllValues()
         pageNoRef.current = document.getElementById('select_page_num') as HTMLInputElement
-        type AccountDetails = {
-            [account_no: string]: {
-                account_name: string;
-                bank_name: string;
-            }
-        }
 
-        const accounts: AccountDetails = {}
-        getAccountDetails({
-            userId: userId
-        }).then(arr => {
+        getAccountDetails(accFilterCondition).then(arr => {
             arr.forEach(entry => {
                 accounts[entry.account_no] = {
                     account_name: entry.account_name,
                     bank_name: entry.bank_name
                 }
+                setAccount(prev => {
+                    if (prev.filter(e => e.account_no == entry.account_no).length == 0) {
+                        return [...prev, {
+                            user_id: userId,
+                            bank_name: entry.bank_name,
+                            account_no: entry.account_no,
+                            account_name: entry.account_name,
+                            balance: entry.balance,
+                            latest_recorded_date: entry.latest_recorded_date
+                        }]
+                    } else {
+                        return prev
+                    }
+                })
             })
         }).then(() =>
-            getTransactionDetails({
-                userId: userId,
-                condition: filterCondition,
-                ascending_date: isAscending,
-            }).then(arr => {
+            getTransactionDetails(transFilterCondition).then(arr => {
                 maxPageNo.current = (Math.ceil(arr.length / 10))
                 setTotalEntries(arr.length)
                 arr.forEach(entry => {
@@ -126,6 +148,7 @@ export default function Transactions() {
                     setEntry(prev =>
                         [...prev, {
                             id: entry.id,
+                            user_id: userId,
                             transaction_description: entry.transaction_description,
                             account_no: entry.account_no,
                             withdrawal_amount: entry.withdrawal_amount,
@@ -133,8 +156,8 @@ export default function Transactions() {
                             category: entry.category,
                             transaction_date: entry.transaction_date,
                             ending_balance: entry.ending_balance,
-                            account_name: entry.account_no ? accounts[entry.account_no].account_name : '',
-                            bank_name: entry.account_no ? accounts[entry.account_no].bank_name : ''
+                            account_name: accounts[entry.account_no] ? accounts[entry.account_no].account_name : '',
+                            bank_name: accounts[entry.account_no] ? accounts[entry.account_no].bank_name : '',
                         }])
                 })
             })
@@ -146,7 +169,7 @@ export default function Transactions() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [filterCondition, isAscending])
+    }, [transFilterCondition])
 
     const buttonStyle = 'border border-black mx-3 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
 
@@ -155,7 +178,9 @@ export default function Transactions() {
             <div className='text-2xl flex justify-between'>
                 <p className='p-4'>All Transactions</p>
                 <div className=" flex justify-between">
-                    <ExportButton />
+                    <ExportButton
+                        filteredAccount={accountEntry}
+                        filteredTransaction={transactionEntry} />
                     <FilterButton
                         setFilter={handleFilterQuery} />
                 </div>

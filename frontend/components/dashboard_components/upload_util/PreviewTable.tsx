@@ -45,7 +45,6 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
     useEffect(() => {
         setLoadingData(transactionData)
         if (!accountInDatabase) {
-            console.log(accountInDatabase)
             setIsLatest('Equal')
         } else if (accountData.latest_recorded_date == accountInDatabase.latest_recorded_date) {
             setIsLatest('Equal')
@@ -122,6 +121,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                     <input
                                         className={editingId != index ? "pointer-events-none select-text cursor-text max-w-25" : "max-w-25"}
                                         type='date'
+                                        name='date'
                                         value={transaction.transaction_date}
                                         onChange={(e) => handleTransactionChange(index, 'transaction_date', e.target.value)}
                                         readOnly={editingId != index}
@@ -129,12 +129,13 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                 </th>
                                 <td className={rowStyle}>
                                     {editingId != index ?
-                                        <div id={"description_" + index}>
+                                        <label htmlFor="description" id={"description_" + index}>
                                             {transaction.transaction_description}
-                                        </div> :
+                                        </label> :
                                         <textarea
                                             className="border rounded-sm w-full overflow-hidden z-30 h-[65]"
                                             value={transaction.transaction_description}
+                                            name='description'
                                             onChange={(e) => handleTransactionChange(index, 'transaction_description', e.target.value)}
                                             readOnly={editingId != index}
                                         />
@@ -142,12 +143,13 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                 </td>
                                 <td className={rowStyle}>
                                     {editingId != index ?
-                                        <div>
+                                        <label htmlFor="deposit">
                                             {(transaction.deposit_amount != 0) ? transaction.deposit_amount.toFixed(2) : ''}
-                                        </div> :
+                                        </label> :
                                         <input
                                             className="max-w-20"
                                             type='number'
+                                            name='deposit'
                                             value={transaction.deposit_amount}
                                             onChange={(e) => handleTransactionChange(index, 'deposit_amount', Number(e.target.value))}
                                             readOnly={editingId != index}
@@ -156,12 +158,13 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                 </td>
                                 <td className={rowStyle}>
                                     {editingId != index ?
-                                        <div>
+                                        <label htmlFor="withdrawal">
                                             {transaction.withdrawal_amount != 0 ? transaction.withdrawal_amount?.toFixed(2) : ''}
-                                        </div> :
+                                        </label> :
                                         <input
                                             className="max-w-20"
                                             type='number'
+                                            name='withdrawal'
                                             value={transaction.withdrawal_amount}
                                             onChange={(e) => handleTransactionChange(index, 'withdrawal_amount', Number(e.target.value))}
                                             readOnly={editingId != index}
@@ -173,6 +176,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                     <input
                                         className={editingId == index ? "border border-gray-400 max-w-25 rounded-sm h-full" : 'pointer-events-none max-w-25 select-text cursor-text'}
                                         type='text'
+                                        name='category'
                                         value={transaction.category}
                                         onChange={(e) => handleTransactionChange(index, 'category', e.target.value)}
                                         readOnly={editingId != index}
@@ -180,12 +184,13 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                 </td>
                                 <td className={rowStyle}>
                                     {editingId != index ?
-                                        <div>
+                                        <label htmlFor="ending balance">
                                             {transaction.ending_balance?.toFixed(2)}
-                                        </div> :
+                                        </label> :
                                         <input
                                             className="max-w-20"
                                             type='number'
+                                            name='ending balance'
                                             value={transaction.ending_balance}
                                             onChange={(e) => handleTransactionChange(index, 'ending_balance', Number(e.target.value))}
                                             readOnly={editingId != index}

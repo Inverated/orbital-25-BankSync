@@ -1,8 +1,11 @@
 import { useUserId } from "@/context/UserContext"
 import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
+import AnalyticsDatePicker from "@/utils/DatePicker"
+import { Dayjs } from "dayjs"
+import { ChevronDown, ChevronUp } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
-export default function FilterButton(onFilterSet: { setFilter: (accountSelection: string[], categorySelection: string[], isAscending: boolean) => void }) {
+export default function FilterButton(onFilterSet: { setFilter: (accountSelection: string[], categorySelection: string[], isAscending: boolean, date: { startDate: Dayjs | null, endDate: Dayjs | null }) => void }) {
     const [filterDialogue, setFilterDialogue] = useState(false)
     const [uniqueAccount, setUniqueAccount] = useState<{ account_name: string, account_no: string, bank_name: string }[]>([])
     const [uniqueCategory, setUniqueCategory] = useState<string[]>([])
@@ -12,6 +15,12 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
     const selectedAccount = useRef<string[]>([])
     const selectedCategory = useRef<string[]>([])
     const orderDateAscending = useRef(false)
+
+    const [showDropdownAccount, setDropdownAccount] = useState(false)
+    const [showDropdownCategory, setDropdownCategory] = useState(false)
+    const [showDropdownDate, setDropdownDate] = useState(false)
+    const [filterStartDate, setStartDate] = useState<Dayjs | null>(null);
+    const [filterEndDate, setEndDate] = useState<Dayjs | null>(null);
 
     const userId = useUserId();
 
@@ -85,7 +94,17 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
     }
 
     const handleFilter = () => {
-        onFilterSet.setFilter(selectedAccount.current, selectedCategory.current, orderDateAscending.current)
+        let startDate = null
+        let endDate = null
+        if (filterStartDate) {
+            startDate = filterStartDate.startOf('month')
+        }
+        if (filterEndDate) {
+            endDate = filterEndDate.endOf('month')
+        }
+
+        onFilterSet.setFilter(selectedAccount.current, selectedCategory.current, orderDateAscending.current,
+            { startDate: startDate, endDate: endDate })
         setFilterDialogue(false)
     }
 
@@ -99,43 +118,97 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
             {filterDialogue && categoryLoaded && accountLoaded &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-5/6 w-full z-60 max-h-11/12 overflow-y-auto">
+                    <div className="bg-white rounded-lg shadow-lg px-8 py-7 max-w-full w-3/4 z-60 max-h-11/12 overflow-y-auto">
                         <p className="text-2xl mb-3">Filter</p>
-                        <div className="text-sm flex justify-between">
-                            <div>
-                                <span className="text-xl">Account</span>
-                                {uniqueAccount.map((account, index) =>
-                                    <label key={index} className="flex py-0.5 px-3 gap-x-1">
-                                        <input
-                                            type='checkbox'
-                                            value={account.account_name}
-                                            onChange={e => updateAccountSelection(account.account_no, e.currentTarget.checked)} />
-                                        {account.bank_name + ': ' + account.account_name}
-                                    </label>
-                                )}
+                        <div className="text-sm space-y-2 flex-col inline-flex min-w-full max-w-full">
+
+                            <button
+                                onClick={() => setDropdownAccount(!showDropdownAccount)}
+                                className="hover:bg-gray-300 focus:outline-none font-medium border-b-2 text-sm px-5 py-2.5 text-center inline-flex justify-between" type="button">
+                                Account Name
+                                {showDropdownAccount ? <ChevronUp /> : <ChevronDown />}
+                            </button>
+                            <div id="accountDropdown" className="rounded-lg" hidden={!showDropdownAccount}>
+                                <ul className="p-3 text-sm">
+                                    {uniqueAccount.map((account, index) =>
+                                        <li key={index} >
+                                            <label className="flex py-1.5 px-3 justify-between">
+                                                {account.bank_name + ': ' + account.account_name}
+                                                <input
+                                                    type='checkbox'
+                                                    value={account.account_name}
+                                                    onChange={e => updateAccountSelection(account.account_no, e.currentTarget.checked)} />
+                                            </label>
+                                            {index < uniqueAccount.length - 1 ? <hr /> : ''}
+                                        </li>
+                                    )}
+                                </ul>
                             </div>
+
+                            <button
+                                onClick={() => setDropdownCategory(!showDropdownCategory)}
+                                className="hover:bg-gray-300 focus:outline-none font-medium border-b-2 text-sm px-5 py-2.5 text-center inline-flex justify-between" type="button">
+                                Category
+                                {showDropdownCategory ? <ChevronUp /> : <ChevronDown />}
+                            </button>
                             <div>
-                                <span className="text-xl">Category</span>
-                                {uniqueCategory.map((category, index) =>
-                                    <label key={index} className="flex py-0.5 px-3 gap-x-1">
-                                        <input
-                                            type='checkbox'
-                                            value={category}
-                                            onChange={e => updateCategorySelection(category, e.currentTarget.checked)} />
-                                        {category}
-                                    </label>
-                                )}
+                                <div className="rounded-lg" hidden={!showDropdownCategory}>
+                                    <ul className="p-3 text-sm">
+                                        {uniqueCategory.map((category, index) =>
+                                            <li key={index} >
+                                                <label className="flex py-1.5 px-3 justify-between">
+                                                    {category}
+                                                    <input
+                                                        type='checkbox'
+                                                        value={category}
+                                                        onChange={e => updateCategorySelection(category, e.currentTarget.checked)} />
+
+                                                </label>
+                                                {index < uniqueCategory.length - 1 ? <hr /> : ''}
+                                            </li>
+                                        )}
+                                    </ul>
+                                </div>
                             </div>
+
+                            <button
+                                onClick={() => setDropdownDate(!showDropdownDate)}
+                                className="hover:bg-gray-300 focus:outline-none font-medium border-b-2 text-sm px-5 py-2.5 text-center inline-flex justify-between" type="button">
+                                Date Range
+                                {showDropdownDate ? <ChevronUp /> : <ChevronDown />}
+                            </button>
+                            <div hidden={!showDropdownDate}>
+                                <div className="flex flex-col sm:flex-row items-center space-x-2">
+                                    <div className="rounded-lg scale-80" >
+                                        <AnalyticsDatePicker
+                                            label="Start Date"
+                                            value={filterStartDate}
+                                            onChange={e => setStartDate(e)}
+                                        />
+                                    </div>
+                                    <p>To</p>
+                                    <div className="rounded-lg scale-80" hidden={!showDropdownDate}>
+                                        <AnalyticsDatePicker
+                                            label="End Date"
+                                            value={filterEndDate}
+                                            onChange={e => setEndDate(e)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
                             <div>
-                                <span className="text-xl">Order By</span>
+                                <div
+                                    className="hover:bg-gray-300 focus:outline-none font-medium border-b-2 text-sm px-5 py-2.5">
+                                    Date Order
+                                </div>
                                 <div>
-                                    <p>Transaction Date</p>
-                                    <div className="flex flex-col px-3 mr-5 py-0.5">
-                                        <label className="py-0.5 gap-x-1">
+                                    <div className="flex flex-col text-sm">
+                                        <label className="space-x-2 my-2">
                                             <input type="radio" name="date_order" onClick={() => orderDateAscending.current = true} />
                                             <span>Ascending</span>
                                         </label>
-                                        <label className="py-0.5 gap-x-1">
+                                        <label className="space-x-2">
                                             <input type="radio" name="date_order" onClick={() => orderDateAscending.current = false} defaultChecked />
                                             <span>Descending</span>
                                         </label>
@@ -144,7 +217,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                             </div>
                         </div>
 
-                        <div className="flex justify-end">
+                        <div className="flex justify-end sticky">
                             <button
                                 onClick={closeAll}
                                 className="border border-black mt-4 mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"

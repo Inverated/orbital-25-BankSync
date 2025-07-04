@@ -6,6 +6,11 @@ export default async function decrypt(items: string[][]) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ value: items }),
     });
-    const json = await response.json()
-    return json.decrypted
+
+    try {
+        const body = await response.json()
+        return body.decrypted
+    } catch (err) {
+        return new Response('Invalid JSON', { status: 400 })
+    }
 }

@@ -6,6 +6,10 @@ export default async function encrypt(items: string[][]) {
         body: JSON.stringify({ value: items }),
     });
 
-    const json = await response.json()
-    return json.encrypted
+    try {
+        const body = await response.json()
+        return body.encrypted
+    } catch (err) {
+        return new Response('Invalid JSON', { status: 400 })
+    }
 }
