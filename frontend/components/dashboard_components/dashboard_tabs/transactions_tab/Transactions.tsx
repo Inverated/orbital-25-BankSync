@@ -106,7 +106,6 @@ export default function Transactions() {
         if (date) {
             transactionFilter.date = date
         }
-        console.log(transactionFilter)
         setAccFilterCondition(accountFilter)
         setTransFilterCondition(transactionFilter)
         setPageNo(1)
@@ -124,9 +123,7 @@ export default function Transactions() {
                     bank_name: entry.bank_name
                 }
                 setAccount(prev => {
-                    console.log(prev.filter(e => e.account_no == entry.account_no).length)
                     if (prev.filter(e => e.account_no == entry.account_no).length == 0) {
-                        console.log(entry, prev)
                         return [...prev, {
                             user_id: userId,
                             bank_name: entry.bank_name,

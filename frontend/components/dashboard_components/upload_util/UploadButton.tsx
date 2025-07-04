@@ -230,9 +230,7 @@ export default function UploadButton() {
                                     <form onSubmit={(event) => {
                                         event.preventDefault()
                                         handleUploadFile()
-                                    }
-                                    }
-                                        className="flex justify-between">
+                                    }} className="flex justify-between">
                                         <span>
                                             <b className="text-red-400">Please enter password: </b>
                                             <input className='border border-black' ref={filePassword} type="password" />

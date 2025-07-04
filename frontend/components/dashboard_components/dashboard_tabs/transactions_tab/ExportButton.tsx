@@ -23,6 +23,8 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
     const [exportType, setExporttype] = useState<typeof EXPORTOPTIONS[number]>('EXCEL')
     const [showTypeDropdown, setShowTypeDropdown] = useState(false)
 
+    const [networkError, setNetworkError] = useState(false)
+
     const passwordRef = useRef<HTMLInputElement>(null)
     const [activeTab, setActiveTab] = useState<'account' | 'transaction'>('account')
 
@@ -44,7 +46,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
             }
         }
         if (blob) {
-            console.log(passwordRef.current?.value)
+            setNetworkError(false)
             if (passwordRef.current?.value) {
                 const response = await passwordProtect(blob, exportType, passwordRef.current.value)
                 if (response?.status == 200 && response.data) {
@@ -54,10 +56,12 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                         downloadBlob(new Blob([response.data], { type: 'application/pdf' }))
                     }
                 } else if (response?.status == 404) {
-                    downloadBlob(await blob)
+                    setNetworkError(true)
+                    downloadBlob(blob)
                 }
+            } else {
+                downloadBlob(blob)
             }
-            //down load if not password
         }
     }
 
@@ -66,6 +70,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
         setFilteredAccount([])
         setTransaction([])
         setAccount([])
+        setNetworkError(false)
         setActiveTab('account')
     }
 
@@ -176,12 +181,18 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                                 dataHeader={EXPORTTRANSACTIONHEADER}
                             />
                         }
-                        <div className="text-sm flex pt-3 pb-1 space-x-2">
-                            <b>Password: </b>
-                            <input type="text" ref={passwordRef} className="border rounded-sm"></input>
+                        <div className="text-sm flex pt-3 pb-1 space-x-2 justify-between">
+                            <div>
+                                <b>Password: </b>
+                                <input type="text" placeholder="Enter password for encryption" ref={passwordRef} className="placeholder:left-0 placeholder:text-xs pl-1 border rounded-sm w-fit"></input>
+                            </div>
+                            <div hidden={!networkError} className="text-sm text-red-500">
+                                Network error, unable to encrypt with password
+                            </div>
                         </div>
                         <div className="flex justify-end">
                             <div className="flex flex-col text-sm scale-90" id="exportType">
+
                                 <button
                                     onClick={() => setShowTypeDropdown(!showTypeDropdown)}
                                     className="hover:bg-gray-300 focus:outline-none font-medium bg-white border-b-2 mx-2 p-1 text-center inline-flex justify-between" type="button">
