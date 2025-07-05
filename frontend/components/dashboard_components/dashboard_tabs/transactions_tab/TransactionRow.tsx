@@ -101,7 +101,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
         <div>
             {/* Collapsed transaction row */}
             {!isRowExpanded ?
-                <div id={String(details.id)} className='flex flex-col justify-between m-3 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition border border-black rounded-lg'>
+                <div id={String(details.id)} className='flex flex-col justify-between m-3 hover:cursor-pointer hover:bg-gradient-to-t hover:from-gray-300 hover:via-gray-200 hover:to-gray-300 active:bg-gray-500 active:scale-97 transition-all border border-black rounded-lg'>
                     <div>
                         <p className='p-3 truncate break-after-all'>{details.transaction_description}</p>
                     </div>
@@ -197,7 +197,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                                         id='submitButton'
                                         className={buttonStyle}
                                         onClick={updateCategory}>
-                                        <b>Confirm</b>
+                                        Confirm
                                     </button>
                                     {/* Cancel statement bugging out, must include timeout*/}
                                     <button
@@ -207,7 +207,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                                                 setEditActive(false)
                                             }, 0)
                                         }}>
-                                        <b>Cancel</b>
+                                        Cancel
                                     </button>
                                 </>
                                 :
@@ -219,14 +219,14 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                                             updateExpandStatus(true)
                                             setSelectedCategory(details.category)
                                         }}>
-                                        <b>Edit</b>
+                                        Edit
                                     </button>
                                 </>
                             }
                             <button
                                 className={buttonStyle}
                                 onClick={() => updateExpandStatus(false)}>
-                                <b>Close</b>
+                                Close
                             </button>
                         </div>
                     </div>

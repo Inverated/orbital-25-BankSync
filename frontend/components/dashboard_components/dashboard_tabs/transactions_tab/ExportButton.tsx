@@ -138,9 +138,9 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
 
     return (
         transactionEntry && accountEntry && <div>
-            <button className='border-b py-0.5 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition'
+            <button className='border-b py-0.5 hover:cursor-pointer hover:bg-gradient-to-t hover:from-gray-400 hover:to-white active:bg-gray-500 active:scale-97 transition-all'
                 onClick={() => setExportDialogue(true)}>
-                <label className="text-base">Export</label>
+                <label className="text-base p-2">Export</label>
             </button>
             {exportDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
