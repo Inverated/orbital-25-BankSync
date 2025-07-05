@@ -1,4 +1,4 @@
-import { AccountDetails, getAccountDetails, getTransactionDetails, TransactionDetails } from "@/lib/supabase_query";
+import { AccountDetails, TransactionDetails, getAccountDetails, getTransactionDetails } from "@/lib/databaseQuery";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Transaction_Row from "./TransactionRow";
 import { Account, Transaction } from "@/utils/types";
@@ -7,6 +7,7 @@ import ExportButton from "./ExportButton";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useUserId } from "@/context/UserContext";
 import { Dayjs } from "dayjs";
+import { useDatabase } from "@/context/DatabaseContext";
 
 type AccountMap = {
     [account_no: string]: {
@@ -15,19 +16,20 @@ type AccountMap = {
     }
 }
 
-
 export default function Transactions() {
     const NUMBER_OF_ENTRIES_PER_PAGE = 10
-    const userId = useUserId();
+    const userId = useUserId()
+
+    const { accounts, transactions } = useDatabase()
 
     const [isAscending, setIsAscending] = useState(false)
-    const [transFilterCondition, setTransFilterCondition] = useState<TransactionDetails>({ userId: userId, ascending_date: isAscending })
-    const [accFilterCondition, setAccFilterCondition] = useState<AccountDetails>({ userId: userId })
+    const [transFilterCondition, setTransFilterCondition] = useState<TransactionDetails>({ transactions: transactions, ascending_date: isAscending })
+    const [accFilterCondition, setAccFilterCondition] = useState<AccountDetails>({ accounts: accounts })
 
     const [transactionEntry, setEntry] = useState<Transaction[]>([])
     const [accountEntry, setAccount] = useState<Account[]>([])
     const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
-    const accounts: AccountMap = {}
+    const currAccounts: AccountMap = {}
 
     // useState to update html and useRef to get the latest value to run in function
     const pageNoRef = useRef<HTMLInputElement>(null)
@@ -37,14 +39,16 @@ export default function Transactions() {
     const maxPageNo = useRef(Math.ceil(transactionEntry.length / 10))
     const [selPageDialogue, setPageDialogue] = useState(false)
 
-
     const resetAllValues = () => {
+        transFilterCondition.transactions = transactions
+        accFilterCondition.accounts = accounts
         setEntry([])
         setAccount([])
         currPageRef.current = 1
         setPageNo(1)
         setUnique(new Set())
     }
+
     const addPageNo = (num: number) => {
         const newNum = currPageRef.current + num
         if (newNum > maxPageNo.current) {
@@ -85,11 +89,12 @@ export default function Transactions() {
             addPageNo(-1)
         }
     }
+
     const handleFilterQuery = useCallback((accountSelection: string[], categorySelection: string[], ascendingSelection: boolean,
         date: { startDate: Dayjs | null, endDate: Dayjs | null } | null) => {
         const transConditionFilter: { key: keyof Transaction, value: string[] }[] = []
-        const transactionFilter: TransactionDetails = { userId: userId, ascending_date: ascendingSelection }
-        const accountFilter: AccountDetails = { userId: userId }
+        const transactionFilter: TransactionDetails = { transactions, ascending_date: ascendingSelection }
+        const accountFilter: AccountDetails = { accounts }
         setIsAscending(isAscending)
 
         if (accountSelection.length != 0) {
@@ -111,57 +116,55 @@ export default function Transactions() {
         setPageNo(1)
     }, [])
 
-
     useEffect(() => {
         resetAllValues()
         pageNoRef.current = document.getElementById('select_page_num') as HTMLInputElement
+        const transArray: Transaction[] = getTransactionDetails(transFilterCondition)
+        const accArray: Account[] = getAccountDetails(accFilterCondition)
 
-        getAccountDetails(accFilterCondition).then(arr => {
-            arr.forEach(entry => {
-                accounts[entry.account_no] = {
-                    account_name: entry.account_name,
-                    bank_name: entry.bank_name
+        accArray.forEach(entry => {
+            currAccounts[entry.account_no] = {
+                account_name: entry.account_name,
+                bank_name: entry.bank_name
+            }
+            setAccount(prev => {
+                if (prev.filter(e => e.account_no == entry.account_no).length == 0) {
+                    return [...prev, {
+                        user_id: userId,
+                        bank_name: entry.bank_name,
+                        account_no: entry.account_no,
+                        account_name: entry.account_name,
+                        balance: entry.balance,
+                        latest_recorded_date: entry.latest_recorded_date
+                    }]
+                } else {
+                    return prev
                 }
-                setAccount(prev => {
-                    if (prev.filter(e => e.account_no == entry.account_no).length == 0) {
-                        return [...prev, {
-                            user_id: userId,
-                            bank_name: entry.bank_name,
-                            account_no: entry.account_no,
-                            account_name: entry.account_name,
-                            balance: entry.balance,
-                            latest_recorded_date: entry.latest_recorded_date
-                        }]
-                    } else {
-                        return prev
-                    }
-                })
             })
-        }).then(() =>
-            getTransactionDetails(transFilterCondition).then(arr => {
-                maxPageNo.current = (Math.ceil(arr.length / 10))
-                setTotalEntries(arr.length)
-                arr.forEach(entry => {
-                    if (entry.category) {
-                        setUnique(uniqueCategory.add(entry.category))
-                    }
-                    setEntry(prev =>
-                        [...prev, {
-                            id: entry.id,
-                            user_id: userId,
-                            transaction_description: entry.transaction_description,
-                            account_no: entry.account_no,
-                            withdrawal_amount: entry.withdrawal_amount,
-                            deposit_amount: entry.deposit_amount,
-                            category: entry.category,
-                            transaction_date: entry.transaction_date,
-                            ending_balance: entry.ending_balance,
-                            account_name: accounts[entry.account_no] ? accounts[entry.account_no].account_name : '',
-                            bank_name: accounts[entry.account_no] ? accounts[entry.account_no].bank_name : '',
-                        }])
-                })
-            })
-        )
+        })
+
+        maxPageNo.current = (Math.ceil(transArray.length / 10))
+        setTotalEntries(transArray.length)
+
+        transArray.forEach(entry => {
+            if (entry.category) {
+                setUnique(uniqueCategory.add(entry.category))
+            }
+            setEntry(prev =>
+                [...prev, {
+                    id: entry.id,
+                    user_id: userId,
+                    transaction_description: entry.transaction_description,
+                    account_no: entry.account_no,
+                    withdrawal_amount: entry.withdrawal_amount,
+                    deposit_amount: entry.deposit_amount,
+                    category: entry.category,
+                    transaction_date: entry.transaction_date,
+                    ending_balance: entry.ending_balance,
+                    account_name: currAccounts[entry.account_no] ? currAccounts[entry.account_no].account_name : '',
+                    bank_name: currAccounts[entry.account_no] ? currAccounts[entry.account_no].bank_name : '',
+                }])
+        })
 
         document.getElementById('load_transaction_data')?.classList.remove('hidden')
 
@@ -169,15 +172,15 @@ export default function Transactions() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [transFilterCondition])
+    }, [userId, transFilterCondition, accounts, transactions])
 
     const buttonStyle = 'border border-black mx-3 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
 
     return (
         <div>
-            <div className='text-2xl flex justify-between'>
-                <p className='p-4'>All Transactions</p>
-                <div className=" flex justify-between">
+            <div className='flex justify-between'>
+                <p className='mx-4 text-2xl'>All Transactions</p>
+                <div className="flex justify-between space-x-4 mx-4">
                     <ExportButton
                         filteredAccount={accountEntry}
                         filteredTransaction={transactionEntry} />

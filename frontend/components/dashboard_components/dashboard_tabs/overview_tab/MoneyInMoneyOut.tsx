@@ -1,5 +1,5 @@
-import { useUserId } from "@/context/UserContext";
-import { getTransactionDetails } from "@/lib/supabase_query";
+import { useDatabase } from "@/context/DatabaseContext";
+import { getTransactionDetails } from "@/lib/databaseQuery";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
@@ -19,7 +19,7 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
 
     const [dataPoints, setDataPoints] = useState<MonthlyMoneyInMoneyOut[]>([]);
 
-    const userId = useUserId()
+    const { transactions } = useDatabase()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,11 +28,10 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
             const months = Array.from({ length: 6 },
                 (_, i) => dayjs().subtract(i, "month").startOf("month"));
 
-            const depositAndTransactions = await getTransactionDetails({
-                userId: userId,
-                selection: ['transaction_date', 'deposit_amount', 'withdrawal_amount'],
+            const depositAndTransactions = getTransactionDetails({
+                transactions: transactions,
                 condition: [{ key: 'account_no', value: [account_no] }],
-                date: { startDate: months[months.length - 1], endDate: months[0]}
+                date: { startDate: months[months.length - 1], endDate: months[0] }
             })
 
             const map = new Map<string, { moneyIn: number, moneyOut: number }>(
@@ -61,7 +60,7 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
         };
 
         fetchData();
-    }, [userId, account_no]);
+    }, [account_no, transactions]);
 
 
     const chartData = {

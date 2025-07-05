@@ -6,24 +6,29 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import PreviewTable from "./PreviewTable";
 import { FileUp, Info, Loader, Upload } from "lucide-react";
 import setStatementCategory from "@/utils/setStatementCategory";
-import { addStatements } from "@/lib/supabase_upload";
+import { addStatements } from "@/lib/supabaseUpload";
 import { useUserId } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
-import { getAccountDetails } from "@/lib/supabase_query";
+import { useDatabase } from "@/context/DatabaseContext";
 
 export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
+
+    const [errorMessage, setErrorMessage] = useState('')
     const [errorFileType, setFileError] = useState(false)
-    const currentFile = useRef<File | null>(null)
+    const [showParsingLoading, setParsingLoading] = useState(false)
+    const [uploading, setUploadingStatus] = useState(false)
+    const [uploaded, setIsUploaded] = useState(false)
+
     const [passwordQuery, setQueryPassword] = useState(false)
     const filePassword = useRef<HTMLInputElement>(null)
     const passwordConfirmRef = useRef<HTMLButtonElement>(null)
-    const [statements, setStatements] = useState<StatementResponse[] | null>(null)
-    const [activeTab, setActiveTab] = useState(0)
-    const [uploading, setUploadingStatus] = useState(false)
-    const [showParsingLoading, setParsingLoading] = useState(false)
 
+    const currentFile = useRef<File | null>(null)
+    const [statements, setStatements] = useState<StatementResponse[] | null>(null)
     const [currAccount, setCurrAccount] = useState<Account[] | undefined>()
+
+    const [activeTab, setActiveTab] = useState(0)
 
     const router = useRouter()
     const userId = useUserId();
@@ -37,6 +42,7 @@ export default function UploadButton() {
     }
 
     const resetValues = () => {
+        setIsUploaded(false)
         setParsingLoading(false)
         setActiveTab(0)
         setStatements(null)
@@ -54,11 +60,16 @@ export default function UploadButton() {
             }
 
             setParsingLoading(true)
-            const result: { status: number, data: uploadReturnData | null, error: Error | null } = await uploadNewFile(currentFile.current, filePassword.current?.value)
+            const result: {
+                status: number,
+                data: uploadReturnData | null,
+                error: Error | null
+            } = await uploadNewFile(currentFile.current, filePassword.current?.value)
+
             setParsingLoading(false)
 
             if (result.status == 404) {
-                alert(result.error)
+                setErrorMessage(result.error ? result.error.message : '')
                 resetValues()
                 return
             }
@@ -74,13 +85,13 @@ export default function UploadButton() {
                     setQueryPassword(true)
                 } else if (errorMessage == 'Invalid Password') {
                     setQueryPassword(true)
-                    alert('Wrong password')
+                    setErrorMessage('Wrong password')
                 } else {
                     if (passwordConfirmRef.current) {
                         passwordConfirmRef.current.disabled = true
                     }
 
-                    alert(errorMessage)
+                    setErrorMessage(errorMessage)
                     console.error(errorMessage)
                 }
                 resetValues()
@@ -146,9 +157,10 @@ export default function UploadButton() {
         })
         const error = await addStatements(userId, statements)
         if (error instanceof Error) {
-            alert(error.message)
+            setErrorMessage(error.message)
         } else {
-            window.location.reload()
+            refreshDatabase()
+            setIsUploaded(true)
         }
     }
 
@@ -165,14 +177,11 @@ export default function UploadButton() {
         e.preventDefault(); // necessary to allow drop
     }
 
-    useEffect(() => {
-        getAccountDetails({
-            userId: userId,
-            selection: ['latest_recorded_date', 'balance', 'account_no']
-        }).then(acc => {
-            setCurrAccount(acc)
-        })
+    const { accounts, refreshDatabase } = useDatabase()
 
+    useEffect(() => {
+        setErrorMessage('')
+        setCurrAccount(accounts)
         const handleButtonDown = (event: KeyboardEvent) => {
             if (event.key == 'Escape') {
                 closeDialogue()
@@ -182,7 +191,7 @@ export default function UploadButton() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [handleUpdate, router])
+    }, [handleUpdate, router, accounts])
 
     return (
         <div>
@@ -271,19 +280,22 @@ export default function UploadButton() {
                                 />
                             </div>
                         }
-
+                        <div className="flex justify-end text-sm p-2">
+                            <p className="text-red-500" hidden={errorMessage == ''}>{errorMessage}</p>
+                            <p className="text-green-500" hidden={!uploaded}>File uploaded</p>
+                        </div>
                         {errorFileType && <p className="text-xs italic text-red-600">Please upload the correct file type</p>}
                         <div className="flex justify-end">
                             <button
                                 onClick={closeDialogue}
-                                className="border border-black mt-4 mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                                className="border border-black mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
                             >
                                 Close
                             </button>
                             <button
                                 disabled={statements === null || uploading}
                                 onClick={handleUploadData}
-                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black mt-4 p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
+                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
                             >
                                 Upload
                             </button>

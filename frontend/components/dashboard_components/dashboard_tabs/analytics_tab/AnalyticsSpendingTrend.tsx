@@ -1,5 +1,5 @@
-import { useUserId } from "@/context/UserContext";
-import { getTransactionDetails } from "@/lib/supabase_query";
+import { useDatabase } from "@/context/DatabaseContext";
+import { getTransactionDetails } from "@/lib/databaseQuery";
 import { Dayjs } from "dayjs";
 import { LineChart } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -42,24 +42,23 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
 
     const [dataPoints, setDataPoints] = useState<MonthlySpending[]>([]);
 
-    const userId = useUserId()
+    const { transactions } = useDatabase()
 
     useEffect(() => {
         if (startDate && endDate && !startDate.isAfter(endDate)) {
             const months = getMonths(startDate, endDate);
-            
+
             const fetchData = async () => {
                 setLoading(true);
-                
-                const depositAndTransactions = await getTransactionDetails({
-                    userId: userId,
-                    selection: ['transaction_date', 'withdrawal_amount'],
-                    date: { startDate: startDate, endDate: endDate }
-                });
-                
+
                 const map = new Map<string, number>(
                     months.map(key => [key.format('MMM YY'), 0.0])
                 );
+
+                const depositAndTransactions = getTransactionDetails({
+                    transactions: transactions,
+                    date: { startDate: startDate, endDate: endDate }
+                });
 
                 depositAndTransactions.forEach(entry => months.forEach(month => {
                     const start = month.startOf("month").toISOString();
@@ -88,7 +87,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
 
             setLoading(false);
         }
-    }, [userId, startDate, endDate])
+    }, [startDate, endDate, transactions])
 
     const chartData = {
         labels: dataPoints.map(d => d.date),

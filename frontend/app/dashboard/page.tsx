@@ -11,12 +11,13 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { UserProvider } from "@/context/UserContext";
 import { registerCharts } from "@/utils/RegisterCharts";
+import { DatabaseProvider } from "@/context/DatabaseContext";
 
 
 export default function Dashboard() {
     const [currentSession, setSession] = useState<Session | null>(null)
     const router = useRouter()
-    const [isLoaded, setLoadingStatus] = useState(false)
+    const [sessionLoaded, setSessionLoaded] = useState(false)
 
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -25,7 +26,7 @@ export default function Dashboard() {
                     router.push('/registration/login');
                 } else {
                     setSession(session)
-                    setLoadingStatus(true);
+                    setSessionLoaded(true);
                 }
             }
         );
@@ -36,7 +37,7 @@ export default function Dashboard() {
                     router.push('/registration/login')
                 } else {
                     setSession(session)
-                    setLoadingStatus(true)
+                    setSessionLoaded(true)
                 }
                 if (error) console.error(error)
             })
@@ -58,31 +59,32 @@ export default function Dashboard() {
     const [currentPage, setPage] = useState<Page>("Overview")
     const CurrentComponent = componentSelector[currentPage]
 
-    const tabStyle = "text-2xl mx-1 px-2 py-1 border-b-2 cursor-pointer"
-    
+    const tabStyle = "sm:text-2xl text-xl mx-1 sm:px-2 px-0.5 transition-all py-1 border-b-2 cursor-pointer"
+
     registerCharts();
-    
+
     return (
-        isLoaded && currentSession &&
-        <UserProvider userId={currentSession.user.id}>
-            <div>
-                <NavBar user={currentSession?.user} />
-                <div className="flex justify-end">
-                    <div className="p-2 m-3">
-                        {Object.keys(componentSelector).map((tab) =>
-                            <span
-                                onClick={() => setPage(tab as Page)}
-                                key={tab}
-                                className={`${tabStyle} ${currentPage === tab ? " border-blue-500 text-blue-600" : "border-transparent text-gray-500 hover:text-blue-600"}`}>
-                                {tab}
-                            </span>
-                        )}
+        sessionLoaded && currentSession &&
+        <DatabaseProvider userId={currentSession.user.id}>
+            <UserProvider userId={currentSession.user.id}>
+                <div>
+                    <NavBar user={currentSession?.user} />
+                    <div className="flex justify-end">
+                        <div className="p-2 m-3 transition">
+                            {Object.keys(componentSelector).map((tab) =>
+                                <span
+                                    onClick={() => setPage(tab as Page)}
+                                    key={tab}
+                                    className={`${tabStyle} ${currentPage === tab ? " border-blue-500 text-blue-600" : "border-transparent text-gray-500 hover:text-blue-600"}`}>
+                                    {tab}
+                                </span>
+                            )}
+                        </div>
+
                     </div>
-
+                    <div><CurrentComponent /></div>
                 </div>
-                <div><CurrentComponent /></div>
-            </div>
-        </UserProvider>
-
+            </UserProvider>
+        </DatabaseProvider>
     )
 }

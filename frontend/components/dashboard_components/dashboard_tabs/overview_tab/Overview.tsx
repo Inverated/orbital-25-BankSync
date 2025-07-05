@@ -1,8 +1,8 @@
-import { useUserId } from "@/context/UserContext";
-import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query";
-import { Account } from "@/utils/types"
+import { Account, Transaction } from "@/utils/types"
 import { useEffect, useState } from "react"
 import MoneyInMoneyOut from "./MoneyInMoneyOut";
+import { getAccountDetails, getTransactionDetails } from "@/lib/databaseQuery";
+import { useDatabase } from "@/context/DatabaseContext";
 
 export default function Overview() {
     const [totalBal, setTotalBal] = useState(0.0);
@@ -12,44 +12,44 @@ export default function Overview() {
 
     const [accountArray, setAccount] = useState<Partial<Account>[]>([]);
     const [expandAccount, setExpandAccount] = useState<string | null>(null);
-    const userId = useUserId();
+
+    const { accounts, transactions, loaded } = useDatabase()
 
     useEffect(() => {
-        getAccountDetails({
-            userId: userId
-        }).then(arr => {
-            let totalBalance = 0
-            const accountArr: Partial<Account>[] = []
-            arr?.forEach(entry => {
-                if (entry.balance) totalBalance += entry.balance
-                accountArr.push({
-                    id: entry.id,
-                    account_name: entry.account_name,
-                    account_no: entry.account_no,
-                    balance: entry.balance
-                })
-            })
-            setTotalBal(totalBalance)
-            setAccount(accountArr)
-            setLoadingStatus(true)
+        const accArray: Account[] = getAccountDetails({
+            accounts: accounts
         })
 
-        getTransactionDetails({
-            userId: userId,
-            selection: ['deposit_amount', 'withdrawal_amount']
-        }).then(data => {
-            setIncome(data.reduce((x, y) => {
-                if (y.deposit_amount) {
-                    return x + y.deposit_amount
-                } else return x
-            }, 0))
-            setExpenses(data.reduce((x, y) => {
-                if (y.withdrawal_amount) {
-                    return x + y.withdrawal_amount
-                } else return x
-            }, 0))
+        let totalBalance = 0
+        const accountArr: Partial<Account>[] = []
+        accArray.forEach(entry => {
+            if (entry.balance) totalBalance += entry.balance
+            accountArr.push({
+                id: entry.id,
+                account_name: entry.account_name,
+                account_no: entry.account_no,
+                balance: entry.balance
+            })
         })
-    }, [userId, expandAccount])
+        setTotalBal(totalBalance)
+        setAccount(accountArr)
+        setLoadingStatus(loaded)
+
+        const transArray: Transaction[] = getTransactionDetails({
+            transactions: transactions,
+        })
+
+        setIncome(transArray.reduce((x, y) => {
+            if (y.deposit_amount) {
+                return x + y.deposit_amount
+            } else return x
+        }, 0))
+        setExpenses(transArray.reduce((x, y) => {
+            if (y.withdrawal_amount) {
+                return x + y.withdrawal_amount
+            } else return x
+        }, 0))
+    }, [expandAccount, loaded, accounts, transactions])
 
     const expandTotalBal = () => {
         const expanded_account = document.getElementById("expanded_account");
@@ -99,14 +99,13 @@ export default function Overview() {
                 </div>
             </div>
 
-            <div className="flex justify-between w-2/3">
-                <div className="justify-items-start w-1/1 py-3 px-7 mr-3 border border-black rounded-lg">
+            <div className="flex flex-col space-y-5 space-x-5 sm:flex-row justify-between w-2/3">
+                <div className="justify-items-start w-1/1 h-full py-3 px-7 border border-black rounded-lg">
                     <label className="text-2xl">
                         <b>Income:</b> ${income.toFixed(2)}
                     </label>
                 </div>
-
-                <div className="justify-items-start w-1/1 py-3 px-7 ml-3 border border-black rounded-lg">
+                <div className="justify-items-start w-1/1 h-full py-3 px-7 border border-black rounded-lg">
                     <label className="text-2xl">
                         <b>Expenses:</b> ${expenses.toFixed(2)}
                     </label>

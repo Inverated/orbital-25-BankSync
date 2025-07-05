@@ -1,6 +1,7 @@
-import { useUserId } from "@/context/UserContext"
-import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
+import { useDatabase } from "@/context/DatabaseContext"
+import { getAccountDetails, getTransactionDetails } from "@/lib/databaseQuery"
 import AnalyticsDatePicker from "@/utils/DatePicker"
+import { Account, Transaction } from "@/utils/types"
 import { Dayjs } from "dayjs"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
@@ -22,45 +23,47 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
     const [filterStartDate, setStartDate] = useState<Dayjs | null>(null);
     const [filterEndDate, setEndDate] = useState<Dayjs | null>(null);
 
-    const userId = useUserId();
+    const resetFilterValues = () => {
+        selectedAccount.current = []
+        selectedCategory.current = []
+    }
 
     const resetAllValues = () => {
         setUniqueAccount([])
         setUniqueCategory([])
         setAccountStatus(false)
         setCategoryStatus(false)
-        selectedAccount.current = []
-        selectedCategory.current = []
     }
 
     const closeAll = () => {
-        setFilterDialogue(false)
         resetAllValues()
+        resetFilterValues()
+        setFilterDialogue(false)
     }
+
+    const { accounts, transactions } = useDatabase()
 
     useEffect(() => {
         resetAllValues()
-
-        getAccountDetails({
-            userId: userId,
-            selection: ['account_name', 'account_no', 'bank_name']
-        }).then(arr => {
-            arr.forEach(entry => {
-                const name = entry.account_name
-                const no = entry.account_no
-                const bank = entry.bank_name
-                setUniqueAccount(prev => [...prev, { account_name: name, account_no: no, bank_name: bank }])
-            })
-            setAccountStatus(true)
+        const accArray: Account[] = getAccountDetails({
+            accounts: accounts,
         })
 
-        getTransactionDetails({
-            userId: userId,
-            selection: ['category']
-        }).then(arr => {
-            setUniqueCategory([...new Set(arr.map(entry => entry.category)
-                .filter(item => item != undefined))])
+        accArray.forEach(entry => {
+            const name = entry.account_name
+            const no = entry.account_no
+            const bank = entry.bank_name
+            setUniqueAccount(prev => [...prev, { account_name: name, account_no: no, bank_name: bank }])
         })
+        setAccountStatus(true)
+
+
+        const transArray: Transaction[] = getTransactionDetails({
+            transactions: transactions,
+        })
+
+        setUniqueCategory([...new Set(transArray.map(entry => entry.category)
+            .filter(item => item != undefined))])
 
         setCategoryStatus(true)
 
@@ -69,11 +72,12 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                 closeAll()
             }
         }
+
         document.addEventListener('keydown', handleButtonDown)
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [userId, filterDialogue])
+    }, [filterDialogue, accounts, transactions, selectedAccount, selectedCategory])
 
     const updateAccountSelection = (account_no: string, checked: boolean) => {
         const index = selectedAccount.current.findIndex(no => no == account_no)
@@ -108,12 +112,11 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
         setFilterDialogue(false)
     }
 
-
     return (
         <div>
-            <button className='border border-black mx-3 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition'
+            <button className='border-b py-0.5 hover:cursor-pointer hover:bg-gradient-to-t hover:from-gray-400 hover:to-white active:bg-gray-500 active:scale-97 transition-all'
                 onClick={() => setFilterDialogue(true)}>
-                Filter
+                <label className="text-base p-2">Filter</label>
             </button>
             {filterDialogue && categoryLoaded && accountLoaded &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
@@ -137,6 +140,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                                                 <input
                                                     type='checkbox'
                                                     value={account.account_name}
+                                                    defaultChecked={selectedAccount.current.includes(account.account_no)}
                                                     onChange={e => updateAccountSelection(account.account_no, e.currentTarget.checked)} />
                                             </label>
                                             {index < uniqueAccount.length - 1 ? <hr /> : ''}
@@ -161,6 +165,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                                                     <input
                                                         type='checkbox'
                                                         value={category}
+                                                        defaultChecked={selectedCategory.current.includes(category)}
                                                         onChange={e => updateCategorySelection(category, e.currentTarget.checked)} />
 
                                                 </label>
@@ -217,16 +222,18 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                             </div>
                         </div>
 
-                        <div className="flex justify-end sticky">
+                        <div className="flex justify-end space-x-3">
                             <button
                                 onClick={closeAll}
-                                className="border border-black mt-4 mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                                className="border border-black px-2 py-1 rounded-sm text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
                             >
                                 Close
                             </button>
                             <button
                                 onClick={handleFilter}
-                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black mt-4 p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
+                                className="border disabled:border-gray-400 disabled:text-gray-400 
+                                        not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 
+                                        border-black px-2 py-1 rounded-sm text-base flex justify-end transition"
                             >
                                 Confirm
                             </button>
