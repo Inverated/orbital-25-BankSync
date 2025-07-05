@@ -1,4 +1,3 @@
-import { useDatabase } from "@/context/DatabaseContext";
 import { Account, StatementResponse, Transaction } from "@/utils/types";
 import { useEffect, useState } from "react";
 
