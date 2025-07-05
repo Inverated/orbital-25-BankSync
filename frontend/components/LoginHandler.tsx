@@ -1,9 +1,11 @@
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { UserRoundPen, KeyRound } from "lucide-react";
+import { useState } from "react";
 
 export default function Login() {
     const router = useRouter()
+    const [savedEmail, setEmail] = useState('')
     
     const loginUser = async (formData: FormData) => {
         const userEmail = formData.get('email') as string;
@@ -13,6 +15,8 @@ export default function Login() {
             email: userEmail,
             password: userPassword
         })
+        
+        setEmail(userEmail)
 
         if (error) {
             alert(error.message)
@@ -33,6 +37,7 @@ export default function Login() {
                         id='loginEmailInput'
                         type="email"
                         name="email"
+                        defaultValue={savedEmail}
                         placeholder="example@email.com"
                         className="bg-transparent w-full" />
                 </div>
