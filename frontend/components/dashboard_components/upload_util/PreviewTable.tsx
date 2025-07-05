@@ -1,3 +1,4 @@
+import { useDatabase } from "@/context/DatabaseContext";
 import { Account, StatementResponse, Transaction } from "@/utils/types";
 import { useEffect, useState } from "react";
 
@@ -69,7 +70,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                 </p>
                 <p className="span flex flex-row justify-between">
                     <span>
-                        <b>Balance: </b>
+                        <b>{isLatest=='This Latest' ? "New balance: " : "Balance: "}</b>
                         <span className={isLatest=='Equal' ? '' : isLatest=='This Latest' ? "text-green-600" : "text-red-600 line-through"}>
                             ${accountData?.balance?.toFixed(2)}
                         </span>

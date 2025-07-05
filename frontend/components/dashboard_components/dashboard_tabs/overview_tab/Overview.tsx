@@ -99,14 +99,13 @@ export default function Overview() {
                 </div>
             </div>
 
-            <div className="flex justify-between w-2/3">
-                <div className="justify-items-start w-1/1 py-3 px-7 mr-3 border border-black rounded-lg">
+            <div className="flex flex-col space-y-5 space-x-5 sm:flex-row justify-between w-2/3">
+                <div className="justify-items-start w-1/1 h-full py-3 px-7 border border-black rounded-lg">
                     <label className="text-2xl">
                         <b>Income:</b> ${income.toFixed(2)}
                     </label>
                 </div>
-
-                <div className="justify-items-start w-1/1 py-3 px-7 ml-3 border border-black rounded-lg">
+                <div className="justify-items-start w-1/1 h-full py-3 px-7 border border-black rounded-lg">
                     <label className="text-2xl">
                         <b>Expenses:</b> ${expenses.toFixed(2)}
                     </label>
