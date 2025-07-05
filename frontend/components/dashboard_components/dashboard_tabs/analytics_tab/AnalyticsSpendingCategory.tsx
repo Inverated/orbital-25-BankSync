@@ -1,5 +1,5 @@
-import { useUserId } from "@/context/UserContext";
-import { getTransactionDetails } from "@/lib/supabase_query";
+import { useDatabase } from "@/context/DatabaseContext";
+import { useTransactionDetails } from "@/lib/databaseQuery";
 import { Dayjs } from "dayjs";
 import { PieChart } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -22,20 +22,19 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
 
     const [dataPoints, setDataPoints] = useState<CategorySpending[]>([]);
 
-    const userId = useUserId()
+    const { transactions } = useDatabase()
 
     useEffect(() => {
         if (startDate && endDate && !startDate.isAfter(endDate)) {
             const fetchData = async () => {
                 setLoading(true);
 
-                const transactionCatergoryList = await getTransactionDetails({
-                    userId: userId,
-                    selection: ['category', 'withdrawal_amount'],
+                const map = new Map<string, number>();
+
+                const transactionCatergoryList = useTransactionDetails({
+                    transactions: transactions,
                     date: { startDate: startDate, endDate: endDate }
                 });
-
-                const map = new Map<string, number>();
 
                 transactionCatergoryList
                     .filter(entry => entry.withdrawal_amount != 0.0)
@@ -59,7 +58,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
 
             setLoading(false);
         }
-    }, [userId, startDate, endDate])
+    }, [startDate, endDate, transactions])
 
     const generateSliceColors = (index: number, total: number) => {
         const hue = (index * (360 / total)) % 360;

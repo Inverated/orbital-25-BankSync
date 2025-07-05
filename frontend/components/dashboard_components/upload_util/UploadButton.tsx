@@ -6,24 +6,27 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import PreviewTable from "./PreviewTable";
 import { FileUp, Info, Loader, Upload } from "lucide-react";
 import setStatementCategory from "@/utils/setStatementCategory";
-import { addStatements } from "@/lib/supabase_upload";
+import { addStatements } from "@/lib/supabaseUpload";
 import { useUserId } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
-import { getAccountDetails } from "@/lib/supabase_query";
+import { useDatabase } from "@/context/DatabaseContext";
 
 export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
+
     const [errorFileType, setFileError] = useState(false)
-    const currentFile = useRef<File | null>(null)
+    const [showParsingLoading, setParsingLoading] = useState(false)
+    const [uploading, setUploadingStatus] = useState(false)
+
     const [passwordQuery, setQueryPassword] = useState(false)
     const filePassword = useRef<HTMLInputElement>(null)
     const passwordConfirmRef = useRef<HTMLButtonElement>(null)
-    const [statements, setStatements] = useState<StatementResponse[] | null>(null)
-    const [activeTab, setActiveTab] = useState(0)
-    const [uploading, setUploadingStatus] = useState(false)
-    const [showParsingLoading, setParsingLoading] = useState(false)
 
+    const currentFile = useRef<File | null>(null)
+    const [statements, setStatements] = useState<StatementResponse[] | null>(null)
     const [currAccount, setCurrAccount] = useState<Account[] | undefined>()
+
+    const [activeTab, setActiveTab] = useState(0)
 
     const router = useRouter()
     const userId = useUserId();
@@ -54,7 +57,12 @@ export default function UploadButton() {
             }
 
             setParsingLoading(true)
-            const result: { status: number, data: uploadReturnData | null, error: Error | null } = await uploadNewFile(currentFile.current, filePassword.current?.value)
+            const result: {
+                status: number,
+                data: uploadReturnData | null,
+                error: Error | null
+            } = await uploadNewFile(currentFile.current, filePassword.current?.value)
+            
             setParsingLoading(false)
 
             if (result.status == 404) {
@@ -148,7 +156,7 @@ export default function UploadButton() {
         if (error instanceof Error) {
             alert(error.message)
         } else {
-            window.location.reload()
+            refreshDatabase()
         }
     }
 
@@ -165,14 +173,10 @@ export default function UploadButton() {
         e.preventDefault(); // necessary to allow drop
     }
 
-    useEffect(() => {
-        getAccountDetails({
-            userId: userId,
-            selection: ['latest_recorded_date', 'balance', 'account_no']
-        }).then(acc => {
-            setCurrAccount(acc)
-        })
+    const { accounts, refreshDatabase } = useDatabase()
 
+    useEffect(() => {
+        setCurrAccount(accounts)
         const handleButtonDown = (event: KeyboardEvent) => {
             if (event.key == 'Escape') {
                 closeDialogue()
@@ -182,7 +186,7 @@ export default function UploadButton() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [handleUpdate, router])
+    }, [handleUpdate, router, accounts])
 
     return (
         <div>

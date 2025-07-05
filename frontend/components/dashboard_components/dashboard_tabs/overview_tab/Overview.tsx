@@ -1,8 +1,8 @@
-import { useUserId } from "@/context/UserContext";
-import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query";
-import { Account } from "@/utils/types"
+import { Account, Transaction } from "@/utils/types"
 import { useEffect, useState } from "react"
 import MoneyInMoneyOut from "./MoneyInMoneyOut";
+import { useAccountDetails, useTransactionDetails } from "@/lib/databaseQuery";
+import { useDatabase } from "@/context/DatabaseContext";
 
 export default function Overview() {
     const [totalBal, setTotalBal] = useState(0.0);
@@ -12,44 +12,44 @@ export default function Overview() {
 
     const [accountArray, setAccount] = useState<Partial<Account>[]>([]);
     const [expandAccount, setExpandAccount] = useState<string | null>(null);
-    const userId = useUserId();
+
+    const { accounts, transactions, loaded } = useDatabase()
 
     useEffect(() => {
-        getAccountDetails({
-            userId: userId
-        }).then(arr => {
-            let totalBalance = 0
-            const accountArr: Partial<Account>[] = []
-            arr?.forEach(entry => {
-                if (entry.balance) totalBalance += entry.balance
-                accountArr.push({
-                    id: entry.id,
-                    account_name: entry.account_name,
-                    account_no: entry.account_no,
-                    balance: entry.balance
-                })
-            })
-            setTotalBal(totalBalance)
-            setAccount(accountArr)
-            setLoadingStatus(true)
+        const accArray: Account[] = useAccountDetails({
+            accounts: accounts
         })
 
-        getTransactionDetails({
-            userId: userId,
-            selection: ['deposit_amount', 'withdrawal_amount']
-        }).then(data => {
-            setIncome(data.reduce((x, y) => {
-                if (y.deposit_amount) {
-                    return x + y.deposit_amount
-                } else return x
-            }, 0))
-            setExpenses(data.reduce((x, y) => {
-                if (y.withdrawal_amount) {
-                    return x + y.withdrawal_amount
-                } else return x
-            }, 0))
+        let totalBalance = 0
+        const accountArr: Partial<Account>[] = []
+        accArray.forEach(entry => {
+            if (entry.balance) totalBalance += entry.balance
+            accountArr.push({
+                id: entry.id,
+                account_name: entry.account_name,
+                account_no: entry.account_no,
+                balance: entry.balance
+            })
         })
-    }, [userId, expandAccount])
+        setTotalBal(totalBalance)
+        setAccount(accountArr)
+        setLoadingStatus(loaded)
+
+        const transArray: Transaction[] = useTransactionDetails({
+            transactions: transactions,
+        })
+
+        setIncome(transArray.reduce((x, y) => {
+            if (y.deposit_amount) {
+                return x + y.deposit_amount
+            } else return x
+        }, 0))
+        setExpenses(transArray.reduce((x, y) => {
+            if (y.withdrawal_amount) {
+                return x + y.withdrawal_amount
+            } else return x
+        }, 0))
+    }, [expandAccount, loaded, accounts, transactions])
 
     const expandTotalBal = () => {
         const expanded_account = document.getElementById("expanded_account");

@@ -2,21 +2,6 @@ import { Account, Transaction } from "@/utils/types"
 import { supabase } from "./supabase"
 import decryptData from "@/utils/decryptData"
 import { Timestamp } from "next/dist/server/lib/cache-handlers/types";
-import { Dayjs } from "dayjs";
-
-export type TransactionDetails = {
-    userId: string;
-    selection?: (keyof Transaction)[];
-    condition?: { key: keyof Transaction, value: string[] }[];
-    ascending_date?: boolean;
-    date?: { startDate: Dayjs | null, endDate: Dayjs | null } | null;
-}
-
-export type AccountDetails = {
-    userId: string;
-    selection?: (keyof Account)[];
-    condition?: { key: keyof Account, value: string[] }[];
-}
 
 type EncryptedTransaction = {
     id?: number,
@@ -42,70 +27,33 @@ type EncryptedAccount = {
     latest_recorded_date: string;
 }
 
-export async function getTransactionDetails({
-    userId,
-    selection = [],
-    condition = [],
-    ascending_date = false,
-    date = null
-}: TransactionDetails): Promise<Transaction[]> {
-    const query = supabase
+export async function queryTransactionDetails(userId: string): Promise<Transaction[]> {
+    const { data: transaction_details, error } = await supabase
         .from('encryptedTransactionDetails')
-        .select(selection.length == 0 ? '*' : selection.join(','))
+        .select('*')
         .eq('user_id', userId)
-
-    condition.forEach(({ key, value }) => {
-        query.in(key, value)
-    })
-
-    if (date) {
-        if (date.startDate) {
-            const start = date.startDate.startOf("month").toISOString();
-            query.gte("transaction_date", start)
-
-        }
-        if (date.endDate) {
-            const end = date.endDate.endOf("month").toISOString();
-            query.lte("transaction_date", end)
-        }
-    }
-
-    const { data: transaction_details, error } = await query
-        .order("transaction_date", { ascending: ascending_date })
 
     if (error) {
         throw error.message
     }
 
-    // Only fetch what you input into selection. getting non existent col from unknown returns undefined
-    // no easy workaround that works cause supabase returns GenericStringError as data type when selecting columns dynamically
-    const fixedTying = transaction_details as unknown as EncryptedTransaction[]
+    const fixedTying = transaction_details as EncryptedTransaction[]
     const decrypted = await decryptTransaction(fixedTying)
 
     return decrypted
 }
 
-export async function getAccountDetails({
-    userId,
-    selection = [],
-    condition = []
-}: AccountDetails): Promise<Account[]> {
-    let query = supabase
+export async function queryAccountDetails(userId: string): Promise<Account[]> {
+    const { data: account_details, error } = await supabase
         .from('encryptedAccountDetails')
-        .select(selection.length == 0 ? '*' : selection.join(','))
+        .select('*')
         .eq('user_id', userId)
-
-    condition.forEach(({ key, value }) => {
-        query = query.in(key, value)
-    })
-
-    const { data: account_details, error } = await query
 
     if (error) {
         throw error.message
     }
 
-    const fixedTyping = account_details as unknown as EncryptedAccount[]
+    const fixedTyping = account_details as EncryptedAccount[]
     const decrypted = await decryptAccount(fixedTyping)
 
     return decrypted
@@ -165,3 +113,4 @@ async function decryptAccount(accounts: EncryptedAccount[]): Promise<Account[]> 
 
     return decryptedAccounts
 }
+

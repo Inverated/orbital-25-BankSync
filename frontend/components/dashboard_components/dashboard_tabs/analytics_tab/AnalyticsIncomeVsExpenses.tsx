@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { LineChart } from "lucide-react";
 import { Dayjs } from "dayjs";
 import { Line } from "react-chartjs-2";
-import { useUserId } from "@/context/UserContext";
-import { getTransactionDetails } from "@/lib/supabase_query";
-
+import { useTransactionDetails } from "@/lib/databaseQuery";
+import { useDatabase } from "@/context/DatabaseContext";
 
 interface IncomeExpensesProps {
     startDate: Dayjs | null;
@@ -23,7 +22,6 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
     const savings = totalIncome - totalExpenses;
     const savingsSign = savings >= 0 ? "+" : "-";
 
-    const userId = useUserId()
     const getMonths = (start: Dayjs | null, end: Dayjs | null) => {
         if (!start || !end || start.isAfter(end)) {
             return [];
@@ -48,28 +46,29 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
 
     const [dataPoints, setDataPoints] = useState<MonthlyIncomeAndExpenses[]>([]);
 
+    const { transactions } = useDatabase()
+
     useEffect(() => {
         if (startDate && endDate && !startDate.isAfter(endDate)) {
             const months = getMonths(startDate, endDate);
 
             const fetchData = async () => {
                 setLoading(true);
-                
-                const depositAndTransactions = await getTransactionDetails({
-                    userId: userId,
-                    selection: ['transaction_date', 'deposit_amount', 'withdrawal_amount'],
-                    date: { startDate: startDate, endDate: endDate }
-                });
 
                 const map = new Map<string, { income: number, expenses: number }>(
                     months.map(key => [key.format('MMM YY'), ({ income: 0.0, expenses: 0.0 })])
                 );
 
+                const depositAndTransactions = useTransactionDetails({
+                    transactions: transactions,
+                    date: { startDate: startDate, endDate: endDate }
+                });
+
                 depositAndTransactions.forEach(entry => months.forEach(month => {
                     const start = month.startOf("month").toISOString();
                     const end = month.endOf("month").toISOString();
                     const curr = month.format('MMM YY');
-                    
+
                     if (entry.transaction_date >= start && entry.transaction_date <= end) {
                         map.set(curr, {
                             income: (map.get(curr)?.income || 0) + entry.deposit_amount,
@@ -77,7 +76,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                         })
                     }
                 }));
-                
+
                 const data: MonthlyIncomeAndExpenses[] = Array.from(map.entries())
                     .map(([date, { income, expenses }]) => ({ date, income, expenses }));
 
@@ -99,10 +98,10 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
             setDataPoints([]);
             setTotalIncome(0.0);
             setTotalExpenses(0.0);
-          
+
             setLoading(false);
         }
-    }, [userId, startDate, endDate])
+    }, [startDate, endDate, transactions])
 
     const chartData = {
         labels: dataPoints.map(d => d.date),

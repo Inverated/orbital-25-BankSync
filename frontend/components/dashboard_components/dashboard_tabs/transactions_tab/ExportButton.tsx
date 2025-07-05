@@ -1,10 +1,10 @@
-import { useUserId } from "@/context/UserContext"
-import { getAccountDetails, getTransactionDetails } from "@/lib/supabase_query"
 import { Account, Transaction } from "@/utils/types"
 import { useEffect, useRef, useState } from "react"
 import ExportTable from "./ExportTable"
 import { exportToXlsx, exportToPdf, downloadBlob, passwordProtect } from "@/utils/downloadFile"
 import { ChevronDown, ChevronUp } from "lucide-react"
+import { useAccountDetails, useTransactionDetails } from "@/lib/databaseQuery"
+import { useDatabase } from "@/context/DatabaseContext"
 
 
 export default function ExportButton({ filteredAccount, filteredTransaction }: { filteredAccount: Account[], filteredTransaction: Transaction[] }) {
@@ -24,11 +24,10 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
     const [showTypeDropdown, setShowTypeDropdown] = useState(false)
 
     const [networkError, setNetworkError] = useState(false)
+    const [downloadSuccess, setDownloadSuccess] = useState(false)
 
     const passwordRef = useRef<HTMLInputElement>(null)
     const [activeTab, setActiveTab] = useState<'account' | 'transaction'>('account')
-
-    const userId = useUserId()
 
     const exportToFile = async () => {
         let blob: Blob | null = null
@@ -62,6 +61,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
             } else {
                 downloadBlob(blob)
             }
+            setDownloadSuccess(true)
         }
     }
 
@@ -79,40 +79,42 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
         setShowTypeDropdown(false)
     }
 
-    // query data here. Export only filtered items added later
+    const { accounts, transactions } = useDatabase()
+
     useEffect(() => {
         resetAllValues()
         setFilteredTransaction(filteredTransaction)
         setFilteredAccount(filteredAccount)
 
-        const initializeEntries = async () => {
-            await getTransactionDetails({
-                userId: userId
-            }).then(arr => arr.forEach(entry => {
-                setTransaction(prev => [...prev, {
-                    transaction_date: entry.transaction_date,
-                    transaction_description: entry.transaction_description,
-                    category: entry.category,
-                    withdrawal_amount: entry.withdrawal_amount,
-                    deposit_amount: entry.deposit_amount,
-                    ending_balance: entry.ending_balance,
-                    account_no: entry.account_no,
-                }])
-            }))
-            getAccountDetails({
-                userId: userId
-            }).then(arr => arr.forEach(entry => {
-                setAccount(prev => [...prev, {
-                    bank_name: entry.bank_name,
-                    account_no: entry.account_no,
-                    account_name: entry.account_name,
-                    balance: entry.balance,
-                    latest_recorded_date: entry.latest_recorded_date
-                }])
-            }))
-        }
+        const accArray: Account[] = useAccountDetails({
+            accounts: accounts
+        })
 
-        initializeEntries()
+        const transArray: Transaction[] = useTransactionDetails({
+            transactions: transactions
+        })
+
+        transArray.forEach(entry => {
+            setTransaction(prev => [...prev, {
+                transaction_date: entry.transaction_date,
+                transaction_description: entry.transaction_description,
+                category: entry.category,
+                withdrawal_amount: entry.withdrawal_amount,
+                deposit_amount: entry.deposit_amount,
+                ending_balance: entry.ending_balance,
+                account_no: entry.account_no,
+            }])
+        })
+
+        accArray.forEach(entry => {
+            setAccount(prev => [...prev, {
+                bank_name: entry.bank_name,
+                account_no: entry.account_no,
+                account_name: entry.account_name,
+                balance: entry.balance,
+                latest_recorded_date: entry.latest_recorded_date
+            }])
+        })
 
         const handleButtonDown = (event: KeyboardEvent) => {
             if (event.key == 'Escape') {
@@ -132,13 +134,13 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
             document.removeEventListener('keydown', handleButtonDown)
             document.removeEventListener('click', handleClick)
         }
-    }, [userId, exportDialogue])
+    }, [exportDialogue, accounts, transactions])
 
     return (
         transactionEntry && accountEntry && <div>
-            <button className='border border-black mx-3 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition'
+            <button className='border-b py-0.5 hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition'
                 onClick={() => setExportDialogue(true)}>
-                Export
+                <label className="text-base">Export</label>
             </button>
             {exportDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
@@ -182,12 +184,14 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                             />
                         }
                         <div className="text-sm flex pt-3 pb-1 space-x-2 justify-between">
-                            <div>
-                                <b>Password: </b>
-                                <input type="text" placeholder="Enter password for encryption" ref={passwordRef} className="placeholder:left-0 placeholder:text-xs pl-1 border rounded-sm w-fit"></input>
-                            </div>
-                            <div hidden={!networkError} className="text-sm text-red-500">
-                                Network error, unable to encrypt with password
+                            <div className="flex flex-col">
+                                <div>
+                                    <b>Password: </b>
+                                    <input type="text" placeholder="Enter password for encryption" ref={passwordRef} className="placeholder:left-0 placeholder:text-xs pl-1 border rounded-sm w-fit"></input>
+                                </div>
+                                <div hidden={!networkError} className="text-sm text-red-500">
+                                    Network error, unable to encrypt with password
+                                </div>
                             </div>
                         </div>
                         <div className="flex justify-end">
@@ -227,6 +231,9 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                             >
                                 Confirm
                             </button>
+                        </div>
+                        <div hidden={!downloadSuccess} className="text-sm text-green-500 flex justify-end">
+                            Download successful
                         </div>
                     </div>
                 </div>
