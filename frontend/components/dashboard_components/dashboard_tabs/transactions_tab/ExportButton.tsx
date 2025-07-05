@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import ExportTable from "./ExportTable"
 import { exportToXlsx, exportToPdf, downloadBlob, passwordProtect } from "@/utils/downloadFile"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { useAccountDetails, useTransactionDetails } from "@/lib/databaseQuery"
+import { getAccountDetails, getTransactionDetails } from "@/lib/databaseQuery"
 import { useDatabase } from "@/context/DatabaseContext"
 
 
@@ -86,11 +86,11 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
         setFilteredTransaction(filteredTransaction)
         setFilteredAccount(filteredAccount)
 
-        const accArray: Account[] = useAccountDetails({
+        const accArray: Account[] = getAccountDetails({
             accounts: accounts
         })
 
-        const transArray: Transaction[] = useTransactionDetails({
+        const transArray: Transaction[] = getTransactionDetails({
             transactions: transactions
         })
 

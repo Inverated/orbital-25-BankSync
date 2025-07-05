@@ -1,5 +1,5 @@
 import { useDatabase } from "@/context/DatabaseContext";
-import { useTransactionDetails } from "@/lib/databaseQuery";
+import { getTransactionDetails } from "@/lib/databaseQuery";
 import { Dayjs } from "dayjs";
 import { PieChart } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -31,7 +31,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
 
                 const map = new Map<string, number>();
 
-                const transactionCatergoryList = useTransactionDetails({
+                const transactionCatergoryList = getTransactionDetails({
                     transactions: transactions,
                     date: { startDate: startDate, endDate: endDate }
                 });

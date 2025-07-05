@@ -1,4 +1,4 @@
-import { AccountDetails, TransactionDetails, useAccountDetails, useTransactionDetails } from "@/lib/databaseQuery";
+import { AccountDetails, TransactionDetails, getAccountDetails, getTransactionDetails } from "@/lib/databaseQuery";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Transaction_Row from "./TransactionRow";
 import { Account, Transaction } from "@/utils/types";
@@ -119,8 +119,8 @@ export default function Transactions() {
     useEffect(() => {
         resetAllValues()
         pageNoRef.current = document.getElementById('select_page_num') as HTMLInputElement
-        const transArray: Transaction[] = useTransactionDetails(transFilterCondition)
-        const accArray: Account[] = useAccountDetails(accFilterCondition)
+        const transArray: Transaction[] = getTransactionDetails(transFilterCondition)
+        const accArray: Account[] = getAccountDetails(accFilterCondition)
 
         accArray.forEach(entry => {
             currAccounts[entry.account_no] = {

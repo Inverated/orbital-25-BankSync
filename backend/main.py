@@ -56,7 +56,6 @@ async def upload_file(file: UploadFile = File(...), password: Optional[str] = Fo
 
 @app.post("/encryptFile")
 async def encrypt_file(file: UploadFile = File(...), password: str = Form(None)):
-    print(file.content_type)
     content = await file.read()
     if file.content_type == 'application/pdf':
         return Response(

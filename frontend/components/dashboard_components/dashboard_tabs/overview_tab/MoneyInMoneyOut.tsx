@@ -1,5 +1,5 @@
 import { useDatabase } from "@/context/DatabaseContext";
-import { useTransactionDetails } from "@/lib/databaseQuery";
+import { getTransactionDetails } from "@/lib/databaseQuery";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
@@ -28,7 +28,7 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
             const months = Array.from({ length: 6 },
                 (_, i) => dayjs().subtract(i, "month").startOf("month"));
 
-            const depositAndTransactions = useTransactionDetails({
+            const depositAndTransactions = getTransactionDetails({
                 transactions: transactions,
                 condition: [{ key: 'account_no', value: [account_no] }],
                 date: { startDate: months[months.length - 1], endDate: months[0] }

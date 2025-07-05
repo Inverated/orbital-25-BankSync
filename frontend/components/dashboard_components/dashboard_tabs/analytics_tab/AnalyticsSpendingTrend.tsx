@@ -1,5 +1,5 @@
 import { useDatabase } from "@/context/DatabaseContext";
-import { useTransactionDetails } from "@/lib/databaseQuery";
+import { getTransactionDetails } from "@/lib/databaseQuery";
 import { Dayjs } from "dayjs";
 import { LineChart } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -55,7 +55,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
                     months.map(key => [key.format('MMM YY'), 0.0])
                 );
 
-                const depositAndTransactions = useTransactionDetails({
+                const depositAndTransactions = getTransactionDetails({
                     transactions: transactions,
                     date: { startDate: startDate, endDate: endDate }
                 });

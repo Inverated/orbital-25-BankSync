@@ -1,5 +1,5 @@
 import { useDatabase } from "@/context/DatabaseContext"
-import { useAccountDetails, useTransactionDetails } from "@/lib/databaseQuery"
+import { getAccountDetails, getTransactionDetails } from "@/lib/databaseQuery"
 import AnalyticsDatePicker from "@/utils/DatePicker"
 import { Account, Transaction } from "@/utils/types"
 import { Dayjs } from "dayjs"
@@ -45,7 +45,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
 
     useEffect(() => {
         resetAllValues()
-        const accArray: Account[] = useAccountDetails({
+        const accArray: Account[] = getAccountDetails({
             accounts: accounts,
         })
 
@@ -58,7 +58,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
         setAccountStatus(true)
 
 
-        const transArray: Transaction[] = useTransactionDetails({
+        const transArray: Transaction[] = getTransactionDetails({
             transactions: transactions,
         })
 

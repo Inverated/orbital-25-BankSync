@@ -1,6 +1,5 @@
 import { Account, Transaction } from "@/utils/types"
 import { Dayjs } from "dayjs";
-import { useDatabase } from "@/context/DatabaseContext";
 
 export type TransactionDetails = {
     transactions: Transaction[];
@@ -14,7 +13,7 @@ export type AccountDetails = {
     condition?: { key: keyof Account, value: string[] }[];
 }
 
-export function useTransactionDetails({
+export function getTransactionDetails({
     transactions,
     condition = [],
     ascending_date = false,
@@ -49,7 +48,7 @@ export function useTransactionDetails({
     return filtered
 }
 
-export function useAccountDetails({
+export function getAccountDetails({
     accounts,
     condition = []
 } : AccountDetails): Account[] {

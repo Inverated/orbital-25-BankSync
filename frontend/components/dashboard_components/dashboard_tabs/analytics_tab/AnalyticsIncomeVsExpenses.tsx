@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { LineChart } from "lucide-react";
 import { Dayjs } from "dayjs";
 import { Line } from "react-chartjs-2";
-import { useTransactionDetails } from "@/lib/databaseQuery";
+import { getTransactionDetails } from "@/lib/databaseQuery";
 import { useDatabase } from "@/context/DatabaseContext";
 
 interface IncomeExpensesProps {
@@ -59,7 +59,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                     months.map(key => [key.format('MMM YY'), ({ income: 0.0, expenses: 0.0 })])
                 );
 
-                const depositAndTransactions = useTransactionDetails({
+                const depositAndTransactions = getTransactionDetails({
                     transactions: transactions,
                     date: { startDate: startDate, endDate: endDate }
                 });

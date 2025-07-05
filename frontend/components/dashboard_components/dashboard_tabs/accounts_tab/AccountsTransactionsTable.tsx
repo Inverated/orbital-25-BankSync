@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Account, Transaction } from "@/utils/types";
 import TransactionAmount from "./TransactionAmount";
-import { useTransactionDetails } from "@/lib/databaseQuery";
+import { getTransactionDetails } from "@/lib/databaseQuery";
 import { useDatabase } from "@/context/DatabaseContext";
 
 interface AccountsTransactionsTableProps {
@@ -14,7 +14,7 @@ export default function AccountsTransactionsTable({ account }: AccountsTransacti
     const { transactions } = useDatabase()
 
     useEffect(() => {
-        const transArray = useTransactionDetails({
+        const transArray = getTransactionDetails({
             transactions: transactions,
             condition: [{ key: 'account_no', value: [account.account_no] }]
         })

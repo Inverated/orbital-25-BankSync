@@ -59,7 +59,7 @@ export default function Dashboard() {
     const [currentPage, setPage] = useState<Page>("Overview")
     const CurrentComponent = componentSelector[currentPage]
 
-    const tabStyle = "sm:text-xl text-l mx-1 sm:px-2 px-0.5 transition-all py-1 border-b-2 cursor-pointer"
+    const tabStyle = "sm:text-2xl text-xl mx-1 sm:px-2 px-0.5 transition-all py-1 border-b-2 cursor-pointer"
 
     registerCharts();
 
@@ -70,7 +70,7 @@ export default function Dashboard() {
                 <div>
                     <NavBar user={currentSession?.user} />
                     <div className="flex justify-end">
-                        <div className="p-2 m-3 overflow-x-scroll transition">
+                        <div className="p-2 m-3 transition">
                             {Object.keys(componentSelector).map((tab) =>
                                 <span
                                     onClick={() => setPage(tab as Page)}

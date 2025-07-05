@@ -1,7 +1,7 @@
 import { Account, Transaction } from "@/utils/types"
 import { useEffect, useState } from "react"
 import MoneyInMoneyOut from "./MoneyInMoneyOut";
-import { useAccountDetails, useTransactionDetails } from "@/lib/databaseQuery";
+import { getAccountDetails, getTransactionDetails } from "@/lib/databaseQuery";
 import { useDatabase } from "@/context/DatabaseContext";
 
 export default function Overview() {
@@ -16,7 +16,7 @@ export default function Overview() {
     const { accounts, transactions, loaded } = useDatabase()
 
     useEffect(() => {
-        const accArray: Account[] = useAccountDetails({
+        const accArray: Account[] = getAccountDetails({
             accounts: accounts
         })
 
@@ -35,7 +35,7 @@ export default function Overview() {
         setAccount(accountArr)
         setLoadingStatus(loaded)
 
-        const transArray: Transaction[] = useTransactionDetails({
+        const transArray: Transaction[] = getTransactionDetails({
             transactions: transactions,
         })
 
