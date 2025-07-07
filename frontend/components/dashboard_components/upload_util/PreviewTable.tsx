@@ -18,10 +18,13 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
     const [isLatest, setIsLatest] = useState<'This Latest' | 'Equal' | 'This Older'>('Equal')
     const [loadedTransactionData, setLoadingData] = useState<Transaction[]>(transactionData)
     const [showDuplicateHighlight, setDuplicateHighlight] = useState(true)
-    const [showDuplicateRows, setDuplicateShow] = useState(true)
 
     const handleTransactionChange = (index: number, field: keyof Transaction, newValue: string | number) => {
+        if (transactionData[index][field] == newValue) {
+            return
+        }
         transactionData[index] = { ...transactionData[index], [field]: newValue }
+        transactionData[index].duplicate = false
         setLoadingData(transactionData)
         const updatedStatement: StatementResponse = { hasData: true, account: accountData, transactions: transactionData }
         onUpdate(currIndex, updatedStatement)
@@ -49,7 +52,6 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
     useEffect(() => {
         setLoadingData(transactionData)
         setDuplicateHighlight(duplicateChecker)
-        setDuplicateShow(duplicateShower)
 
         if (!accountInDatabase) {
             setIsLatest('Equal')
@@ -61,6 +63,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
             setIsLatest('This Latest')
         }
     }, [loadedTransactionData, duplicateChecker, duplicateShower])
+
     const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit"
 
     return (
@@ -93,7 +96,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                     }
                 </p>
             </div>
-            <div className='text-sm text-end' hidden={!(duplicateChecker && !duplicateShower)}>
+            <div className='text-sm text-end italic' hidden={!(duplicateChecker && !duplicateShower)}>
                 {transactionData.filter(each => each.duplicate).length} entries hidden
             </div>
             <div className="overflow-auto shadow-md max-h-[400px]">
@@ -127,6 +130,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                         {transactionData.map((transaction, index) =>
                             <tr
                                 hidden={!duplicateShower && transaction.duplicate && duplicateChecker}
+                                /* classname require usestate it update dynamically, hiddent does not */
                                 className={'border-gray-200 ' + (transaction.duplicate && showDuplicateHighlight ? "odd:bg-red-200 even:bg-red-300" : "odd:bg-white even:bg-gray-300")}
                                 key={index}>
                                 <th scope="row" className={rowStyle}>
@@ -209,20 +213,20 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                                         />
                                     }
                                 </td>
-                                <td className={rowStyle + ' space-x-1.5'}>
-                                    <a
+                                <td className='text-center'>
+                                    <div
                                         className="font-medium text-blue-600 hover:underline hover:cursor-pointer"
                                         onClick={() => {
                                             fixDecimalPlace(index)
                                             setEditId(editingId == index ? -1 : index)
                                         }}>
                                         {editingId != index ? 'Edit' : 'Confirm'}
-                                    </a>
-                                    <a
+                                    </div>
+                                    <div
                                         className="font-medium text-blue-600 hover:underline hover:cursor-pointer"
                                         onMouseUp={() => handleDelete(index)}>
                                         Delete
-                                    </a>
+                                    </div>
                                 </td>
                             </tr>
                         )}

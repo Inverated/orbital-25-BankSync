@@ -210,11 +210,15 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                                 <div>
                                     <div className="flex flex-col text-sm">
                                         <label className="space-x-2 my-2">
-                                            <input type="radio" name="date_order" onClick={() => orderDateAscending.current = true} />
+                                            <input type="radio" name="date_order"
+                                                onClick={() => orderDateAscending.current = true}
+                                                defaultChecked={orderDateAscending.current} />
                                             <span>Ascending</span>
                                         </label>
                                         <label className="space-x-2">
-                                            <input type="radio" name="date_order" onClick={() => orderDateAscending.current = false} defaultChecked />
+                                            <input type="radio" name="date_order"
+                                                onClick={() => orderDateAscending.current = false}
+                                                defaultChecked={!orderDateAscending.current} />
                                             <span>Descending</span>
                                         </label>
                                     </div>

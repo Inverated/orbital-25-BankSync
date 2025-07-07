@@ -146,9 +146,10 @@ export default function UploadButton() {
         if (statements) {
             statements.map(each => each.account.account_no == updatedStatements.account.account_no ? updatedStatements : each)
         }
-    }, [setStatements, statements])
+    }, [statements])
 
     const handleUploadData = async () => {
+        setErrorMessage('')
         setUploadingStatus(true)
         if (statements == null || statements?.length == 0) {
             return
@@ -180,15 +181,16 @@ export default function UploadButton() {
             }
         })
 
-        let error: null | Error = null
         if (uploadData.length != 0) {
-            error = await addStatements(userId, uploadData)
-        }
-        if (error instanceof Error) {
-            setErrorMessage(error.message)
+            const error = await addStatements(userId, uploadData)
+            if (error instanceof Error) {
+                setErrorMessage(error.message)
+            } else {
+                refreshDatabase()
+                setIsUploaded(true)
+            }
         } else {
-            refreshDatabase()
-            setIsUploaded(true)
+            setErrorMessage('No new rows uploaded')
         }
     }
 

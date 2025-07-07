@@ -43,7 +43,9 @@ export function getTransactionDetails({
     }
 
     if (ascending_date) {
-        filtered.reverse()
+        filtered.sort((fst, snd) => fst.transaction_date > snd.transaction_date ? 1 : fst == snd ? 0 : -1)
+    } else {
+        filtered.sort((fst, snd) => fst.transaction_date < snd.transaction_date ? 1 : fst == snd ? 0 : -1)
     }
     return filtered
 }
