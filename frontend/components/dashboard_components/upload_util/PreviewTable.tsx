@@ -65,7 +65,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
 
     return (
         <>
-            <div className="text-sm rounded-lg mt-4">
+            <div className="text-sm rounded-lg my-3">
                 <p>
                     <b>{accountData?.bank_name}</b>
                     {accountData?.account_name && <><b>: </b>{accountData?.account_name}</>}
@@ -93,7 +93,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                     }
                 </p>
             </div>
-            <div className='text-sm mt-3 text-end' hidden={!(duplicateChecker && !duplicateShower)}>
+            <div className='text-sm text-end' hidden={!(duplicateChecker && !duplicateShower)}>
                 {transactionData.filter(each => each.duplicate).length} entries hidden
             </div>
             <div className="overflow-auto shadow-md max-h-[400px]">
@@ -127,7 +127,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                         {transactionData.map((transaction, index) =>
                             <tr
                                 hidden={!duplicateShower && transaction.duplicate && duplicateChecker}
-                                className={'border-gray-200 ' + (transaction.duplicate && showDuplicateHighlight ? "odd:bg-red-300 even:bg-red-400" : "odd:bg-white even:bg-gray-300")}
+                                className={'border-gray-200 ' + (transaction.duplicate && showDuplicateHighlight ? "odd:bg-red-200 even:bg-red-300" : "odd:bg-white even:bg-gray-300")}
                                 key={index}>
                                 <th scope="row" className={rowStyle}>
                                     <input
