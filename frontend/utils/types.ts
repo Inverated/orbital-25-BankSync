@@ -15,6 +15,7 @@ export interface Transaction {
     id?: number,
     created_at?: Timestamp;
     user_id?: string;
+    duplicate?: boolean;
     transaction_date: string;
     transaction_description: string;
     withdrawal_amount: number;

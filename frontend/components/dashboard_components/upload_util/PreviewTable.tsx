@@ -7,15 +7,19 @@ interface Props {
     accountData: Account;
     onUpdate: (index: number, updatedItem: StatementResponse) => void;
     onDelete: (updatedItem: StatementResponse) => void;
-    accountInDatabase: Account | undefined
+    accountInDatabase: Account | undefined;
+    duplicateChecker: boolean;
+    duplicateShower: boolean;
 }
 
 
-export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate, onDelete, accountInDatabase }: Props) {
+export default function PreviewTable({ currIndex, transactionData, accountData, onUpdate, onDelete, accountInDatabase, duplicateChecker, duplicateShower }: Props) {
     const [editingId, setEditId] = useState(-1)
     const [isLatest, setIsLatest] = useState<'This Latest' | 'Equal' | 'This Older'>('Equal')
     const [loadedTransactionData, setLoadingData] = useState<Transaction[]>(transactionData)
-    
+    const [showDuplicateHighlight, setDuplicateHighlight] = useState(true)
+    const [showDuplicateRows, setDuplicateShow] = useState(true)
+
     const handleTransactionChange = (index: number, field: keyof Transaction, newValue: string | number) => {
         transactionData[index] = { ...transactionData[index], [field]: newValue }
         setLoadingData(transactionData)
@@ -24,7 +28,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
     }
 
     const handleDelete = (index: number) => {
-        setLoadingData(transactionData.splice(index, 1) )
+        setLoadingData(transactionData.splice(index, 1))
         const updatedStatement: StatementResponse = { hasData: true, account: accountData, transactions: transactionData }
         onDelete(updatedStatement)
     }
@@ -44,6 +48,9 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
 
     useEffect(() => {
         setLoadingData(transactionData)
+        setDuplicateHighlight(duplicateChecker)
+        setDuplicateShow(duplicateShower)
+
         if (!accountInDatabase) {
             setIsLatest('Equal')
         } else if (accountData.latest_recorded_date == accountInDatabase.latest_recorded_date) {
@@ -53,7 +60,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
         } else {
             setIsLatest('This Latest')
         }
-    }, [loadedTransactionData])
+    }, [loadedTransactionData, duplicateChecker, duplicateShower])
     const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit"
 
     return (
@@ -69,17 +76,17 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                 </p>
                 <p className="span flex flex-row justify-between">
                     <span>
-                        <b>{isLatest=='This Latest' ? "New balance: " : "Balance: "}</b>
-                        <span className={isLatest=='Equal' ? '' : isLatest=='This Latest' ? "text-green-600" : "text-red-600 line-through"}>
+                        <b>{isLatest == 'This Latest' ? "New balance: " : "Balance: "}</b>
+                        <span className={isLatest == 'Equal' ? '' : isLatest == 'This Latest' ? "text-green-600" : "text-red-600 line-through"}>
                             ${accountData?.balance?.toFixed(2)}
                         </span>
                     </span>
                     {
                         accountInDatabase?.latest_recorded_date &&
                         <span>
-                            <b>{isLatest=='This Older' ? "Latest Balance " : "Previous Balance "}
+                            <b>{isLatest == 'This Older' ? "Latest Balance " : "Previous Balance "}
                                 {new Date(accountInDatabase.latest_recorded_date).toLocaleDateString('en-GB')}: </b>
-                            <span className={isLatest=='Equal' ? '' : isLatest=='This Latest' ? "text-red-600 line-through" : "text-green-600"}>
+                            <span className={isLatest == 'Equal' ? '' : isLatest == 'This Latest' ? "text-red-600 line-through" : "text-green-600"}>
                                 ${accountInDatabase.balance}
                             </span>
                         </span>
@@ -87,8 +94,8 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                 </p>
             </div>
             <div className="overflow-auto shadow-md mt-4 max-h-[400px]">
-                <table className="text-xs w-full text-left rtl:text-right text-gray-500">
-                    <thead className=" text-gray-700 bg-gray-300">
+                <table className="text-xs w-full text-left rtl:text-right">
+                    <thead className="bg-gray-300">
                         <tr>
                             <th scope="col" className={rowStyle}>
                                 Transaction Date
@@ -115,7 +122,9 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                     </thead>
                     <tbody>
                         {transactionData.map((transaction, index) =>
-                            <tr className="odd:bg-white even:bg-gray-300 border-gray-200"
+                            <tr
+                                hidden={!duplicateShower && transaction.duplicate}
+                                className={'border-gray-200 ' + (transaction.duplicate && showDuplicateHighlight ? "odd:bg-red-300 even:bg-red-400" : "odd:bg-white even:bg-gray-300")}
                                 key={index}>
                                 <th scope="row" className={rowStyle}>
                                     <input
