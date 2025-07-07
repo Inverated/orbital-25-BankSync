@@ -93,7 +93,10 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                     }
                 </p>
             </div>
-            <div className="overflow-auto shadow-md mt-4 max-h-[400px]">
+            <div className='text-sm mt-3 text-end' hidden={!(duplicateChecker && !duplicateShower)}>
+                {transactionData.filter(each => each.duplicate).length} entries hidden
+            </div>
+            <div className="overflow-auto shadow-md max-h-[400px]">
                 <table className="text-xs w-full text-left rtl:text-right">
                     <thead className="bg-gray-300">
                         <tr>
@@ -123,7 +126,7 @@ export default function PreviewTable({ currIndex, transactionData, accountData, 
                     <tbody>
                         {transactionData.map((transaction, index) =>
                             <tr
-                                hidden={!duplicateShower && transaction.duplicate}
+                                hidden={!duplicateShower && transaction.duplicate && duplicateChecker}
                                 className={'border-gray-200 ' + (transaction.duplicate && showDuplicateHighlight ? "odd:bg-red-300 even:bg-red-400" : "odd:bg-white even:bg-gray-300")}
                                 key={index}>
                                 <th scope="row" className={rowStyle}>
