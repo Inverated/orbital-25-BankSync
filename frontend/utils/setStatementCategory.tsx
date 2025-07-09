@@ -30,7 +30,7 @@ const keywordMap: { [category: string]: string[] } = {
     "Income": ["payroll", "salary", "income", "deposit", "bonus"],
     "Transfer": ["fast", 'paylah', "paynow", "trf", "transfer"],
     "Interest": ["interest"],
-    "Payment": ["debit card", "purchase", "nets", "pos", "point-of-sale", "point-of-sale"],
+    "Payment": ["debit card", "purchase", "nets", "pos", "point-of-sale"],
     "Entertainment": ["netflix", "spotify", "youtube", "cinema", "theatre", "concert", "game", "steam"],
     "Utilities": ["bill", "internet", "wifi", "phone", "mobile", "telecom"],
     "Travel": ["hotel", "flight", "trip", "travel"],

@@ -40,6 +40,8 @@ export async function queryTransactionDetails(userId: string): Promise<Transacti
     const fixedTying = transaction_details as EncryptedTransaction[]
     const decrypted = await decryptTransaction(fixedTying)
 
+    decrypted.sort((fst, snd) => fst.transaction_date < snd.transaction_date ? 1 : fst == snd ? 0 : -1)
+    
     return decrypted
 }
 
