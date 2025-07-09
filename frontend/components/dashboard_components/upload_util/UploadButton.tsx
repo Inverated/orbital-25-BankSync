@@ -10,9 +10,12 @@ import { addStatements } from "@/lib/supabaseUpload";
 import { useUserId } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import { useDatabase } from "@/context/DatabaseContext";
+import { duplicateChecking } from "@/utils/duplicateTransactionCheck";
 
 export default function UploadButton() {
     const [uploadDialogue, setDialogueStatus] = useState(false)
+    const [checkDuplicate, setDuplicateChecker] = useState(true)
+    const [duplicateShower, setDuplicateShower] = useState(true)
 
     const [errorMessage, setErrorMessage] = useState('')
     const [errorFileType, setFileError] = useState(false)
@@ -32,6 +35,7 @@ export default function UploadButton() {
 
     const router = useRouter()
     const userId = useUserId();
+    const { transactions, accounts, refreshDatabase } = useDatabase()
 
     const closeDialogue = () => {
         resetValues()
@@ -99,7 +103,7 @@ export default function UploadButton() {
                 return
             } else {
                 setQueryPassword(false)
-                // Set category here instead of backend to allow custom catEGORY
+                duplicateChecking(parsedData.data, transactions)
                 setStatementCategory(parsedData.data)
                 setStatements(parsedData.data)
             }
@@ -142,25 +146,51 @@ export default function UploadButton() {
         if (statements) {
             statements.map(each => each.account.account_no == updatedStatements.account.account_no ? updatedStatements : each)
         }
-    }, [setStatements, statements])
+    }, [statements])
 
     const handleUploadData = async () => {
+        setErrorMessage('')
         setUploadingStatus(true)
         if (statements == null || statements?.length == 0) {
             return
         }
-        statements.map(newStatement => {
+
+        let uploadData: StatementResponse[] = statements.map(each => (
+            {
+                hasData: each.hasData,
+                account: each.account,
+                transactions: [...each.transactions]
+            })
+        )
+
+        if (checkDuplicate) {
+            uploadData = uploadData.map(statement => {
+                statement.transactions = statement.transactions
+                    .filter(each => !each.duplicate)
+                return statement
+            })
+                .filter(statement => {
+                    return statement.transactions.length != 0
+                })
+        }
+
+        uploadData.map(newStatement => {
             const latestAcc = currAccount?.filter(curr => curr.account_no == newStatement.account.account_no)[0]
             if (latestAcc && (newStatement.account.latest_recorded_date < latestAcc.latest_recorded_date)) {
                 newStatement.account.balance = latestAcc.balance
             }
         })
-        const error = await addStatements(userId, statements)
-        if (error instanceof Error) {
-            setErrorMessage(error.message)
+
+        if (uploadData.length != 0) {
+            const error = await addStatements(userId, uploadData)
+            if (error instanceof Error) {
+                setErrorMessage(error.message)
+            } else {
+                refreshDatabase()
+                setIsUploaded(true)
+            }
         } else {
-            refreshDatabase()
-            setIsUploaded(true)
+            setErrorMessage('No new rows uploaded')
         }
     }
 
@@ -176,8 +206,6 @@ export default function UploadButton() {
     const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
         e.preventDefault(); // necessary to allow drop
     }
-
-    const { accounts, refreshDatabase } = useDatabase()
 
     useEffect(() => {
         setErrorMessage('')
@@ -277,6 +305,8 @@ export default function UploadButton() {
                                     onUpdate={handleUpdate}
                                     onDelete={handleDelete}
                                     accountInDatabase={currAccount?.filter(acc => acc.account_no == statements[activeTab].account.account_no)[0]}
+                                    duplicateChecker={checkDuplicate}
+                                    duplicateShower={duplicateShower}
                                 />
                             </div>
                         }
@@ -286,6 +316,23 @@ export default function UploadButton() {
                         </div>
                         {errorFileType && <p className="text-xs italic text-red-600">Please upload the correct file type</p>}
                         <div className="flex justify-end">
+                            <div className="flex flex-col">
+                                <label className="text-xs space-x-2 items-center flex justify-between">
+                                    <p>Check for duplicates</p>
+                                    <input
+                                        type="checkbox"
+                                        defaultChecked={checkDuplicate}
+                                        onClick={e => setDuplicateChecker(e.currentTarget.checked)} />
+                                </label>
+                                <label className="text-xs space-x-2 items-center flex justify-between">
+                                    <p>Show duplicates</p>
+                                    <input
+                                        type="checkbox"
+                                        defaultChecked={duplicateShower}
+                                        onClick={e => setDuplicateShower(e.currentTarget.checked)} />
+                                </label>
+                            </div>
+
                             <button
                                 onClick={closeDialogue}
                                 className="border border-black mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
