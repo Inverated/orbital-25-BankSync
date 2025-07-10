@@ -42,7 +42,18 @@ export default function Dashboard() {
                 if (error) console.error(error)
             })
 
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            event.stopImmediatePropagation()
+            console.log(localStorage.getItem('rememberMe'), localStorage.getItem('rememberMe') == 'false')
+            if (localStorage.getItem('rememberMe') == 'false') {
+                supabase.auth.signOut()
+            }
+        }
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
         return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
             authListener.subscription.unsubscribe()
         }
     }, [router])
