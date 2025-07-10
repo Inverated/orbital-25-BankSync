@@ -41,12 +41,6 @@ export default function Login() {
 
     const redirectToSignUp = () => redirect("/registration/signup")
 
-    const redirectToForgetPassword = () => {
-        const emailLogin = document.getElementById('loginEmailInput') as HTMLInputElement
-        const message = emailLogin.value == '' ? '' : '?email=' + emailLogin.value
-        router.push('/forgetpassword' + message)
-    }
-
     const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
 
     return (
@@ -59,13 +53,6 @@ export default function Login() {
                     <p>Don&#39;t have an account?</p>
                     <span className="font-semibold underline">
                         Signup
-                    </span>
-                </div>
-
-                <div className="my-2 text-sm flex cursor-pointer"
-                    onClick={redirectToForgetPassword}>
-                    <span className="font-semibold underline ml-auto">
-                        Forgot your password?
                     </span>
                 </div>
 

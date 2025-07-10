@@ -1,20 +1,20 @@
 'use client'
 
 import { supabase } from '@/lib/supabase'
+import { checkPasswordRequirement } from '@/utils/passwordRequirement'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { RiLockPasswordFill } from 'react-icons/ri'
 
 export default function ResetPassword() {
-    const messageElement = useRef<HTMLElement>(null)
+    const [errorMessage, setErrorMessage] = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
     const newPassword = useRef<HTMLInputElement>(null)
     const confirmNewPassword = useRef<HTMLInputElement>(null)
-    const [showIncorrectConfirmPassword, setPasswordDifference] = useState(false)
     const router = useRouter()
 
     useEffect(() => {
         const getTokens = (): { access_token: string | null, refresh_token: string | null } => {
-            messageElement.current = document.getElementById('message')
             newPassword.current = document.getElementById('newPassword') as HTMLInputElement
             confirmNewPassword.current = document.getElementById('confirmNewPassword') as HTMLInputElement
 
@@ -37,7 +37,6 @@ export default function ResetPassword() {
 
     const updatePassword = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (showIncorrectConfirmPassword) return
 
         const userPassword = document.getElementById('newPassword') as HTMLInputElement
         const confirmPassword = document.getElementById('confirmNewPassword') as HTMLInputElement
@@ -46,19 +45,22 @@ export default function ResetPassword() {
             return
         }
 
+        const missing = checkPasswordRequirement(confirmPassword.value)
+        if (missing) {
+            setErrorMessage(missing)
+            return
+        }
+
         const { data, error } = await supabase.auth.updateUser({ password: newPassword.current?.value })
         if (error) {
-            if (messageElement.current) {
-                if (error.name == 'AuthSessionMissingError') {
-                    messageElement.current.textContent = 'Session expired, please submit another password reset request'
-                } else {
-                    messageElement.current.textContent = error.message
-                }
+            if (error.name == 'AuthSessionMissingError') {
+                setErrorMessage('Session expired, please submit another password reset request')
+            } else {
+                setErrorMessage(error.message)
             }
         } else if (data) {
-            if (messageElement.current) {
-                messageElement.current.textContent = 'Password reset successful, redirecting to dashboard'
-            }
+            setErrorMessage('')
+            setSuccessMessage('Password reset successful, redirecting to dashboard')
             setTimeout(() => router.push('/dashboard'), 2000)
             return
         }
@@ -67,9 +69,9 @@ export default function ResetPassword() {
 
     const updatePasswordSimilarity = () => {
         if (confirmNewPassword.current?.value != '' && newPassword.current?.value != confirmNewPassword.current?.value) {
-            setPasswordDifference(true)
+            setErrorMessage('Password do not match!')
         } else {
-            setPasswordDifference(false)
+            setErrorMessage('Password do not match!')
         }
     }
 
@@ -105,13 +107,12 @@ export default function ResetPassword() {
                     </button>
                 </form>
                 <div className="my-2 text-sm w-sm">
-                    {
-                        showIncorrectConfirmPassword &&
-                        <div className="text-shadow-xm text-red-600">
-                            Password do not match!
-                        </div>
-                    }
-                    <p id='message'></p>
+                    <div hidden={errorMessage == ''} className="text-shadow-xm text-red-600">
+                        {errorMessage}
+                    </div>
+                    <div hidden={successMessage == ''} className="text-shadow-xm text-green-600">
+                        {successMessage}
+                    </div>
                 </div>
             </div>
         </div>
