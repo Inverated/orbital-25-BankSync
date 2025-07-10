@@ -2,22 +2,32 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { UserRoundPen, KeyRound } from "lucide-react";
+import { checkPasswordRequirement } from "@/utils/passwordRequirement";
 
 export default function Signup() {
     const router = useRouter();
-    const [showIncorrectConfirmPassword, setPasswordDifference] = useState(false)
     const [showSuccessfulSignup, setIsSuccess] = useState(false)
+    const [signupErrorMessage, setErrorMessage] = useState('')
 
     const signupUser = async (event: FormEvent) => {
         event.preventDefault()
-
-        if (showIncorrectConfirmPassword) return
 
         const userEmail = document.getElementById('email') as HTMLInputElement
         const userPassword = document.getElementById('password') as HTMLInputElement
         const confirmPassword = document.getElementById('confirmPassword') as HTMLInputElement
 
+        if (userEmail.value == '') {
+            setErrorMessage('Email is required')
+            return
+        }
+
         if (userPassword.value != confirmPassword.value) {
+            return
+        }
+
+        const missing = checkPasswordRequirement(confirmPassword.value)
+        if (missing) {
+            setErrorMessage(missing)
             return
         }
 
@@ -27,7 +37,7 @@ export default function Signup() {
         })
 
         if (error) {
-            alert(error.message)
+            setErrorMessage(error.message)
             return
         }
 
@@ -40,9 +50,9 @@ export default function Signup() {
         const confirmPassword = document.getElementById('confirmPassword') as HTMLInputElement
 
         if (confirmPassword.value != '' && userPassword.value != confirmPassword.value) {
-            setPasswordDifference(true)
+            setErrorMessage('Password do not match!')
         } else {
-            setPasswordDifference(false)
+            setErrorMessage('')
         }
     }
 
@@ -80,12 +90,9 @@ export default function Signup() {
                         onChange={updatePasswordSimilarity} />
                 </div>
                 <div className="my-2">
-                    {
-                        showIncorrectConfirmPassword &&
-                        <div className="text-shadow-xm text-red-600">
-                            Password do not match!
-                        </div>
-                    }
+                    <div hidden={signupErrorMessage == ''} className="text-shadow-xm text-red-600">
+                        {signupErrorMessage}
+                    </div>
                     {
                         showSuccessfulSignup &&
                         <div className="text-sm text-green-600">
