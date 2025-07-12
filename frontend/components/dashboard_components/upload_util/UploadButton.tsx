@@ -134,7 +134,7 @@ export default function UploadButton() {
         }
     }
 
-    const handleUpdate = useCallback((index: number, updatedItem: StatementResponse) => {
+    const handleTransactionUpdate = useCallback((index: number, updatedItem: StatementResponse) => {
         if (statements) {
             const newStatement = [...statements]
             newStatement[index] = updatedItem
@@ -144,7 +144,17 @@ export default function UploadButton() {
 
     const handleDelete = useCallback((updatedStatements: StatementResponse) => {
         if (statements) {
-            statements.map(each => each.account.account_no == updatedStatements.account.account_no ? updatedStatements : each)
+            if (updatedStatements.hasData) {
+                statements.map(each => each.account.account_no == updatedStatements.account.account_no ? updatedStatements : each)
+            } else {
+                const newStatement = statements.filter(each => each.account.account_no != updatedStatements.account.account_no)
+                if (newStatement.length != 0) {
+                    setStatements(newStatement)
+                } else {
+                    resetValues()
+                }
+
+            }
         }
     }, [statements])
 
@@ -219,7 +229,7 @@ export default function UploadButton() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [handleUpdate, router, accounts])
+    }, [handleTransactionUpdate, router, accounts])
 
     return (
         <div>
@@ -300,11 +310,9 @@ export default function UploadButton() {
 
                                 <PreviewTable
                                     currIndex={activeTab}
-                                    transactionData={statements[activeTab].transactions}
-                                    accountData={statements[activeTab].account}
-                                    onUpdate={handleUpdate}
+                                    statement={statements[activeTab]}
+                                    onTransactionUpdate={handleTransactionUpdate}
                                     onDelete={handleDelete}
-                                    accountInDatabase={currAccount?.filter(acc => acc.account_no == statements[activeTab].account.account_no)[0]}
                                     duplicateChecker={checkDuplicate}
                                     duplicateShower={duplicateShower}
                                 />

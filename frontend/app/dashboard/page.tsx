@@ -44,7 +44,6 @@ export default function Dashboard() {
 
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
             event.stopImmediatePropagation()
-            console.log(localStorage.getItem('rememberMe'), localStorage.getItem('rememberMe') == 'false')
             if (localStorage.getItem('rememberMe') == 'false') {
                 supabase.auth.signOut()
             }
