@@ -37,22 +37,22 @@ export default function Home() {
                 <Image src="/name.png" alt="BankSync" width={500} height={250} className="mx-auto" />
                 
                 <p className="text-lg text-gray-500 w-3/8 mx-auto">
-                    A simple, centralized platform to organize all your finances.
+                    A simple, centralized platform to manage all your finances.
                 </p>
 
-                <p className="text-lg text-gray-500 w-3/8 mx-auto">
-                    <a className="underline decoration-green-500 decoration-2 underline-offset-5">Track spending</a>, <a className="underline decoration-green-500 decoration-2 underline-offset-5">monitor budgets</a> and <a className="underline decoration-green-500 decoration-2 underline-offset-5">gain financial insights</a> more effectively across multiple accounts all in one place.
+                <p className="text-lg text-gray-500 w-5/16 mx-auto">
+                    <a className="underline decoration-green-500 decoration-2 underline-offset-5">Monitor balances</a>, <a className="underline decoration-green-500 decoration-2 underline-offset-5">track spending</a> and <a className="underline decoration-green-500 decoration-2 underline-offset-5">uncover financial insights</a> across all your accounts — all in one place.
                 </p>
             </section>
 
-            <section className="bg-white pt-20 pb-20 flex-col items-center text-center">
+            <section className="bg-white pt-20 pb-19 flex-col items-center text-center">
                 <h1 className="text-5xl font-sans font-bold mb-12">Features</h1>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 px-45">
                     <div className="bg-white rounded-3xl shadow-xl p-8 flex flex-col items-center border border-green-500 border-2 items-center justify-center">
                         <LayoutDashboard className="h-12 w-12 text-green-500 mb-3"/>
                         <h2 className="text-2xl font-bold mb-2">Unified Dashboard</h2>
-                        <p className="text-gray-500 text-center w-3/4">Combine your monthly bank statements from all accounts into one centralized overview</p>
+                        <p className="text-gray-500 text-center w-3/4">Upload your monthly bank statements and combine them into one centralized overview</p>
                     </div>
 
                     <div className="bg-white rounded-3xl shadow-xl p-8 flex flex-col items-center border border-green-500 border-2 items-center justify-center">
@@ -75,11 +75,15 @@ export default function Home() {
                 </div>
             </section>
 
-            <section className="bg-gray-100 pt-13 pb-10 flex-col items-center text-center">
+            <section className="bg-gray-100 pt-20 pb-9 flex-col items-center text-center">
                 <h1 className="text-4xl font-sans font-bold mb-8">Supported Banks</h1>
 
-                <p className="text-lg text-gray-500 w-3/8 mx-auto mb-4">
-                    BankSync currently supports the following banks. More banks will be added in the future.
+                <p className="text-lg text-gray-500 w-3/8 mx-auto">
+                    BankSync currently supports the uploading of statements from the banks below. 
+                </p>
+
+                <p className="text-lg text-gray-500 w-3/8 mx-auto mb-4"> 
+                    More will be added soon!
                 </p>
 
                 <div className="grid grid-cols-2 px-130">
@@ -93,12 +97,12 @@ export default function Home() {
                 </div>
             </section>
 
-            <section className="bg-white pt-20 pb-20 flex-col items-center text-center">
-                <h1 className="text-5xl font-sans font-bold mb-8">
+            <section className="bg-white pt-20 pb-17 flex-col items-center text-center">
+                <h1 className="text-5xl font-sans font-bold mb-9">
                     Ready to take control of your finances?
                 </h1>
 
-                <p className="text-lg text-gray-500 w-3/8 mx-auto mb-6">
+                <p className="text-lg text-gray-500 w-3/8 mx-auto mb-7">
                     Sign up now and start managing your accounts with ease.
                 </p>
 
@@ -113,7 +117,7 @@ export default function Home() {
                 </button>
             </section>
 
-            <footer className="bg-white pt-5 pb-10 flex items-center justify-center text-center">
+            <footer className="bg-white pt-5 pb-5 flex items-center justify-center text-center">
                 <p className="text-md text-gray-500">
                     &copy; {new Date().getFullYear()} BankSync. All rights reserved.
                 </p>
