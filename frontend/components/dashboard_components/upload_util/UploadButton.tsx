@@ -102,10 +102,14 @@ export default function UploadButton() {
                 parsedData = null
                 return
             } else {
+                const returnedData = parsedData.data
+                returnedData.forEach(response => response.transactions
+                    .sort((fst, snd) => fst.transaction_date > snd.transaction_date ? 1 :
+                        fst.transaction_date == snd.transaction_date ? 0 : -1))
                 setQueryPassword(false)
-                duplicateChecking(parsedData.data, transactions)
-                setStatementCategory(parsedData.data)
-                setStatements(parsedData.data)
+                duplicateChecking(returnedData, transactions)
+                setStatementCategory(returnedData)
+                setStatements(returnedData)
             }
         }
     }
@@ -229,7 +233,7 @@ export default function UploadButton() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [handleTransactionUpdate, router, accounts])
+    }, [router, accounts])
 
     return (
         <div>
@@ -303,7 +307,7 @@ export default function UploadButton() {
                                                 }`}
                                             onClick={() => setActiveTab(index)}
                                         >
-                                            {statement.account.account_name}
+                                            {statement.account.account_name != '' ? statement.account.account_name : statement.account.account_no}
                                         </button>
                                     )}
                                 </div>

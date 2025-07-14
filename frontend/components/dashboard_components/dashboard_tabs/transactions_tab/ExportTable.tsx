@@ -73,10 +73,10 @@ export default function ExportTable(selectedTable: {
                                     Withdrawal
                                 </th>
                                 <th scope="col" className={rowStyle}>
-                                    Category
+                                    Ending Balance
                                 </th>
                                 <th scope="col" className={rowStyle}>
-                                    Ending Balance
+                                    Category
                                 </th>
                                 <th scope="col" className={rowStyle}>
                                     Account No
@@ -100,10 +100,10 @@ export default function ExportTable(selectedTable: {
                                         {transaction.withdrawal_amount && transaction.withdrawal_amount != 0 ? transaction.withdrawal_amount.toFixed(2) : ''}
                                     </td>
                                     <td className={rowStyle}>
-                                        {transaction.category}
+                                        {transaction.ending_balance?.toFixed(2)}
                                     </td>
                                     <td className={rowStyle}>
-                                        {transaction.ending_balance?.toFixed(2)}
+                                        {transaction.category}
                                     </td>
                                     <td className={rowStyle}>
                                         {transaction.account_no}

@@ -80,7 +80,7 @@ def extractTableDetailsFromText(bank, extractedText):
             case 'SC':
                 return pdfTextProcesser.processSC(extractedText)
             case _:
-                return (False, 'Invalid bank type. Please use supported bank types only.')
+                return pdfTextProcesser.processOthers(extractedText)
             
     except Exception as e:
         # prints relavent part of the error for easier debugging

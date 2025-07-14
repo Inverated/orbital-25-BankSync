@@ -18,7 +18,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
     const [useFiltered, setUsingFiltered] = useState(false)
 
     const EXPORTACCOUNTHEADER = ['Bank Name', 'Account No', 'Account Name', 'Balance', 'Last Recorded Date']
-    const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Category', 'Ending Balance', 'Account No']
+    const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Ending Balance', 'Category', 'Account No']
     const EXPORTOPTIONS = ['EXCEL', 'PDF'] as const
     const [exportType, setExporttype] = useState<typeof EXPORTOPTIONS[number]>('EXCEL')
     const [showTypeDropdown, setShowTypeDropdown] = useState(false)

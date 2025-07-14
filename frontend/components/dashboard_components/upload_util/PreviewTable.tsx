@@ -96,7 +96,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
         } else {
             setIsLatest('This Latest')
         }
-    }, [loadedTransactionData, duplicateChecker, duplicateShower, editingId])
+    }, [loadedTransactionData, duplicateChecker, duplicateShower, editingId, currIndex])
 
     const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit"
 
@@ -186,7 +186,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                     <tbody>
                         <tr>
                             <td></td>
-                            <td className='whitespace-nowrap px-4 py-2'>Starting balance</td>
+                            <td className='whitespace-nowrap px-4 py-2'>START BALANCE</td>
                             <td /><td /><td />
                             <td className={rowStyle}>{statement.transactions.length == 0 ? '0.00' : (statement.transactions[0].ending_balance + statement.transactions[0].withdrawal_amount - statement.transactions[0].deposit_amount).toFixed(2)}</td>
                         </tr>
@@ -295,6 +295,13 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                 </td>
                             </tr>
                         )}
+                        <tr>
+                            <td></td>
+                            <td className='whitespace-nowrap px-4 py-2'>END BALANCE</td>
+                            <td /><td /><td />
+                            <td className={rowStyle}>{statement.transactions.length == 0 ? '0.00' :
+                                statement.transactions[statement.transactions.length - 1].ending_balance.toFixed(2)}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

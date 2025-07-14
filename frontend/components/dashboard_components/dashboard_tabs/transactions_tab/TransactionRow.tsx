@@ -106,7 +106,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                         <p className='p-3 truncate break-after-all'>{details.transaction_description}</p>
                     </div>
                     <div className={'p-3 flex justify-between'}>
-                        <p>{details.account_name}</p>
+                        <p>{details.account_name ? details.account_name : 'Unknown Account' }</p>
                         <p className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>
                             {details.withdrawal_amount == 0 ? '+$' + details.deposit_amount?.toFixed(2) : '-$' + details.withdrawal_amount?.toFixed(2)}
                         </p>
