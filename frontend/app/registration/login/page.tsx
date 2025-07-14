@@ -41,49 +41,44 @@ export default function Login() {
 
     const redirectToSignUp = () => redirect("/registration/signup")
 
-    const redirectToForgetPassword = () => {
-        const emailLogin = document.getElementById('loginEmailInput') as HTMLInputElement
-        const message = emailLogin.value == '' ? '' : '?email=' + emailLogin.value
-        router.push('/forgetpassword' + message)
-    }
-
-    const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
+    const externalAuthButtonStyle = "w-full my-3 p-2 flex hover:bg-gray-200 active:bg-gray-300 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-xl"
 
     return (
-        <div className={(currentSession == null && sessionLoaded ? '' : 'hidden ') + "flex justify-center items-center h-screen"}>
-            <div className="w-[400]">
+        <div 
+            className={
+                (currentSession == null && sessionLoaded ? '' : 'hidden ') + 
+                "flex justify-center items-center h-screen bg-cover bg-center bg-no-repeat"
+            }
+            style={{
+                backgroundImage: "url('/background.jpg')",
+            }}
+        >
+            <div className="w-[500] rounded-3xl shadow-xl bg-white p-10">
                 <LoginHandler />
 
-                <div className="my-2 text-sm flex justify-between cursor-pointer"
+                <div className="flex flex-col items-center justify-center text-center pt-10 pb-1">
+                    <p className="text-sans text-gray-500 tracking-wider text-sm">
+                        Or login with
+                    </p>
+                </div>
+
+                <div className="flex flex-row items-center justify-center gap-4">
+                    <div className={externalAuthButtonStyle}
+                        onClick={() => handleOAuthLogin('google')} >
+                        <FcGoogle />
+                        <span className="mx-2 font-sans font-semibold">Google</span>
+                    </div>
+
+                    <div className={externalAuthButtonStyle}
+                        onClick={() => handleOAuthLogin('github')} >
+                        <FaGithub />
+                        <span className="mx-2 font-sans font-semibold">GitHub</span>
+                    </div>
+                </div>
+
+                <div className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
                     onClick={redirectToSignUp}>
-                    <p>Don&#39;t have an account?</p>
-                    <span className="font-semibold underline">
-                        Signup
-                    </span>
-                </div>
-
-                <div className="my-2 text-sm flex cursor-pointer"
-                    onClick={redirectToForgetPassword}>
-                    <span className="font-semibold underline ml-auto">
-                        Forgot your password?
-                    </span>
-                </div>
-
-                <div className="flex items-center">
-                    <hr className="w-full" />
-                    <p className="shrink-0">Login with others</p>
-                    <hr className="w-full" />
-                </div>
-
-                <div className={externalAuthButtonStyle}
-                    onClick={() => handleOAuthLogin('google')} >
-                    <FcGoogle />
-                    <span className="mx-2">Sign in with Google</span>
-                </div>
-                <div className={externalAuthButtonStyle}
-                    onClick={() => handleOAuthLogin('github')} >
-                    <FaGithub />
-                    <span className="mx-2">Sign in with GitHub</span>
+                    <p>Don&#39;t have an account? <a className="font-semibold underline">Sign up now</a></p>
                 </div>
             </div>
         </div>

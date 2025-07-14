@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import { UserRoundPen, KeyRound } from "lucide-react";
+import { UserRound, LockKeyhole } from "lucide-react";
 import { useState } from "react";
 
 export default function Login() {
@@ -25,33 +25,80 @@ export default function Login() {
 
         router.push('/dashboard')
     }
+
+    const redirectToForgetPassword = () => {
+        const emailLogin = document.getElementById('loginEmailInput') as HTMLInputElement
+        const message = emailLogin.value == '' ? '' : '?email=' + emailLogin.value
+        router.push('/forgetpassword' + message)
+    }
+
     return (
         <div>
-            <div className="text-center py-4">
-                <div className="text-6xl font-bold">Login</div>
+            <div className="text-center pt-7 pb-11">
+                <div className="text-4xl font-sans font-bold tracking-wider">Login</div>
             </div>
+
             <form action={loginUser}>
-                <div className="my-2 flex bg-gray-300 rounded-lg">
-                    <UserRoundPen className="m-1"/>
+                <div className="relative w-full flex items-center pb-2">
+                    <UserRound className="absolute left-1 top-5.5 text-gray-500"/>
+
                     <input
                         id='loginEmailInput'
                         type="email"
                         name="email"
                         defaultValue={savedEmail}
-                        placeholder="example@email.com"
-                        className="bg-transparent w-full" />
+                        placeholder=" "
+                        className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
+                            pl-10 pt-6 pb-1
+                            focus:outline-none focus:border-black" 
+                    />
+                    
+                    <label
+                        htmlFor="loginEmailInput"
+                        className="absolute left-10 text-gray-400 text-sm transition-all 
+                            peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm 
+                            peer-focus:top-2 peer-focus:text-xs 
+                            peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs"
+                    >
+                        Email address
+                    </label>
                 </div>
-                <div className="my-2 flex bg-gray-300 rounded-lg">
-                    <KeyRound className="m-1" />
+                
+                <div className="relative w-full flex items-center">
+                    <LockKeyhole className="absolute left-1 top-5.5 text-gray-500"/>
+
                     <input
+                        id='loginPasswordInput'
                         type="password"
                         name="password"
-                        placeholder="*****"
-                        className="bg-transparent w-full" />
+                        placeholder=" "
+                        className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
+                            pl-10 pt-6 pb-1
+                            focus:outline-none focus:border-black" 
+                    />
+                    
+                    <label
+                        htmlFor="loginPasswordInput"
+                        className="absolute left-10 text-gray-400 text-sm transition-all 
+                            peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm 
+                            peer-focus:top-2 peer-focus:text-xs 
+                            peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs"
+                    >
+                        Password
+                    </label>
+                </div>
+
+                <div className="my-2 flex cursor-pointer pb-4"
+                    onClick={redirectToForgetPassword}>
+                    <span className="ml-auto text-sans text-sm text-gray-500 tracking-wider">
+                        Forgot your password?
+                    </span>
                 </div>
 
                 <div>
-                    <button type="submit" className="bg-black active:bg-gray-900 active:scale-95 w-full transition cursor-pointer text-white p-2 rounded-lg">
+                    <button 
+                        type="submit" 
+                        className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer">
                         Login
                     </button>
                 </div>
