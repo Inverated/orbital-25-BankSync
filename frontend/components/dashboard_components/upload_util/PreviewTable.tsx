@@ -184,15 +184,15 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr className="odd:bg-white even:bg-gray-300">
                             <td></td>
                             <td className='whitespace-nowrap px-4 py-2'>START BALANCE</td>
                             <td /><td /><td />
                             <td className={rowStyle}>{statement.transactions.length == 0 ? '0.00' : (statement.transactions[0].ending_balance + statement.transactions[0].withdrawal_amount - statement.transactions[0].deposit_amount).toFixed(2)}</td>
+                            <td />
                         </tr>
                         {statement.transactions.map((transaction, index) =>
-                            <tr
-                                hidden={!duplicateShower && transaction.duplicate && duplicateChecker}
+                            !(!duplicateShower && transaction.duplicate && duplicateChecker) ? <tr
                                 /* classname require usestate it update dynamically, hiddent does not */
                                 className={'border-gray-200 ' + (transaction.duplicate && showDuplicateHighlight ? "odd:bg-red-200 even:bg-red-300" : "odd:bg-white even:bg-gray-300")}
                                 key={index}>
@@ -293,14 +293,15 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                         </div>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> : null 
                         )}
-                        <tr>
+                        <tr className="odd:bg-white even:bg-gray-300">
                             <td></td>
                             <td className='whitespace-nowrap px-4 py-2'>END BALANCE</td>
                             <td /><td /><td />
                             <td className={rowStyle}>{statement.transactions.length == 0 ? '0.00' :
                                 statement.transactions[statement.transactions.length - 1].ending_balance.toFixed(2)}</td>
+                            <td />
                         </tr>
                     </tbody>
                 </table>

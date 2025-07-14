@@ -46,7 +46,7 @@ export async function exportToXlsx(accountEntry: Account[], transactionEntry: Tr
         ])
     })
 
-    const transactionSheet = workbook.addWorksheet("Transaction")
+    const transactionSheet = workbook.addWorksheet("Transactions")
     transactionSheet.columns = [
         {
             header: 'Transaction Date',

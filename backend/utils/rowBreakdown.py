@@ -1,8 +1,8 @@
 from datetime import datetime
-import re
-from backend.utils.textFormatter import rmSpaceFromList
 from backend.models.keywordDict import monthLookup
 from dateutil.parser import parse
+
+from backend.utils.textFormatter import rmSpaceFromList
 
 
 def parseDate(splitted: list[str], yyyy: str) -> bool | tuple[str, str]:

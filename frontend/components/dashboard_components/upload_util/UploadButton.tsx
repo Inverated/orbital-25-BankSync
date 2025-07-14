@@ -233,7 +233,7 @@ export default function UploadButton() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [router, accounts])
+    }, [handleTransactionUpdate, router, accounts])
 
     return (
         <div>

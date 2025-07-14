@@ -1,10 +1,15 @@
 import csv
 import io
 import re
+import msoffcrypto
+
 from typing import Optional
 from backend.services import csvTextProcessor, pdfTextProcesser
+from backend.services.processExported import processExportedExcel
 from backend.utils import pdfReader
+from backend.utils.detectBank import detectBank
 from backend.utils.pdfReader import convertToPypdf, decryptPdf
+from openpyxl import load_workbook
 
 import traceback
 
@@ -12,11 +17,33 @@ def fileParser(content: bytes, extension: str, password: Optional[str]):
     if (extension == 'pdf'):
         return parsePdf(content, password)
     elif (extension == 'xlsx'):
-        return (False, 'WIP')
+        return parseXlsx(content, password)
     elif (extension == 'txt'):
         return parseTxt(content)
     """ elif (extension == 'csv'):
         return parseCSV(content) """
+
+def parseXlsx(content: bytes, password: Optional[str]):
+    stream = io.BytesIO(content)
+    officeFile = msoffcrypto.OfficeFile(stream)
+    if (officeFile.is_encrypted()):
+        if password == None:
+            return (False, 'Require Password')
+        else:
+            try:
+                decryptedSteam = io.BytesIO()
+                officeFile.load_key(password)
+                officeFile.decrypt(decryptedSteam)
+                stream = decryptedSteam
+            except:
+                return (False, 'Invalid Password') 
+    
+    workbook = load_workbook(stream, data_only=True)
+    sheetnames = workbook.sheetnames
+    if (sheetnames.index('Accounts') != -1 and sheetnames.index('Transactions') != -1):
+        return processExportedExcel(workbook)
+    else:   
+        return (False, 'Please use exported excel file only')
 
 def parsePdf(content: bytes, password: Optional[str]):
     pypdf = convertToPypdf(content)
@@ -35,7 +62,7 @@ def parsePdf(content: bytes, password: Optional[str]):
     if extractedText == []:
         return (False, 'File cannot be read, ensure it is text and can be selected')
     else:
-        bank = pdfTextProcesser.detectBank(extractedText)
+        bank = detectBank(extractedText)
         return extractTableDetailsFromText(bank, extractedText)
 
 #DBS is shit
