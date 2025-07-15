@@ -4,6 +4,7 @@ from pypdf import PdfReader
 from backend.models.account import Account, Statement
 from backend.models.keywordDict import accountTableKeywords, monthLookup
 from backend.models.transaction import Transaction
+from backend.services.genericProcesser import processGenericPdf
 from backend.services.processExported import processExportedPdf
 from backend.utils.postProcessessing import assignWithdrawDeposit, setLatestDate
 from backend.utils.rowBreakdown import standardRowBreakdown
@@ -495,6 +496,6 @@ def processOthers(textList: list[str], pypdf: PdfReader) -> tuple[bool, list[Sta
         if ('Transaction' in row) and ('Description' in row) and ('Deposit' in row) and ('Withdrawal' in row) and ('Account No' in row):
             hasTrans = True
 
-    return (False, 'Invalid bank type. Please use supported bank types only.')
+    return processGenericPdf(textList)
 
 

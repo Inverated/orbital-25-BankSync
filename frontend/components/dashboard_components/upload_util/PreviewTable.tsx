@@ -246,7 +246,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="odd:bg-white even:bg-gray-300">
+                        <tr className="odd:bg-white even:bg-gray-200">
                             <td></td>
                             <td className='whitespace-nowrap px-4 py-2'>START BALANCE</td>
                             <td /><td /><td />
@@ -256,7 +256,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                         {statement.transactions.map((transaction, index) =>
                             !(!duplicateShower && transaction.duplicate && duplicateChecker) ? <tr
                                 /* classname require usestate it update dynamically, hiddent does not */
-                                className={'border-gray-200 ' + (transaction.duplicate && showDuplicateHighlight ? "odd:bg-red-200 even:bg-red-300" : "odd:bg-white even:bg-gray-300")}
+                                className={'border-gray-200 ' + (transaction.duplicate && showDuplicateHighlight ? "odd:bg-red-200 even:bg-red-300" : "odd:bg-white even:bg-gray-200")}
                                 key={index}>
                                 <th scope="row" className={rowStyle}>
                                     <input
@@ -357,7 +357,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                 </td>
                             </tr> : null
                         )}
-                        <tr className="odd:bg-white even:bg-gray-300">
+                        <tr className="odd:bg-white even:bg-gray-200">
                             <td></td>
                             <td className='whitespace-nowrap px-4 py-2'>END BALANCE</td>
                             <td /><td /><td />

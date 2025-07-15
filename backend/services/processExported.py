@@ -5,9 +5,6 @@ from pypdf import PdfReader, PdfWriter
 from backend.models.account import Account, Statement
 from backend.models.transaction import Transaction
 from backend.utils.postProcessessing import setLatestDate
-from backend.utils.rowBreakdown import standardRowBreakdown
-from backend.utils.textFormatter import rmSpaceFromList
-
 
 def processExportedPdf(pypdf: PdfReader) -> tuple[bool, list[Statement]]:
     newStream = io.BytesIO()

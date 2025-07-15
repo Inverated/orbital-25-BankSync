@@ -47,6 +47,8 @@ from backend.utils.rowBreakdown import standardRowBreakdown
         # Both deposit and withdrawal present
         ("22/8 22/8 Food  0.00  75.25  925.75", None, ["1900-08-22", "Food", 75.25, 925.75]),
         ("22/8 22/8 Food  75.25    0.00    925.75", None, ["1900-08-22", "Food", 75.25, 925.75]),
+        ("22/8 22/8 Food  $75.25    $$0.00    %925.75", None, ["1900-08-22", "Food", 75.25, 925.75]),
+        ("22/8 22/8 Food  S$75.25    $S0.00    SS$$925.75", None, ["1900-08-22", "Food", 75.25, 925.75]),
     ]
 )
 def test_rowbreakdown(input_row, optional_year, expected_output):

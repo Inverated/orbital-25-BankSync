@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 from backend.models.keywordDict import monthLookup
 from dateutil.parser import parse
 
@@ -81,10 +82,10 @@ def standardRowBreakdown(row: str, yyyy: str = '1900') -> list[str] | bool:
     descriptionEndIndex = -2
     
     try:
-        balance = float(testBalance)
-        change = float(testChange)
+        balance = float(re.sub(r'[^0-9.]+', '', testBalance))
+        change = float(re.sub(r'[^0-9.]+', '', testChange))
         try:
-            optional = float(testOptional)
+            optional = float(re.sub(r'[^0-9.]+', '', testOptional))
             if (change == 0.00) ^ (optional == 0.00):
                 if change == 0.00:
                     change = optional

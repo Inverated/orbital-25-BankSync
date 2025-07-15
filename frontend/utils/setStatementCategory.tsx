@@ -5,7 +5,7 @@ export default function setStatementCategory(statements: StatementResponse[]) {
         statement.transactions.map((entry) => {
             const description = entry.transaction_description.toLowerCase()
             for (const [category, keywords] of Object.entries(keywordMap)) {
-                if (keywords.some((kw) => description.includes(kw))) {
+                if (keywords.some((kw) => kw in description.split(' '))) {
                     entry.category = category
                     break
                 }
@@ -28,7 +28,7 @@ const keywordMap: { [category: string]: string[] } = {
     ],
     "Transport": ["uber", "taxi", "bus", "train", "gas", "fuel", "shell", "grab"],
     "Income": ["payroll", "salary", "income", "deposit", "bonus"],
-    "Transfer": ["fast", 'paylah', "paynow", "trf", "transfer"],
+    "Transfer": ["fast", 'paylah', "paynow", "trf", "transfer", 'to'],
     "Interest": ["interest"],
     "Payment": ["debit card", "purchase", "nets", "pos", "point-of-sale"],
     "Entertainment": ["netflix", "spotify", "youtube", "cinema", "theatre", "concert", "game", "steam"],

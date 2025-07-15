@@ -5,8 +5,6 @@ import msoffcrypto
 
 from typing import Optional
 
-import pdfplumber
-from pypdf import PdfWriter
 from backend.services import csvTextProcessor, pdfTextProcesser
 from backend.services.processExported import processExportedExcel
 from backend.utils import pdfReader
