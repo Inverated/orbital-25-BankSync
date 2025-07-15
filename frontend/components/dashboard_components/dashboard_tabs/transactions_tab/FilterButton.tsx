@@ -10,18 +10,18 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
     const [filterDialogue, setFilterDialogue] = useState(false)
     const [uniqueAccount, setUniqueAccount] = useState<{ account_name: string, account_no: string, bank_name: string }[]>([])
     const [uniqueCategory, setUniqueCategory] = useState<string[]>([])
-    const [accountLoaded, setAccountStatus] = useState(false)
-    const [categoryLoaded, setCategoryStatus] = useState(false)
+    const [accountLoaded, setAccountLoaded] = useState(false)
+    const [categoryLoaded, setCategoryLoaded] = useState(false)
 
     const selectedAccount = useRef<string[]>([])
     const selectedCategory = useRef<string[]>([])
     const orderDateAscending = useRef(false)
 
-    const [showDropdownAccount, setDropdownAccount] = useState(false)
-    const [showDropdownCategory, setDropdownCategory] = useState(false)
-    const [showDropdownDate, setDropdownDate] = useState(false)
-    const [filterStartDate, setStartDate] = useState<Dayjs | null>(null);
-    const [filterEndDate, setEndDate] = useState<Dayjs | null>(null);
+    const [showDropdownAccount, setShowDropdownAccount] = useState(false)
+    const [showDropdownCategory, setShowDropdownCategory] = useState(false)
+    const [showDropdownDate, setShowDropdownDate] = useState(false)
+    const [filterStartDate, setFilterStartDate] = useState<Dayjs | null>(null);
+    const [filterEndDate, setFilterEndDate] = useState<Dayjs | null>(null);
 
     const resetFilterValues = () => {
         selectedAccount.current = []
@@ -31,8 +31,8 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
     const resetAllValues = () => {
         setUniqueAccount([])
         setUniqueCategory([])
-        setAccountStatus(false)
-        setCategoryStatus(false)
+        setAccountLoaded(false)
+        setCategoryLoaded(false)
     }
 
     const closeAll = () => {
@@ -55,7 +55,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
             const bank = entry.bank_name
             setUniqueAccount(prev => [...prev, { account_name: name, account_no: no, bank_name: bank }])
         })
-        setAccountStatus(true)
+        setAccountLoaded(true)
 
 
         const transArray: Transaction[] = getTransactionDetails({
@@ -65,7 +65,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
         setUniqueCategory([...new Set(transArray.map(entry => entry.category)
             .filter(item => item != undefined))])
 
-        setCategoryStatus(true)
+        setCategoryLoaded(true)
 
         const handleButtonDown = (event: KeyboardEvent) => {
             if (event.key == 'Escape') {
@@ -116,7 +116,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
         <div>
             <button className='border-b py-0.5 hover:cursor-pointer hover:bg-gradient-to-t hover:from-gray-400 hover:to-white active:bg-gray-500 active:scale-97 transition-all'
                 onClick={() => setFilterDialogue(true)}>
-                <label className="text-base p-2">Filter</label>
+                <div className="text-base p-2">Filter</div>
             </button>
             {filterDialogue && categoryLoaded && accountLoaded &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
@@ -126,7 +126,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                         <div className="text-sm space-y-2 flex-col inline-flex min-w-full max-w-full">
 
                             <button
-                                onClick={() => setDropdownAccount(!showDropdownAccount)}
+                                onClick={() => setShowDropdownAccount(!showDropdownAccount)}
                                 className="hover:bg-gray-300 focus:outline-none font-medium border-b-2 text-sm px-5 py-2.5 text-center inline-flex justify-between" type="button">
                                 Account Name
                                 {showDropdownAccount ? <ChevronUp /> : <ChevronDown />}
@@ -136,7 +136,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                                     {uniqueAccount.map((account, index) =>
                                         <li key={index} >
                                             <label className="flex py-1.5 px-3 justify-between">
-                                                {account.bank_name + ': ' + account.account_name}
+                                                {account.bank_name ? account.bank_name + ': ' : ''}{account.account_name == '' ? account.account_no : account.account_name}
                                                 <input
                                                     type='checkbox'
                                                     value={account.account_name}
@@ -150,7 +150,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                             </div>
 
                             <button
-                                onClick={() => setDropdownCategory(!showDropdownCategory)}
+                                onClick={() => setShowDropdownCategory(!showDropdownCategory)}
                                 className="hover:bg-gray-300 focus:outline-none font-medium border-b-2 text-sm px-5 py-2.5 text-center inline-flex justify-between" type="button">
                                 Category
                                 {showDropdownCategory ? <ChevronUp /> : <ChevronDown />}
@@ -177,7 +177,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                             </div>
 
                             <button
-                                onClick={() => setDropdownDate(!showDropdownDate)}
+                                onClick={() => setShowDropdownDate(!showDropdownDate)}
                                 className="hover:bg-gray-300 focus:outline-none font-medium border-b-2 text-sm px-5 py-2.5 text-center inline-flex justify-between" type="button">
                                 Date Range
                                 {showDropdownDate ? <ChevronUp /> : <ChevronDown />}
@@ -188,7 +188,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                                         <AnalyticsDatePicker
                                             label="Start Date"
                                             value={filterStartDate}
-                                            onChange={e => setStartDate(e)}
+                                            onChange={e => setFilterStartDate(e)}
                                         />
                                     </div>
                                     <p>To</p>
@@ -196,7 +196,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                                         <AnalyticsDatePicker
                                             label="End Date"
                                             value={filterEndDate}
-                                            onChange={e => setEndDate(e)}
+                                            onChange={e => setFilterEndDate(e)}
                                         />
                                     </div>
                                 </div>

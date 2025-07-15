@@ -37,7 +37,7 @@ def parseXlsx(content: bytes, password: Optional[str]):
                 officeFile.decrypt(decryptedSteam)
                 stream = decryptedSteam
             except:
-                return (False, 'Invalid Password') 
+                return (False, 'Invalid Password')
     
     workbook = load_workbook(stream, data_only=True)
     sheetnames = workbook.sheetnames
@@ -90,7 +90,7 @@ def parseTxt(content: bytes):
     bank = pdfTextProcesser.detectBank(extractedText)
     return extractTableDetailsFromText(bank, extractedText)
 
-def extractTableDetailsFromText(bank, extractedText, pypdf):
+def extractTableDetailsFromText(bank, extractedText, pypdf = None):
     try:
         match bank:
             case 'DBS':
@@ -113,6 +113,7 @@ def extractTableDetailsFromText(bank, extractedText, pypdf):
     except Exception as e:
         # prints relavent part of the error for easier debugging
         tb = traceback.extract_tb(e.__traceback__)
-        last_call = tb[-1]# Only the last call
+        last_call = tb[-1]
+        # Only the last call
         print(f"Error in file {last_call.filename}, line {last_call.lineno}, in {last_call.name}\nMessage: {str(e)}")
         return (False, f"Error:\n{str(e)}")

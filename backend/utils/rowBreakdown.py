@@ -86,8 +86,8 @@ def standardRowBreakdown(row: str, yyyy: str = '1900') -> list[str] | bool:
         change = float(re.sub(r'[^0-9.]+', '', testChange))
         try:
             optional = float(re.sub(r'[^0-9.]+', '', testOptional))
-            if (change == 0.00) ^ (optional == 0.00):
-                if change == 0.00:
+            if (abs(change) < 1e-8) ^ (abs(optional) < 1e-8):
+                if abs(change) < 1e-8:
                     change = optional
                 descriptionEndIndex = -3
         except:

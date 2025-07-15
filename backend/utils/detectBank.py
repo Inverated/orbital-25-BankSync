@@ -1,7 +1,7 @@
 from backend.models.keywordDict import bankKeywords
 
 def detectBank(textList: list[str]) -> str:
-    freqList = {keys: 0 for keys in list(bankKeywords.keys())}
+    freqList = dict.fromkeys(bankKeywords, 0)
     for line in textList:
         for key, values in bankKeywords.items():
             if any(keywords in line.lower() for keywords in values):

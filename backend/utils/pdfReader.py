@@ -12,7 +12,7 @@ def isPasswordProtected(pdf: PdfReader):
             #Encrypted != password protect
             output = pdf.pages[0].extract_text()
             return True if output == '' else False
-        except Exception as e:
+        except:
             return True
     return False
 

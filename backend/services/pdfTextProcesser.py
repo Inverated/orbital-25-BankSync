@@ -41,7 +41,7 @@ def processDBS(textList: list[str]) -> tuple[bool, list[Statement]]:
             splitted = rmSpaceFromList(textList[index].split(' '))
             for itemIndex, item in enumerate(reversed(splitted)):
                 # account no always contain numbers without . , before the balances with _.00
-                if (not '.' in item) and (any(char.isdigit() for char in item)):
+                if ('.' not in item) and (any(char.isdigit() for char in item)):
                     accountNo = item
                     accountName = ' '.join(
                         splitted[: len(splitted) - itemIndex - 1])
@@ -155,7 +155,7 @@ def processUOB(textList: list[str]) -> tuple[bool, list[Statement]]:
     accountList = []
 
     for index in accountTableIndex:
-        while not 'Total' in textList[index]:
+        while 'Total' not in textList[index]:
             accountDetail = rmSpaceFromList(textList[index].split('  '))
             if len(accountDetail) >= 3:
                 account_no = textList[index + 1]
@@ -222,7 +222,7 @@ def processUOB(textList: list[str]) -> tuple[bool, list[Statement]]:
 
                 rowBreakdown = (standardRowBreakdown(row, yyyy))
                 if not rowBreakdown:
-                    if not 'Total' in rmSpaceFromList(row.split('  '))[0]:
+                    if 'Total' not in rmSpaceFromList(row.split('  '))[0]:
                         # Skip UOB last line: Total    withdrawal deposit bal values.
                         description += '\n' + textList[index]
                     index += 1

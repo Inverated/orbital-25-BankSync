@@ -17,12 +17,12 @@ interface Props {
 
 export default function PreviewTable({ currIndex, statement, onTransactionUpdate, onDelete,
     duplicateChecker, duplicateShower }: Props) {
-    const [editingId, setEditId] = useState(-1)
+    const [editingId, setEditingId] = useState(-1)
     const [isLatest, setIsLatest] = useState<'This Latest' | 'Equal' | 'This Older'>('Equal')
-    const [loadedTransactionData, setLoadingData] = useState<Transaction[]>([])
-    const [accountInDatabase, setExistingAccount] = useState<Account | undefined>(undefined)
-    const [showDuplicateHighlight, setDuplicateHighlight] = useState(true)
-    const [editingAccount, setEditAccount] = useState(false)
+    const [loadedTransactionData, setLoadedTransactionData] = useState<Transaction[]>([])
+    const [accountInDatabase, setAccountInDatabase] = useState<Account | undefined>(undefined)
+    const [showDuplicateHighlight, setShowDuplicateHighlight] = useState(true)
+    const [editingAccount, setEditingAccount] = useState(false)
     const [accountList, setAccountList] = useState<string[]>([])
 
     const { accounts, transactions } = useDatabase()
@@ -33,14 +33,14 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
         }
         statement.transactions[index] = { ...statement.transactions[index], [field]: newValue }
         statement.transactions[index].duplicate = false
-        setLoadingData(statement.transactions)
+        setLoadedTransactionData(statement.transactions)
         const updatedStatement: StatementResponse = { hasData: true, account: statement.account, transactions: statement.transactions }
         onTransactionUpdate(currIndex, updatedStatement)
     }
 
     const handleDeleteTransaction = (index: number) => {
-        if (index == editingId) setEditId(-1)
-        setLoadingData(statement.transactions.splice(index, 1))
+        if (index == editingId) setEditingId(-1)
+        setLoadedTransactionData(statement.transactions.splice(index, 1))
         const updatedStatement: StatementResponse = { hasData: true, account: statement.account, transactions: statement.transactions }
         onDelete(updatedStatement)
     }
@@ -53,7 +53,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
             ['deposit_amount']: Number(transactionRow.deposit_amount.toFixed(2).split('.').join('.')),
             ['ending_balance']: Number(transactionRow.ending_balance.toFixed(2).split('.').join('.')),
         }
-        setLoadingData(statement.transactions)
+        setLoadedTransactionData(statement.transactions)
         const updatedStatement: StatementResponse = { hasData: true, account: statement.account, transactions: statement.transactions }
         onTransactionUpdate(currIndex, updatedStatement)
     }
@@ -73,6 +73,10 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
         if (finishedEditing) {
             refreshAccInDatabaseCheck()
             duplicateChecking([statement], transactions)
+            if (statement.account.account_no == '') {
+                statement.account.account_no = 'Unknown Acc No'
+                statement.transactions.forEach(each => each.account_no = 'Unknown Acc No')
+            }
         }
     }
 
@@ -83,9 +87,11 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
     const refreshAccInDatabaseCheck = () => {
         const referenceAcc = getAccountDetails({ accounts, condition: [{ key: 'account_no', value: [statement.account.account_no] }] })
         if (referenceAcc.length == 1) {
-            setExistingAccount(referenceAcc[0])
+            setAccountInDatabase(referenceAcc[0])
+            statement.account.account_name = referenceAcc[0].account_name
+            statement.account.bank_name = referenceAcc[0].bank_name
         } else {
-            setExistingAccount(undefined)
+            setAccountInDatabase(undefined)
         }
 
         if (referenceAcc.length != 1) {
@@ -112,9 +118,9 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
     }, [editingId])
 
     useEffect(() => {
-        setLoadingData(statement.transactions)
+        setLoadedTransactionData(statement.transactions)
         checkDuplicate()
-        setDuplicateHighlight(duplicateChecker)
+        setShowDuplicateHighlight(duplicateChecker)
 
         const accNoList: string[] = []
         accounts.forEach(acc => accNoList.push(acc.account_no))
@@ -203,15 +209,15 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                     </p>
                 </div>
                 <div className="pr-3 flex flex-row justify-center scale-70 space-x-2">
-                    <div className="text-blue-600 hover:underline hover:cursor-pointer self-center"
-                        onClick={() => { setEditAccount(!editingAccount); confirmAcc(editingAccount) }}>
+                    <button className="text-blue-600 hover:underline hover:cursor-pointer self-center"
+                        onClick={() => { setEditingAccount(!editingAccount); confirmAcc(editingAccount) }}>
                         {editingAccount ? <Check /> : <SquarePen />}
-                    </div>
-                    <div
+                    </button>
+                    <button
                         className="text-blue-600 hover:underline hover:cursor-pointer self-center"
                         onMouseUp={handleDeleteAccount}>
                         <Trash />
-                    </div>
+                    </button>
                 </div>
 
             </div>
@@ -340,19 +346,19 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                 </td>
                                 <td>
                                     <div className='max-w-full max-h-full flex flex-row justify-center scale-70 space-x-2'>
-                                        <div
+                                        <button
                                             className="text-blue-600 hover:underline hover:cursor-pointer"
                                             onClick={() => {
                                                 fixDecimalPlace(index)
-                                                setEditId(editingId == index ? -1 : index)
+                                                setEditingId(editingId == index ? -1 : index)
                                             }}>
                                             {editingId != index ? <SquarePen /> : <Check />}
-                                        </div>
-                                        <div
+                                        </button>
+                                        <button
                                             className="text-blue-600 hover:underline hover:cursor-pointer"
                                             onMouseUp={() => handleDeleteTransaction(index)}>
                                             <Trash />
-                                        </div>
+                                        </button>
                                     </div>
                                 </td>
                             </tr> : null

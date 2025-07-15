@@ -18,6 +18,7 @@ def processExportedPdf(pypdf: PdfReader) -> tuple[bool, list[Statement]]:
         for page in f.pages:
             for table in page.extract_tables():
                 tables.append(table)
+    
     if len(tables) == 0:
         return (False, 'Please use exported pdf file only')
     

@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 type uniqueCategory = string[]
 type arguements = { details: Partial<Transaction & Account>, uniqueCategory: uniqueCategory }
 
-export default function Transaction_Row({ details, uniqueCategory }: arguements) {
+export default function TransactionRow({ details, uniqueCategory }: arguements) {
     // Handle persistent expanded row display when shift pressed or long click
     const HOLD_DELAY_TO_PERSIST = 200;
-    const [isRowExpanded, updateRowExpandStatus] = useState(false);
+    const [isRowExpanded, setIsRowExpanded] = useState(false);
     const refIsRowExpanded = useRef(false);
     const isShiftPressed = useRef(false);
     const expandedRow = useRef<HTMLDivElement>(null);
@@ -15,9 +15,9 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
     const clickStartTime = useRef<number | null>(null);
 
     const updateExpandStatus = (isExpanded: boolean) => {
-        setEditActive(isExpanded)
+        setShowEditDialogue(isExpanded)
         refIsRowExpanded.current = isExpanded
-        updateRowExpandStatus(isExpanded)
+        setIsRowExpanded(isExpanded)
     }
 
     useEffect(() => {
@@ -52,10 +52,10 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
             const currentElement = document.getElementById(String(details.id))
             const cursorAt = event.target as Node
 
-            const isClickedOnExpandedElement = expandedRow.current && expandedRow.current.contains(cursorAt)
+            const isClickedOnExpandedElement = expandedRow.current?.contains(cursorAt)
             const isAlreadyExpanded = refIsRowExpanded.current
             const isLongPress = duration && duration > HOLD_DELAY_TO_PERSIST
-            const isClickedOnCurrentRow = currentElement && currentElement.contains(cursorAt)
+            const isClickedOnCurrentRow = currentElement?.contains(cursorAt)
 
             if (isClickedOnExpandedElement) {
                 // Does nothing if click on an expanded row
@@ -63,9 +63,9 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                 // If current row is already expanded, and is long click then do nothing
             } else if (isClickedOnCurrentRow) {
                 // Expand any row when clicked on
-                currentElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                currentElement?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                 refIsRowExpanded.current = true
-                updateRowExpandStatus(true)
+                setIsRowExpanded(true)
             } else if (!isShiftPressed.current) {
                 // Collapse everything else if shift not pressed
                 updateExpandStatus(false)
@@ -86,13 +86,13 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
     }, [details.id])
 
     // Handle edit dialogue display
-    const [showEditDialogue, setEditActive] = useState(false)
+    const [showEditDialogue, setShowEditDialogue] = useState(false)
     const [selectedCategory, setSelectedCategory] = useState(details.category)
     const customCategoryRef = useRef<HTMLInputElement>(null)
 
     const updateCategory = () => {
         details.category = selectedCategory
-        setEditActive(false)
+        setShowEditDialogue(false)
     }
     //change unique category list to be updated when new added 
 
@@ -173,7 +173,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                                 )}
                                 {/* Custom category */}
                                 <label className='flex justify-between py-1'>
-                                    <input
+                                    Custom:<input
                                         type='text'
                                         className='border border-black w-3/4 p-1'
                                         ref={customCategoryRef}
@@ -204,7 +204,7 @@ export default function Transaction_Row({ details, uniqueCategory }: arguements)
                                         className={buttonStyle}
                                         onClick={() => {
                                             setTimeout(() => {
-                                                setEditActive(false)
+                                                setShowEditDialogue(false)
                                             }, 0)
                                         }}>
                                         Cancel

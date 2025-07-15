@@ -79,10 +79,8 @@ def processGenericPdf(textList: list[str]) -> tuple[bool, list[Statement]]:
         
         check = row[firstIndex:].strip().replace('0', ' ').replace('.', ' ')
         if len(check) > longer:
-            print(check, len(check))
             longer = len(check)
         if len(check) < shorter:
-            print(check, len(check))
             shorter = len(check)
         
         if date != '':
@@ -108,8 +106,6 @@ def processGenericPdf(textList: list[str]) -> tuple[bool, list[Statement]]:
             changeType = header[2]
         else: 
             changeType = header[3]
-            print(firstTrans)
-        print(changeBal, len(changeBal))
 
         if changeType == 'in' or changeType == 'deposit':
             initialBal = firstTrans[1][-1] - firstTrans[1][-2]
