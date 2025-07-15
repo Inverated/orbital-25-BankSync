@@ -7,6 +7,7 @@ import { redirect, useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js";
 import LoginHandler from "@/components/LoginHandler";
 import { supabase } from "@/lib/supabase";
+import { ChevronLeft } from "lucide-react";
 
 export default function Login() {
     const [currentSession, setSession] = useState<Session | null>(null)
@@ -53,36 +54,42 @@ export default function Login() {
                 backgroundImage: "url('/background.jpg')",
             }}
         >
-            <div className="w-[500] rounded-3xl shadow-xl bg-white p-10">
-                <LoginHandler />
-
-                <div className="flex flex-col items-center justify-center text-center pt-10 pb-1">
-                    <p className="text-sans text-gray-500 tracking-wider text-sm">
-                        Or login with
-                    </p>
+            <div className="w-[600px] rounded-3xl shadow-xl bg-white p-10 flex flex-row gap-1">
+                <div className="flex items-start justify-start w-[5%] pt-1">
+                    <ChevronLeft
+                        className="cursor-pointer transition" 
+                        onClick={() => router.push('/')}/>
                 </div>
 
-                <div className="flex flex-row items-center justify-center gap-4">
-                    <div className={externalAuthButtonStyle}
-                        onClick={() => handleOAuthLogin('google')} >
-                        <FcGoogle />
-                        <span className="mx-2 font-sans font-semibold">Google</span>
+                <div className="flex flex-col flex-grow w-[95%] pr-7 pt-3">
+                    <LoginHandler />
+
+                    <div className="flex flex-col items-center justify-center text-center pt-10 pb-1">
+                        <p className="text-sans text-gray-500 tracking-wider text-sm">
+                            Or login with
+                        </p>
                     </div>
 
-                    <div className={externalAuthButtonStyle}
-                        onClick={() => handleOAuthLogin('github')} >
-                        <FaGithub />
-                        <span className="mx-2 font-sans font-semibold">GitHub</span>
-                    </div>
-                </div>
+                    <div className="flex flex-row items-center justify-center gap-4">
+                        <div className={externalAuthButtonStyle}
+                            onClick={() => handleOAuthLogin('google')} >
+                            <FcGoogle />
+                            <span className="mx-2 font-sans font-semibold">Google</span>
+                        </div>
 
-                <div className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
-                    onClick={redirectToSignUp}>
-                    <p>Don&#39;t have an account? <a className="font-semibold underline">Sign up now</a></p>
+                        <div className={externalAuthButtonStyle}
+                            onClick={() => handleOAuthLogin('github')} >
+                            <FaGithub />
+                            <span className="mx-2 font-sans font-semibold">GitHub</span>
+                        </div>
+                    </div>
+
+                    <div className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
+                        onClick={redirectToSignUp}>
+                        <p>Don&#39;t have an account? <a className="font-semibold underline">Sign up now</a></p>
+                    </div>
                 </div>
             </div>
         </div>
     )
-
-
 }

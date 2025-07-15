@@ -1,7 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { UserRoundPen, KeyRound } from "lucide-react";
+import { LockKeyhole, UserRound } from "lucide-react";
+import { Alert } from "@mui/material";
 
 export default function Signup() {
     const router = useRouter();
@@ -48,55 +49,122 @@ export default function Signup() {
 
     return (
         <div>
-            <div className="text-center py-4">
-                <h1 className="text-6xl font-bold">Welcome</h1>
+            <div className="text-center pt-7 pb-11">
+                <h1 className="text-4xl font-sans font-bold tracking-wider">Get Started</h1>
             </div>
-            {/* use form instead of div onclick for keyboard accessibility*/}
+            
             <form onSubmit={signupUser}>
-                <div className="my-2 flex bg-gray-300 rounded-lg">
-                    <UserRoundPen className="m-1" />
+                <div className="relative w-full flex items-center pb-2">
+                    <UserRound className="absolute left-1 top-5.5 text-gray-500" />
+                    
                     <input
-                        type="email"
                         id="email"
-                        placeholder="example@email.com"
-                        className="bg-transparent w-full" />
+                        type="email"
+                        placeholder=" "
+                        className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
+                            pl-10 pt-6 pb-1
+                            focus:outline-none focus:border-black"
+                    />
+
+                    <label
+                        htmlFor="email"
+                        className="absolute left-10 text-gray-400 text-sm transition-all 
+                            peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm 
+                            peer-focus:top-2 peer-focus:text-xs 
+                            peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs"
+                    >
+                        Email address
+                    </label>
                 </div>
-                <div className="my-2 flex bg-gray-300 rounded-lg">
-                    <KeyRound className="m-1" />
+                
+                <div className="relative w-full flex items-center pb-2">
+                    <LockKeyhole className="absolute left-1 top-5.5 text-gray-500" />
+                    
                     <input
+                        id="password"
                         type="password"
-                        id='password'
-                        placeholder="Enter new password"
-                        className="bg-transparent w-full"
-                        onChange={updatePasswordSimilarity} />
+                        placeholder=" "
+                        className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
+                            pl-10 pt-6 pb-1
+                            focus:outline-none focus:border-black"
+                        onChange={updatePasswordSimilarity} 
+                    />
+
+                    <label
+                        htmlFor="password"
+                        className="absolute left-10 text-gray-400 text-sm transition-all 
+                            peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm 
+                            peer-focus:top-2 peer-focus:text-xs 
+                            peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs"
+                    >
+                        Create password
+                    </label>
                 </div>
-                <div className="my-2 flex bg-gray-300 rounded-lg">
-                    <KeyRound className="m-1" />
+
+                <div className="relative w-full flex items-center">
+                    <LockKeyhole className="absolute left-1 top-5.5 text-gray-500" />
+
                     <input
+                        id="confirmPassword"
                         type="password"
-                        id='confirmPassword'
-                        placeholder='Confirm your password'
-                        className="bg-transparent w-full"
-                        onChange={updatePasswordSimilarity} />
+                        placeholder=" "
+                        className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
+                            pl-10 pt-6 pb-1
+                            focus:outline-none focus:border-black"
+                        onChange={updatePasswordSimilarity} 
+                    />
+            
+                    <label
+                        htmlFor="confirmPassword"
+                        className="absolute left-10 text-gray-400 text-sm transition-all 
+                            peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm 
+                            peer-focus:top-2 peer-focus:text-xs 
+                            peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs"
+                    >
+                        Confirm password
+                    </label>
                 </div>
-                <div className="my-2">
+
+                <div className="my-2 pb-4">
                     {
                         showIncorrectConfirmPassword &&
-                        <div className="text-shadow-xm text-red-600">
-                            Password do not match!
-                        </div>
+                        <Alert 
+                            sx={{
+                                position: "static",
+                                alignItems: "center",
+                                display: "flex",
+                                borderRadius: "12px",
+                            }}
+                            severity="error"
+                            className="mt-3"
+                        >
+                            <div className="font-bold text-sm">Error</div>
+                            <div className="text-xs">Passwords do not match!</div>
+                        </Alert>
                     }
                     {
                         showSuccessfulSignup &&
-                        <div className="text-sm text-green-600">
-                            Signup successful. Check your email to confirm your account
-                        </div>
+                        <Alert 
+                            sx={{
+                                position: "static",
+                                alignItems: "center",
+                                display: "flex",
+                                borderRadius: "12px",
+                            }}
+                            severity="success"
+                            className="mt-2"
+                        >
+                            <div className="font-bold text-sm">Success</div>
+                            <div className="text-xs">Check your email to confirm your account.</div>
+                        </Alert>
                     }
                 </div>
+                
                 <div>
-                    <button type='submit'
-                        className="bg-black active:bg-gray-900 active:scale-95 w-full 
-                    transition cursor-pointer text-white p-2 rounded-lg">
+                    <button 
+                        type='submit'
+                        className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
+                    >
                         Sign Up
                     </button>
                 </div>

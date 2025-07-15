@@ -40,7 +40,7 @@ export default function Login() {
 
             <form action={loginUser}>
                 <div className="relative w-full flex items-center pb-2">
-                    <UserRound className="absolute left-1 top-5.5 text-gray-500"/>
+                    <UserRound className="absolute left-1 top-5.5 text-gray-500" />
 
                     <input
                         id='loginEmailInput'
@@ -65,7 +65,7 @@ export default function Login() {
                 </div>
                 
                 <div className="relative w-full flex items-center">
-                    <LockKeyhole className="absolute left-1 top-5.5 text-gray-500"/>
+                    <LockKeyhole className="absolute left-1 top-5.5 text-gray-500" />
 
                     <input
                         id='loginPasswordInput'
@@ -98,7 +98,8 @@ export default function Login() {
                 <div>
                     <button 
                         type="submit" 
-                        className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer">
+                        className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
+                    >
                         Login
                     </button>
                 </div>
