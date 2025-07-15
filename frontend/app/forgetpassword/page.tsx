@@ -66,7 +66,7 @@ function ForgetPassword() {
                         </div>
 
                         <form action={forgetPassword}>
-                            <div className="relative w-full flex items-center pb-4">
+                            <div className="relative w-full flex items-center pb-3">
                                 <UserRound className="absolute left-1 top-5.5 text-gray-500" />
                                 
                                 <input
@@ -91,7 +91,26 @@ function ForgetPassword() {
                                 </label>
                             </div>
 
-                            <div>
+                            <div className="pb-0.1">
+                                {alertMessage && alertSeverity && (
+                                    <div>
+                                        <Alert
+                                            sx={{
+                                                position: "static",
+                                                alignItems: "center",
+                                                display: "flex",
+                                                borderRadius: "12px",
+                                            }}
+                                            severity={alertSeverity}
+                                            className="mb-3"
+                                        >
+                                            <p id="message">{alertMessage}</p>
+                                        </Alert>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="pt-3">
                                 <button 
                                     type="submit" 
                                     className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
@@ -100,23 +119,6 @@ function ForgetPassword() {
                                 </button>
                             </div>
                         </form>
-
-                        {alertMessage && alertSeverity && (
-                            <div className="pb-3 pt-3">
-                                <Alert
-                                    sx={{
-                                        position: "static",
-                                        alignItems: "center",
-                                        display: "flex",
-                                        borderRadius: "12px",
-                                    }}
-                                    severity={alertSeverity}
-                                    className="mt-2"
-                                >
-                                    <p id="message">{alertMessage}</p>
-                                </Alert>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>

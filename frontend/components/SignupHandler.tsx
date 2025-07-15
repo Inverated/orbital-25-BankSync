@@ -125,9 +125,8 @@ export default function Signup() {
                     </label>
                 </div>
 
-                <div className="my-2 pb-4">
-                    {
-                        showIncorrectConfirmPassword &&
+                <div className="pb-6">
+                    {showIncorrectConfirmPassword &&
                         <Alert 
                             sx={{
                                 position: "static",
@@ -142,8 +141,8 @@ export default function Signup() {
                             <div className="text-xs">Passwords do not match!</div>
                         </Alert>
                     }
-                    {
-                        showSuccessfulSignup &&
+
+                    {showSuccessfulSignup &&
                         <Alert 
                             sx={{
                                 position: "static",

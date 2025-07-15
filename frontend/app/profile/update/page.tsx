@@ -1,20 +1,21 @@
 'use client'
 
 import { supabase } from '@/lib/supabase'
+import { Alert } from '@mui/material'
+import { LockKeyhole } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { RiLockPasswordFill } from 'react-icons/ri'
 
 export default function ResetPassword() {
-    const messageElement = useRef<HTMLElement>(null)
     const newPassword = useRef<HTMLInputElement>(null)
     const confirmNewPassword = useRef<HTMLInputElement>(null)
     const [showIncorrectConfirmPassword, setPasswordDifference] = useState(false)
+    const [alertMessage, setAlertMessage] = useState(" ")
+    const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "warning" | null>(null)
     const router = useRouter()
 
     useEffect(() => {
         const getTokens = (): { access_token: string | null, refresh_token: string | null } => {
-            messageElement.current = document.getElementById('message')
             newPassword.current = document.getElementById('newPassword') as HTMLInputElement
             confirmNewPassword.current = document.getElementById('confirmNewPassword') as HTMLInputElement
 
@@ -48,18 +49,17 @@ export default function ResetPassword() {
 
         const { data, error } = await supabase.auth.updateUser({ password: newPassword.current?.value })
         if (error) {
-            if (messageElement.current) {
-                if (error.name == 'AuthSessionMissingError') {
-                    messageElement.current.textContent = 'Session expired, please submit another password reset request'
-                } else {
-                    messageElement.current.textContent = error.message
-                }
+            setAlertSeverity("warning")
+
+            if (error.name == 'AuthSessionMissingError') {
+                setAlertMessage('Session expired. Please submit another password reset request')
+            } else {
+                setAlertMessage(error.message)
             }
         } else if (data) {
-            if (messageElement.current) {
-                messageElement.current.textContent = 'Password reset successful, redirecting to dashboard'
-            }
-            setTimeout(() => router.push('/dashboard'), 2000)
+            setAlertSeverity("success")
+            setAlertMessage('Password reset successful. Redirecting to login...')
+            setTimeout(() => router.push('/registration/login'), 2000)
             return
         }
 
@@ -73,45 +73,118 @@ export default function ResetPassword() {
         }
     }
 
-
     return (
-        <div className="flex justify-center-safe items-center h-screen">
-            <div>
-                <div className="text-center">
-                    <div className="text-3xl font-bold">Reset your password</div>
+        <div 
+            className="flex justify-center items-center h-screen bg-cover bg-center bg-no-repeat"
+            style={{
+                backgroundImage: "url('/background.jpg')",
+            }}
+        >
+            <div className="w-[600px] rounded-3xl shadow-xl bg-white p-10 flex flex-col px-17.5">
+                <div className="text-center pt-7 pb-11">
+                    <div className="text-4xl font-sans font-bold tracking-wider">Reset Password</div>
                 </div>
-                <form onSubmit={updatePassword}>
-                    <div className="my-3 flex bg-gray-300 rounded-lg">
-                        <RiLockPasswordFill className="text-2xl" />
-                        <input
-                            type="password"
-                            id='newPassword'
-                            placeholder="Enter new password"
-                            className="mx-2 bg-transparent w-full"
-                            onChange={updatePasswordSimilarity} />
 
-                    </div>
-                    <div className="my-3 flex bg-gray-300 rounded-lg">
-                        <RiLockPasswordFill className="text-2xl" />
+                <form onSubmit={updatePassword}>
+                    <div className="relative w-full flex items-center pb-3">
+                        <LockKeyhole className="absolute left-1 top-5.5 text-gray-500" />
+                        
                         <input
+                            id="newPassword"
                             type="password"
-                            id='confirmNewPassword'
-                            placeholder='Confirm your password'
-                            className="mx-2 bg-transparent w-full"
-                            onChange={updatePasswordSimilarity} />
+                            placeholder=" "
+                            className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
+                                pl-10 pt-6 pb-1
+                                focus:outline-none focus:border-black"
+                            onChange={updatePasswordSimilarity} 
+                        />
+
+                        <label
+                            htmlFor="newPasword"
+                            className="absolute left-10 text-gray-400 text-sm transition-all 
+                            peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm 
+                            peer-focus:top-2 peer-focus:text-xs 
+                            peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs"
+                        >
+                            Enter new password
+                        </label>
                     </div>
-                    <button type="submit" className="bg-black active:bg-gray-900 active:scale-95 w-full transition cursor-pointer text-white p-2 rounded-lg">
+
+                    <div className="relative w-full flex items-center">
+                        <LockKeyhole className="absolute left-1 top-5.5 text-gray-500" />
+
+                        <input
+                            id="confirmNewPassword"
+                            type="password"
+                            placeholder=" "
+                            className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
+                                pl-10 pt-6 pb-1
+                                focus:outline-none focus:border-black"
+                            onChange={updatePasswordSimilarity} 
+                        />
+
+                        <label
+                            htmlFor="confirmNewPassword"
+                            className="absolute left-10 text-gray-400 text-sm transition-all 
+                            peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm 
+                            peer-focus:top-2 peer-focus:text-xs 
+                            peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs"
+                        >
+                            Confirm new password
+                        </label>
+                    </div>
+                </form>
+
+                <div className="pb-6">
+                    {showIncorrectConfirmPassword && (
+                        <Alert 
+                            sx={{
+                                position: "static",
+                                alignItems: "center",
+                                display: "flex",
+                                borderRadius: "12px",
+                            }}
+                            severity="error"
+                            className="mt-3"
+                        >
+                            <div className="font-bold text-sm">Error</div>
+                            <div className="text-xs">Passwords do not match!</div>
+                        </Alert>
+                    )}
+
+                    {alertMessage && alertSeverity && (
+                        <Alert
+                            sx={{
+                                position: "static",
+                                alignItems: "center",
+                                display: "flex",
+                                borderRadius: "12px",
+                            }}
+                            severity={alertSeverity}
+                            className="mt-2"
+                        >
+                            <p id="message">{alertMessage}</p>
+                        </Alert>
+                    )}
+                </div>
+
+                <div>
+                    <button 
+                        type="submit" 
+                        className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
+                    >
                         Update Password
                     </button>
-                </form>
-                <div className="my-2 text-sm w-sm">
-                    {
-                        showIncorrectConfirmPassword &&
-                        <div className="text-shadow-xm text-red-600">
-                            Password do not match!
-                        </div>
-                    }
-                    <p id='message'></p>
+                </div>
+
+                <div className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
+                        onClick={() => router.push('/registration/login')}>
+                    <p>Back to <a className="font-semibold underline">Login</a></p>
+                </div>
+
+                <div className="pb-2 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
+                        onClick={() => router.push('/forgetpassword')}>
+                    <p>Back to <a className="font-semibold underline">Forget Password</a></p>
                 </div>
             </div>
         </div>
