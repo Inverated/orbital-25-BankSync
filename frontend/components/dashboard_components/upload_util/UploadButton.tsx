@@ -157,7 +157,7 @@ export default function UploadButton() {
                 } else {
                     resetValues()
                 }
-
+                setActiveTab(0)
             }
         }
     }, [statements])

@@ -19,7 +19,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
     duplicateChecker, duplicateShower }: Props) {
     const [editingId, setEditId] = useState(-1)
     const [isLatest, setIsLatest] = useState<'This Latest' | 'Equal' | 'This Older'>('Equal')
-    const [loadedTransactionData, setLoadingData] = useState<Transaction[]>(statement.transactions)
+    const [loadedTransactionData, setLoadingData] = useState<Transaction[]>([])
     const [accountInDatabase, setExistingAccount] = useState<Account | undefined>(undefined)
     const [showDuplicateHighlight, setDuplicateHighlight] = useState(true)
     const [editingAccount, setEditAccount] = useState(false)
@@ -60,32 +60,33 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
 
     const handleAccountChange = (field: keyof Account, newValue: string | number) => {
         const newAccountDetail: Account = { ...statement.account, [field]: newValue }
-        const updatedStatement: StatementResponse = { hasData: true, account: newAccountDetail, transactions: statement.transactions }
-        duplicateChecking([updatedStatement], transactions)
+        const newTransaction: Transaction[] = [...statement.transactions]
+        if (field == 'account_no') {
+            newTransaction.forEach(each => each.account_no = newValue.toString())
+        }
+
+        const updatedStatement: StatementResponse = { hasData: true, account: newAccountDetail, transactions: newTransaction }
+        onTransactionUpdate(currIndex, updatedStatement)
+    }
+
+    const confirmAcc = (finishedEditing: boolean) => {
+        if (finishedEditing) {
+            refreshAccInDatabaseCheck()
+            duplicateChecking([statement], transactions)
+        }
     }
 
     const handleDeleteAccount = () => {
         onDelete({ ...statement, hasData: false })
     }
 
-    useEffect(() => {
-        if (editingId == -1) {
-            const sr: StatementResponse[] = [statement]
-            duplicateChecking(sr, transactions)
-            statement.transactions = sr[0].transactions
-        }
-    }, [editingId])
-
-    useEffect(() => {
-        setLoadingData(statement.transactions)
-        setDuplicateHighlight(duplicateChecker)
-
-        const accNoList: string[] = []
-        accounts.forEach(acc => accNoList.push(acc.account_no))
-        setAccountList(accNoList)
-
+    const refreshAccInDatabaseCheck = () => {
         const referenceAcc = getAccountDetails({ accounts, condition: [{ key: 'account_no', value: [statement.account.account_no] }] })
-        referenceAcc.length == 1 ? setExistingAccount(referenceAcc[0]) : setExistingAccount(undefined)
+        if (referenceAcc.length == 1) {
+            setExistingAccount(referenceAcc[0])
+        } else {
+            setExistingAccount(undefined)
+        }
 
         if (referenceAcc.length != 1) {
             setIsLatest('Equal')
@@ -96,6 +97,30 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
         } else {
             setIsLatest('This Latest')
         }
+    }
+
+    const checkDuplicate = () => {
+        if (editingId == -1) {
+            const sr: StatementResponse[] = [statement]
+            duplicateChecking(sr, transactions)
+            statement.transactions = sr[0].transactions
+        }
+    }
+
+    useEffect(() => {
+        checkDuplicate()
+    }, [editingId])
+
+    useEffect(() => {
+        setLoadingData(statement.transactions)
+        checkDuplicate()
+        setDuplicateHighlight(duplicateChecker)
+
+        const accNoList: string[] = []
+        accounts.forEach(acc => accNoList.push(acc.account_no))
+        setAccountList(accNoList)
+
+        refreshAccInDatabaseCheck()
     }, [loadedTransactionData, duplicateChecker, duplicateShower, editingId, currIndex])
 
     const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit"
@@ -104,15 +129,52 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
         <>
             <div className="justify-between flex">
                 <div className="text-sm rounded-lg my-3 w-5/6">
-                    <p>
-                        <b>{statement.account?.bank_name}</b>
-                        {statement.account?.account_name && <><b>: </b>{statement.account?.account_name}</>}
-                    </p>
+                    <div className="flex flex-row">
+                        {editingAccount && ((!accountInDatabase) || (accountInDatabase?.bank_name == '')) ?
+                            <input
+                                placeholder="Bank Name"
+                                type="text"
+                                className="border w-21 pl-1 placeholder:text-gray-600"
+                                onChange={(e) => handleAccountChange('bank_name', e.target.value)}
+                                defaultValue={statement.account.bank_name}
+                            /> :
+                            <b>{statement.account.bank_name}</b>
+
+                        }
+                        {editingAccount && ((!accountInDatabase) || (accountInDatabase?.account_name == '')) ?
+                            (<>
+                                <b>: </b>
+                                <input
+                                    placeholder="Account Name"
+                                    type="text"
+                                    className="border ml-1 pl-1"
+                                    onChange={(e) => handleAccountChange('account_name', e.target.value)}
+                                    defaultValue={statement.account.account_name}
+                                />
+                            </>) : (!statement.account.account_name ? '' :
+                                <>
+                                    <b className="pr-1">: </b>
+                                    {accountInDatabase ?
+                                        (accountInDatabase.account_name == statement.account.account_name ? accountInDatabase.account_name :
+                                            <div className="sm:flex space-x-2">
+                                                <p className="text-red-600 line-through">
+                                                    {statement.account.account_name}
+                                                </p>
+                                                <p className="">
+                                                    {accountInDatabase?.account_name}
+                                                </p>
+                                            </div>
+                                        ) :
+                                        (statement?.account.account_name)
+                                    }
+                                </>)}
+                    </div>
                     <p>
                         <b>Account number: </b>
                         {!editingAccount ? statement.account?.account_no :
                             <input list="accNoList"
                                 className="border pl-1"
+                                placeholder="Account No"
                                 onChange={(e) => handleAccountChange('account_no', e.target.value)}
                                 defaultValue={statement.account?.account_no} />}
                         <datalist id='accNoList'>
@@ -142,7 +204,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                 </div>
                 <div className="pr-3 flex flex-row justify-center scale-70 space-x-2">
                     <div className="text-blue-600 hover:underline hover:cursor-pointer self-center"
-                        onClick={() => setEditAccount(!editingAccount)}>
+                        onClick={() => { setEditAccount(!editingAccount); confirmAcc(editingAccount) }}>
                         {editingAccount ? <Check /> : <SquarePen />}
                     </div>
                     <div
@@ -293,7 +355,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                         </div>
                                     </div>
                                 </td>
-                            </tr> : null 
+                            </tr> : null
                         )}
                         <tr className="odd:bg-white even:bg-gray-300">
                             <td></td>

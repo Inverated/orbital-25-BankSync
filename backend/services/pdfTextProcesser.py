@@ -1,4 +1,6 @@
 import re
+
+from pypdf import PdfReader
 from backend.models.account import Account, Statement
 from backend.models.keywordDict import accountTableKeywords, monthLookup
 from backend.models.transaction import Transaction
@@ -482,11 +484,11 @@ def processSC(textList: list[str]) -> tuple[bool, list[Statement]]:
     return (True, statements)
 
 
-def processOthers(textList: list[str]) -> tuple[bool, list[Statement]]:
+def processOthers(textList: list[str], pypdf: PdfReader) -> tuple[bool, list[Statement]]:
     hasAcc = hasTrans = False
     for row in textList:
         if hasTrans and hasAcc:
-            return processExportedPdf(textList)
+            return processExportedPdf(pypdf)
 
         if ('Last Recorded Date' in row) and ('Account Name' in row) and ('Account No' in row):
             hasAcc = True

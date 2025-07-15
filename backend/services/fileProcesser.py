@@ -4,6 +4,9 @@ import re
 import msoffcrypto
 
 from typing import Optional
+
+import pdfplumber
+from pypdf import PdfWriter
 from backend.services import csvTextProcessor, pdfTextProcesser
 from backend.services.processExported import processExportedExcel
 from backend.utils import pdfReader
@@ -63,7 +66,7 @@ def parsePdf(content: bytes, password: Optional[str]):
         return (False, 'File cannot be read, ensure it is text and can be selected')
     else:
         bank = detectBank(extractedText)
-        return extractTableDetailsFromText(bank, extractedText)
+        return extractTableDetailsFromText(bank, extractedText, pypdf)
 
 #DBS is shit
 def parseCSV(content: bytes):
@@ -89,7 +92,7 @@ def parseTxt(content: bytes):
     bank = pdfTextProcesser.detectBank(extractedText)
     return extractTableDetailsFromText(bank, extractedText)
 
-def extractTableDetailsFromText(bank, extractedText):
+def extractTableDetailsFromText(bank, extractedText, pypdf):
     try:
         match bank:
             case 'DBS':
@@ -107,7 +110,7 @@ def extractTableDetailsFromText(bank, extractedText):
             case 'SC':
                 return pdfTextProcesser.processSC(extractedText)
             case _:
-                return pdfTextProcesser.processOthers(extractedText)
+                return pdfTextProcesser.processOthers(extractedText, pypdf)
             
     except Exception as e:
         # prints relavent part of the error for easier debugging
