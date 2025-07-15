@@ -53,7 +53,8 @@ export default function Signup() {
                 <div className="flex items-start justify-start w-[5%] pt-1">
                     <ChevronLeft
                         className="cursor-pointer transition" 
-                        onClick={() => router.push('/')}/>
+                        onClick={() => router.push('/')}
+                    />
                 </div>
                 
                 <div className="flex flex-col flex-grow w-[95%] pr-7 pt-3">
