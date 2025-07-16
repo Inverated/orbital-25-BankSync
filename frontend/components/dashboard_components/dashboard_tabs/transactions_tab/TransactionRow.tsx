@@ -1,8 +1,11 @@
 import { Account, Transaction } from "@/utils/types";
 import { useEffect, useRef, useState } from "react";
+import { updateTransactionDetails } from "@/lib/supabaseUpdate";
+import { useDatabase } from "@/context/DatabaseContext";
+import { useUserId } from "@/context/UserContext";
 
 type uniqueCategory = string[]
-type arguements = { details: Partial<Transaction & Account>, uniqueCategory: uniqueCategory }
+type arguements = { details: Transaction & Partial<Account>, uniqueCategory: uniqueCategory }
 
 export default function TransactionRow({ details, uniqueCategory }: arguements) {
     // Handle persistent expanded row display when shift pressed or long click
@@ -13,6 +16,9 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
     const expandedRow = useRef<HTMLDivElement>(null);
 
     const clickStartTime = useRef<number | null>(null);
+
+    const userId = useUserId()
+    const { refreshDatabase, loaded } = useDatabase()
 
     const updateExpandStatus = (isExpanded: boolean) => {
         setShowEditDialogue(isExpanded)
@@ -38,7 +44,7 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                 isShiftPressed.current = false
             }
         }
-        
+
         const handleMouseDown = () => {
             clickStartTime.current = Date.now();
         };
@@ -87,14 +93,40 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
 
     // Handle edit dialogue display
     const [showEditDialogue, setShowEditDialogue] = useState(false)
-    const [selectedCategory, setSelectedCategory] = useState(details.category)
+    const [selectedCategory, setCat] = useState(details.category)
     const customCategoryRef = useRef<HTMLInputElement>(null)
 
-    const updateCategory = () => {
-        details.category = selectedCategory
-        setShowEditDialogue(false)
+    const updateTransaction = async (key: keyof Transaction, newValue: string) => {
+        if (newValue == '') {
+            return
+        }
+        if (details[key] == newValue) {
+            setShowEditDialogue(false)
+            return
+        }
+        const currTransaction: Transaction = {
+            id: details.id,
+            transaction_date: details.transaction_date,
+            transaction_description: details.transaction_description,
+            withdrawal_amount: details.withdrawal_amount,
+            deposit_amount: details.deposit_amount,
+            account_no: details.account_no,
+            category: details.category,
+            ending_balance: details.ending_balance
+        }
+
+        const newTransaction = { ...currTransaction, [key]: newValue }
+        if (currTransaction.id) {
+            await updateTransactionDetails(userId, currTransaction.id, newTransaction)
+                .then(() => {
+                    refreshDatabase()
+                })
+        }
     }
-    //change unique category list to be updated when new added 
+
+    useEffect(() => {
+        if (loaded) setShowEditDialogue(false)
+    }, [loaded])
 
     const buttonStyle = 'border border-black mx-2 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
     return (
@@ -106,7 +138,7 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                         <p className='p-3 truncate break-after-all'>{details.transaction_description}</p>
                     </div>
                     <div className={'p-3 flex justify-between'}>
-                        <p>{details.account_name ? details.account_name : 'Unknown Account' }</p>
+                        <p>{details.account_name ? details.account_name : 'Unknown Account'}</p>
                         <p className={details.withdrawal_amount == 0 ? "text-green-500" : "text-red-500"}>
                             {details.withdrawal_amount == 0 ? '+$' + details.deposit_amount?.toFixed(2) : '-$' + details.withdrawal_amount?.toFixed(2)}
                         </p>
@@ -158,34 +190,40 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                         </p>
                         {
                             showEditDialogue &&
-                            <div className='flex flex-col mx-2 py-2 px-2 border border-black w-2/5'>
-                                {uniqueCategory.map((cat) =>
-                                    <div key={cat}>
-                                        <label className='flex justify-between py-1'>
-                                            {cat}
-                                            <input
-                                                value={cat} name={String(details.id)}
-                                                checked={cat == selectedCategory}
-                                                onChange={(e) => setSelectedCategory(e.target.value)}
-                                                type='radio' />
-                                        </label>
+                            <div className='flex flex-col mx-2 py-2 px-2 border border-black not-sm:w-5/6 sm:w-2/5'>
+                                <label className='flex justify-between py-1'>
+                                    <div>
+                                        Select: <select className="p-1 ml-4 mr-3 h-7" 
+                                        defaultValue={details.category} onChange={(e) => setCat(e.target.value)}>
+                                            {uniqueCategory.map((cat =>
+                                                <option value={cat} key={cat}>{cat}</option>
+                                            ))}
+                                        </select>
                                     </div>
-                                )}
+                                    <input
+                                        name={String(details.id)}
+                                        defaultChecked
+                                        type='radio' />
+                                </label>
+
                                 {/* Custom category */}
                                 <label className='flex justify-between py-1'>
-                                    Custom:<input
-                                        type='text'
-                                        className='border border-black w-3/4 p-1'
-                                        ref={customCategoryRef}
-                                        placeholder='Custom category'
-                                        onFocus={() => setSelectedCategory(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)}
-                                        onChange={() => setSelectedCategory(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)} />
+                                    <div>
+                                        Custom:<input
+                                            type='text'
+                                            className='border-b border-black p-1 ml-2 h-7 w-1/2'
+                                            ref={customCategoryRef}
+                                            placeholder='Custom category'
+                                            onFocus={() => setCat(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)}
+                                            onChange={() => setCat(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)} />
+                                    </div>
+
                                     <input
                                         id='categoryRadio'
                                         type='radio'
                                         name={String(details.id)}
                                         checked={selectedCategory == (customCategoryRef.current ? customCategoryRef.current.value : '')}
-                                        onChange={() => setSelectedCategory(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)} />
+                                        onChange={() => setCat(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)} />
                                 </label>
                             </div>
                         }
@@ -196,7 +234,7 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                                     <button
                                         id='submitButton'
                                         className={buttonStyle}
-                                        onClick={updateCategory}>
+                                        onClick={() => updateTransaction('category', selectedCategory)}>
                                         Confirm
                                     </button>
                                     {/* Cancel statement bugging out, must include timeout*/}
@@ -217,7 +255,7 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                                         className={buttonStyle}
                                         onClick={() => {
                                             updateExpandStatus(true)
-                                            setSelectedCategory(details.category)
+                                            setCat(details.category)
                                         }}>
                                         Edit
                                     </button>

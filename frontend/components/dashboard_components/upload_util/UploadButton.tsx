@@ -149,7 +149,7 @@ export default function UploadButton() {
     const handleDelete = useCallback((updatedStatements: StatementResponse) => {
         if (statements) {
             if (updatedStatements.hasData) {
-                statements.map(each => each.account.account_no == updatedStatements.account.account_no ? updatedStatements : each)
+                statements.forEach(each => each.account.account_no == updatedStatements.account.account_no ? updatedStatements : each)
             } else {
                 const newStatement = statements.filter(each => each.account.account_no != updatedStatements.account.account_no)
                 if (newStatement.length != 0) {
@@ -200,7 +200,7 @@ export default function UploadButton() {
                 })
         }
 
-        uploadData.map(newStatement => {
+        uploadData.forEach(newStatement => {
             const latestAcc = currAccount?.filter(curr => curr.account_no == newStatement.account.account_no)[0]
             if (latestAcc && (newStatement.account.latest_recorded_date < latestAcc.latest_recorded_date)) {
                 newStatement.account.balance = latestAcc.balance
