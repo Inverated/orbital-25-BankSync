@@ -32,7 +32,7 @@ export default function NavBar(user: { user: User | undefined; }) {
     }, [])
 
     return (
-            <div className='flex justify-between my-7 mx-4'>
+            <div className='flex justify-between py-7 px-4'>
                 <div>
                     <div className='text-4xl'>Dashboard</div>
                     <div className="text-xl pt-3">Welcome {user.user?.email?.slice(0, user.user.email.indexOf('@'))}</div>

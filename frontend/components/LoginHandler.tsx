@@ -71,12 +71,14 @@ export default function Login() {
                         />
                         <p>Keep me signed in</p>
                     </label>
-                    <div className="cursor-pointer"
+                    <button
+                        type='button'
+                        className="cursor-pointer"
                         onClick={redirectToForgetPassword}>
                         <span className="font-semibold underline ml-auto">
                             Forgot your password?
                         </span>
-                    </div>
+                    </button>
                 </div>
                 <div hidden={errorMessage == ''} className="text-shadow-xm text-red-600">
                     {errorMessage}
