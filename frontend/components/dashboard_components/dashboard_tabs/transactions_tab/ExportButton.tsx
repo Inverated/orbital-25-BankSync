@@ -46,6 +46,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
     }
 
     const exportToFile = async () => {
+        setDownloadSuccess(false)
         let blob: Blob | null = null
         if (exportType == 'EXCEL') {
             blob = await exportXlsxToBlob()
@@ -195,9 +196,14 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                             <div className="flex flex-col">
                                 <div>
                                     <b>Password: </b>
-                                    <input type="text" placeholder="Enter password for encryption" ref={passwordRef} className="placeholder:left-0 placeholder:text-xs pl-1 border rounded-sm w-fit"></input>
+                                    <input
+                                        name="exportPasswordInput"
+                                        type="text"
+                                        placeholder="Enter password for encryption"
+                                        ref={passwordRef}
+                                        className="placeholder:left-0 placeholder:text-xs pl-1 border rounded-sm w-fit" />
                                 </div>
-                                <div hidden={!networkError} className="text-sm text-red-500">
+                                <div hidden={!networkError} className="text-sm text-red-500 mt-2">
                                     Network error, unable to encrypt with password
                                 </div>
                             </div>
@@ -206,6 +212,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                             <div className="flex flex-col text-sm scale-90" id="exportType">
 
                                 <button
+                                    name="exportTypeSelector"
                                     onClick={() => setShowTypeDropdown(!showTypeDropdown)}
                                     className="hover:bg-gray-300 focus:outline-none font-medium bg-white border-b-2 mx-2 p-1 text-center inline-flex justify-between" type="button">
                                     {exportType}
@@ -240,7 +247,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                                 Confirm
                             </button>
                         </div>
-                        <div hidden={!downloadSuccess} className="text-sm text-green-500 flex justify-end">
+                        <div hidden={!downloadSuccess} className="text-sm text-green-500 flex justify-end mt-2">
                             Download successful
                         </div>
                     </div>

@@ -274,7 +274,10 @@ export default function UploadButton() {
                                     PDF or XLSX
                                 </p>
                             </div>
-                            <input id="dropzone-file" type="file"
+                            <input
+                                id="dropzone-file"
+                                type="file"
+                                name="fileUploadArea"
                                 onChange={(e) => {
                                     setCurrentFile(e)
                                     handleUploadFile()
@@ -296,7 +299,10 @@ export default function UploadButton() {
                                     }} className="flex justify-between">
                                         <span>
                                             <b className="text-red-400">Please enter password: </b>
-                                            <input className='border border-black' ref={filePassword} type="password" />
+                                            <input className='border border-black'
+                                                name="passwordInput"
+                                                ref={filePassword}
+                                                type="password" />
                                         </span>
                                         <button
                                             ref={passwordConfirmRef}
@@ -344,6 +350,7 @@ export default function UploadButton() {
                                 <label className="text-xs space-x-2 items-center flex justify-between">
                                     <p>Check for duplicates</p>
                                     <input
+                                        name="duplicateChecker"
                                         type="checkbox"
                                         defaultChecked={checkDuplicate}
                                         onClick={e => setCheckDuplicate(e.currentTarget.checked)} />
@@ -351,6 +358,7 @@ export default function UploadButton() {
                                 <label className="text-xs space-x-2 items-center flex justify-between">
                                     <p>Show duplicates</p>
                                     <input
+                                        name="duplicateShower"
                                         type="checkbox"
                                         defaultChecked={duplicateShower}
                                         onClick={e => setDuplicateShower(e.currentTarget.checked)} />

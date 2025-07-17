@@ -193,8 +193,10 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                             <div className='flex flex-col mx-2 py-2 px-2 border border-black not-sm:w-5/6 sm:w-2/5'>
                                 <label className='flex justify-between py-1'>
                                     <div>
-                                        Select: <select className="p-1 ml-4 mr-3 h-7" 
-                                        defaultValue={details.category} onChange={(e) => setCat(e.target.value)}>
+                                        Select: <select className="p-1 ml-4 mr-3 h-7"
+                                            name="existingCategory"
+                                            defaultValue={details.category} 
+                                            onChange={(e) => setCat(e.target.value)}>
                                             {uniqueCategory.map((cat =>
                                                 <option value={cat} key={cat}>{cat}</option>
                                             ))}
@@ -210,6 +212,7 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                                 <label className='flex justify-between py-1'>
                                     <div>
                                         Custom:<input
+                                            name="customCategory"
                                             type='text'
                                             className='border-b border-black p-1 ml-2 h-7 w-1/2'
                                             ref={customCategoryRef}

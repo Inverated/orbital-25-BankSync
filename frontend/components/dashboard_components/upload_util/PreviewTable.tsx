@@ -178,7 +178,8 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                     <p>
                         <b>Account number: </b>
                         {!editingAccount ? statement.account?.account_no :
-                            <input list="accNoList"
+                            <input list="accNoSelector"
+                                name="accNoList"
                                 className="border pl-1"
                                 placeholder="Account No"
                                 onChange={(e) => handleAccountChange('account_no', e.target.value)}
@@ -268,7 +269,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                     <input
                                         className={editingId != index ? " pointer-events-none select-text cursor-text max-w-25" : " max-w-25"}
                                         type='date'
-                                        name='date'
+                                        name='transactionDateEdit'
                                         value={transaction.transaction_date}
                                         onChange={(e) => handleTransactionChange(index, 'transaction_date', e.target.value)}
                                         readOnly={editingId != index}
@@ -276,9 +277,9 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                 </th>
                                 <td className={rowStyle}>
                                     {editingId != index ?
-                                        <label htmlFor="description" id={"description_" + index}>
+                                        <div id={"description_" + index}>
                                             {transaction.transaction_description}
-                                        </label> :
+                                        </div> :
                                         <textarea
                                             className="border rounded-sm w-full overflow-hidden z-30 h-[65]"
                                             value={transaction.transaction_description}
@@ -290,13 +291,13 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                 </td>
                                 <td className={rowStyle}>
                                     {editingId != index ?
-                                        <label htmlFor="deposit">
+                                        <div>
                                             {(transaction.deposit_amount != 0) ? transaction.deposit_amount.toFixed(2) : ''}
-                                        </label> :
+                                        </div> :
                                         <input
                                             className="max-w-20 border"
                                             type='number'
-                                            name='deposit'
+                                            name='depositEdit'
                                             value={transaction.deposit_amount}
                                             onChange={(e) => handleTransactionChange(index, 'deposit_amount', Number(e.target.value))}
                                             readOnly={editingId != index}
@@ -305,13 +306,13 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                 </td>
                                 <td className={rowStyle}>
                                     {editingId != index ?
-                                        <label htmlFor="withdrawal">
+                                        <div>
                                             {transaction.withdrawal_amount != 0 ? transaction.withdrawal_amount?.toFixed(2) : ''}
-                                        </label> :
+                                        </div> :
                                         <input
                                             className="max-w-20 border"
                                             type='number'
-                                            name='withdrawal'
+                                            name='withdrawalEdit'
                                             value={transaction.withdrawal_amount}
                                             onChange={(e) => handleTransactionChange(index, 'withdrawal_amount', Number(e.target.value))}
                                             readOnly={editingId != index}
@@ -323,7 +324,7 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                     <input
                                         className={editingId == index ? "border max-w-25" : 'pointer-events-none max-w-25 select-text cursor-text'}
                                         type='text'
-                                        name='category'
+                                        name='categoryEdit'
                                         value={transaction.category}
                                         onChange={(e) => handleTransactionChange(index, 'category', e.target.value)}
                                         readOnly={editingId != index}
@@ -331,13 +332,13 @@ export default function PreviewTable({ currIndex, statement, onTransactionUpdate
                                 </td>
                                 <td className={rowStyle}>
                                     {editingId != index ?
-                                        <label htmlFor="ending balance">
+                                        <div>
                                             {transaction.ending_balance?.toFixed(2)}
-                                        </label> :
+                                        </div> :
                                         <input
                                             className="max-w-20 border"
                                             type='number'
-                                            name='ending balance'
+                                            name='endingBalanceEdit'
                                             value={transaction.ending_balance}
                                             onChange={(e) => handleTransactionChange(index, 'ending_balance', Number(e.target.value))}
                                             readOnly={editingId != index}

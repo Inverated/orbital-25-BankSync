@@ -138,6 +138,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                                             <label className="flex py-1.5 px-3 justify-between">
                                                 {account.bank_name ? account.bank_name + ': ' : ''}{account.account_name == '' ? account.account_no : account.account_name}
                                                 <input
+                                                    name="accountFilterSelector"
                                                     type='checkbox'
                                                     value={account.account_name}
                                                     defaultChecked={selectedAccount.current.includes(account.account_no)}
@@ -163,6 +164,7 @@ export default function FilterButton(onFilterSet: { setFilter: (accountSelection
                                                 <label className="flex py-1.5 px-3 justify-between">
                                                     {category}
                                                     <input
+                                                        name="categoryFilterSelector"
                                                         type='checkbox'
                                                         value={category}
                                                         defaultChecked={selectedCategory.current.includes(category)}
