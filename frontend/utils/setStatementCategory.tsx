@@ -1,8 +1,8 @@
 import { StatementResponse } from "./types";
 
 export default function setStatementCategory(statements: StatementResponse[]) {
-    statements.map((statement) => {
-        statement.transactions.map((entry) => {
+    statements.forEach((statement) => {
+        statement.transactions.forEach((entry) => {
             const description = entry.transaction_description.toLowerCase()
             for (const [category, keywords] of Object.entries(keywordMap)) {
                 if (keywords.some((kw) => description.includes(kw))) {

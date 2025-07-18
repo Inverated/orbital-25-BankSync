@@ -19,7 +19,7 @@ export default function ConnectedAccount() {
 
     useEffect(() => {
         const initialise = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await supabase.auth.getUser()
             setConnectedAcc(user?.app_metadata.providers)
         }
         initialise()
