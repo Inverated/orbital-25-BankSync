@@ -1,8 +1,9 @@
 from datetime import datetime
 import re
-from backend.utils.textFormatter import rmSpaceFromList
 from backend.models.keywordDict import monthLookup
 from dateutil.parser import parse
+
+from backend.utils.textFormatter import rmSpaceFromList
 
 
 def parseDate(splitted: list[str], yyyy: str) -> bool | tuple[str, str]:
@@ -28,7 +29,7 @@ def parseDate(splitted: list[str], yyyy: str) -> bool | tuple[str, str]:
         # dd/mm dd/mm ...
         try:
             date = parse(splitted[0], dayfirst=True, default=defaultDate)
-            date2 = parse(splitted[0], dayfirst=True, default=defaultDate)
+            date2 = parse(splitted[1], dayfirst=True, default=defaultDate)
             if date.month == date2.month:
                 return (date.date().isoformat(), splitted[2])
         except:
@@ -70,6 +71,7 @@ def standardRowBreakdown(row: str, yyyy: str = '1900') -> list[str] | bool:
 
     testBalance = splitted[-1].replace(',', '')
     testChange = splitted[-2].replace(',', '')
+    testOptional = splitted[-3].replace(',','')
 
     if '-' in testBalance:
         testBalance = '-' + testBalance.replace('-', '')
@@ -77,9 +79,19 @@ def standardRowBreakdown(row: str, yyyy: str = '1900') -> list[str] | bool:
     if testBalance.find('.') == -1 or testChange.find('.') == -1:
         return False
     
+    descriptionEndIndex = -2
+    
     try:
-        balance = float(testBalance)
-        change = float(testChange)
+        balance = float(re.sub(r'[^0-9.]+', '', testBalance))
+        change = float(re.sub(r'[^0-9.]+', '', testChange))
+        try:
+            optional = float(re.sub(r'[^0-9.]+', '', testOptional))
+            if (abs(change) < 1e-8) ^ (abs(optional) < 1e-8):
+                if abs(change) < 1e-8:
+                    change = optional
+                descriptionEndIndex = -3
+        except:
+            None
     except:
         return False
 
@@ -89,5 +101,5 @@ def standardRowBreakdown(row: str, yyyy: str = '1900') -> list[str] | bool:
             descriptionStartIndex = index
             break
 
-    description = ' '.join(splitted[descriptionStartIndex: -2])
+    description = ' '.join(splitted[descriptionStartIndex: descriptionEndIndex])
     return [date, description, change, balance]

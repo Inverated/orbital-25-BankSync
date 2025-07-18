@@ -75,7 +75,7 @@ async function decryptTransaction(transactions: EncryptedTransaction[]): Promise
 
     const decryptedTransaction: Transaction[] = []
 
-    transactions.map((transaction, index) => decryptedTransaction.push(
+    transactions.forEach((transaction, index) => decryptedTransaction.push(
         {
             id: transaction.id,
             created_at: transaction.created_at,
@@ -102,7 +102,7 @@ async function decryptAccount(accounts: EncryptedAccount[]): Promise<Account[]> 
     const decryptedList = await decryptData(toBeDecrypted)
     const decryptedAccounts: Account[] = []
 
-    accounts.map((account, index) => decryptedAccounts.push({
+    accounts.forEach((account, index) => decryptedAccounts.push({
         id: account.id,
         created_at: account.created_at,
         account_no: account.account_no,

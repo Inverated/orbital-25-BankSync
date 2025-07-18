@@ -22,17 +22,16 @@ export const DatabaseProvider = ({ children, userId }: DatabaseProviderProps) =>
     const [loaded, setLoadingStatus] = useState(false)
 
     const refreshDatabase = async () => {
+        setLoadingStatus(false)
         const newTransactions = await queryTransactionDetails(userId)
         const newAccounts = await queryAccountDetails(userId)
         setTransactions(newTransactions);
         setAccounts(newAccounts);
+        setLoadingStatus(true)
     };
 
     useEffect(() => {
-        setLoadingStatus(false)
-        refreshDatabase().then(() => {
-            setLoadingStatus(true)
-        })
+        refreshDatabase()
     }, [])
 
     return (
