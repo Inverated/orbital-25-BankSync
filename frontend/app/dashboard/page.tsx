@@ -12,6 +12,7 @@ import { supabase } from "@/lib/supabase";
 import { UserProvider } from "@/context/UserContext";
 import { registerCharts } from "@/utils/RegisterCharts";
 import { DatabaseProvider } from "@/context/DatabaseContext";
+import { ProfileProvider } from "@/context/ProfileContext";
 
 
 export default function Dashboard() {
@@ -75,26 +76,28 @@ export default function Dashboard() {
 
     return (
         sessionLoaded && currentSession &&
-        <DatabaseProvider userId={currentSession.user.id}>
-            <UserProvider userId={currentSession.user.id}>
-                <div>
-                    <NavBar user={currentSession?.user} />
-                    <div className="flex justify-end">
-                        <div className="p-2 m-3 transition">
-                            {Object.keys(componentSelector).map((tab) =>
-                                <span
-                                    onClick={() => setPage(tab as Page)}
-                                    key={tab}
-                                    className={`${tabStyle} ${currentPage === tab ? " border-blue-500 text-blue-600" : "border-transparent text-gray-500 hover:text-blue-600"}`}>
-                                    {tab}
-                                </span>
-                            )}
-                        </div>
+        <ProfileProvider userId={currentSession.user.id}>
+            <DatabaseProvider userId={currentSession.user.id}>
+                <UserProvider userId={currentSession.user.id}>
+                    <div>
+                        <NavBar user={currentSession?.user} />
+                        <div className="flex justify-end">
+                            <div className="p-2 m-3 transition">
+                                {Object.keys(componentSelector).map((tab) =>
+                                    <span
+                                        onClick={() => setPage(tab as Page)}
+                                        key={tab}
+                                        className={`${tabStyle} ${currentPage === tab ? " border-blue-500 text-blue-600" : "border-transparent text-gray-500 hover:text-blue-600"}`}>
+                                        {tab}
+                                    </span>
+                                )}
+                            </div>
 
+                        </div>
+                        <div><CurrentComponent /></div>
                     </div>
-                    <div><CurrentComponent /></div>
-                </div>
-            </UserProvider>
-        </DatabaseProvider>
+                </UserProvider>
+            </DatabaseProvider>
+        </ProfileProvider>
     )
 }

@@ -1,4 +1,4 @@
-import { Account, Transaction } from "@/utils/types"
+import { Account, Profile, Transaction } from "@/utils/types"
 import { supabase } from "./supabase"
 import decryptData from "@/utils/decryptData"
 import { Timestamp } from "next/dist/server/lib/cache-handlers/types";
@@ -41,7 +41,7 @@ export async function queryTransactionDetails(userId: string): Promise<Transacti
     const decrypted = await decryptTransaction(fixedTying)
 
     decrypted.sort((fst, snd) => fst.transaction_date < snd.transaction_date ? 1 : fst == snd ? 0 : -1)
-    
+
     return decrypted
 }
 
@@ -116,3 +116,30 @@ async function decryptAccount(accounts: EncryptedAccount[]): Promise<Account[]> 
     return decryptedAccounts
 }
 
+export async function queryProfileDetails(userId: string): Promise<Profile> {
+    const { data: profileDetails, error } = await supabase
+        .from('profile')
+        .select('*')
+        .eq('user_id', userId)
+
+    if (error) {
+        throw error.message
+    }
+
+    if (profileDetails.length == 0) {
+        await supabase.from('profile')
+            .upsert({ 'user_id': userId }, { onConflict: 'user_id' })
+
+        const { data: profileDetails, error } = await supabase
+            .from('profile')
+            .select('*')
+            .eq('user_id', userId)
+
+        if (error) {
+            throw error
+        }
+        return profileDetails[0] as Profile
+    }
+
+    return profileDetails[0] as Profile
+}

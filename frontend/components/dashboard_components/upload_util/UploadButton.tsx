@@ -11,6 +11,7 @@ import { useUserId } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import { useDatabase } from "@/context/DatabaseContext";
 import { duplicateChecking } from "@/utils/duplicateTransactionCheck";
+import { useProfile } from "@/context/ProfileContext";
 
 export default function UploadButton() {
     const [uploadDialogue, setUploadDialogue] = useState(false)
@@ -34,7 +35,8 @@ export default function UploadButton() {
     const [activeTab, setActiveTab] = useState(0)
 
     const router = useRouter()
-    const userId = useUserId();
+    const userId = useUserId()
+    const { keywordMap } = useProfile()
     const { transactions, accounts, refreshDatabase } = useDatabase()
 
     const closeDialogue = () => {
@@ -104,11 +106,11 @@ export default function UploadButton() {
             } else {
                 const returnedData = parsedData.data
                 returnedData.forEach(response => response.transactions
-                    .sort((fst, snd) => fst.transaction_date > snd.transaction_date ? 1 :
+                    .toSorted((fst, snd) => fst.transaction_date > snd.transaction_date ? 1 :
                         fst.transaction_date == snd.transaction_date ? 0 : -1))
                 setPasswordQuery(false)
                 duplicateChecking(returnedData, transactions)
-                setStatementCategory(returnedData)
+                setStatementCategory(returnedData, keywordMap)
                 setStatements(returnedData)
             }
         }
@@ -130,7 +132,6 @@ export default function UploadButton() {
         if (['pdf', 'xlsx', 'txt'].includes(fileExt.toLowerCase())) {
             currentFile.current = file
             setErrorFileType(false)
-            return
         } else {
             setErrorFileType(true)
             resetValues()

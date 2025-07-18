@@ -38,3 +38,39 @@ export interface uploadReturnData {
     error: string;
     data: StatementResponse[];
 }
+
+export type keywordMapType = Map<string, string[]>
+
+export const defaultKeywordMap: { [category: string]: string[] } = {
+    "Food and Drinks": [
+        "starbucks", "mcdonalds", "mcdonald's", "kfc", "pizza", "burger king", "koufu",
+        "dunkin", "coffee", "restaurant", "cafe", "dominos", "foodpanda", "ubereats", "meal"
+    ],
+    "Online Shopping": [
+        "amazon", "ebay", "shopee", "shopeepay", "aliexpress", "taobao", "lazada"
+    ],
+    "Shopping": [
+        "etsy", "store", "mall", "nike", "adidas", "zara",
+        "clothing", "supermarket", "don don donki"
+    ],
+    "Transport": [
+        "uber", "taxi", "bus", "train", "gas", "fuel", "shell", "grab",
+        "mrt", "bus/mrt"
+    ],
+    "Income": ["payroll", "salary", "income", "deposit", "bonus"],
+    "Transfer": ["fast", "paylah", "paynow", "trf", "transfer", "to"],
+    "Interest": ["interest"],
+    "Payment": ["debit card", "purchase", "nets", "pos", "point-of-sale", "alipay"],
+    "Entertainment": ["netflix", "spotify", "youtube", "cinema", "theatre", "concert", "game", "steam"],
+    "Utilities": ["bill", "internet", "wifi", "phone", "mobile", "telecom"],
+    "Travel": ["hotel", "flight", "trip", "travel"],
+    "Healthcare": ["hospital", "clinic", "pharmacy", "health", "doctor", "dentist", "watsons"],
+    "Withdrawal": ["withdrawal", "atm"]
+}
+
+export interface Profile {
+    user_id: string,
+    id?: number,
+    created_at?: string,
+    category_filter?: string
+}

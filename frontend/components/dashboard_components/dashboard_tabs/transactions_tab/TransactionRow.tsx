@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { updateTransactionDetails } from "@/lib/supabaseUpdate";
 import { useDatabase } from "@/context/DatabaseContext";
 import { useUserId } from "@/context/UserContext";
+import { supabase } from "@/lib/supabase";
 
 type uniqueCategory = string[]
 type arguements = { details: Transaction & Partial<Account>, uniqueCategory: uniqueCategory }
@@ -13,7 +14,7 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
     const [isRowExpanded, setIsRowExpanded] = useState(false);
     const refIsRowExpanded = useRef(false);
     const isShiftPressed = useRef(false);
-    const expandedRow = useRef<HTMLDivElement>(null);
+    const expandedRow = useRef<HTMLDivElement>(null)
 
     const clickStartTime = useRef<number | null>(null);
 
@@ -93,7 +94,10 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
 
     // Handle edit dialogue display
     const [showEditDialogue, setShowEditDialogue] = useState(false)
-    const [selectedCategory, setCat] = useState(details.category)
+    const [existingCat, setCat] = useState(details.category)
+    const [customCat, setCustomCat] = useState('')
+    const [selectedCat, setSelectedCat] = useState('')
+
     const customCategoryRef = useRef<HTMLInputElement>(null)
 
     const updateTransaction = async (key: keyof Transaction, newValue: string) => {
@@ -121,6 +125,21 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                 .then(() => {
                     refreshDatabase()
                 })
+        }
+    }
+
+    const deleteTransaction = async () => {
+        if (details.id) {
+            const { error } = await supabase.from('encryptedTransactionDetails')
+                .delete()
+                .eq('user_id', userId)
+                .eq('id', details.id)
+            if (error) {
+                console.error(error.message)
+            } else {
+                setShowEditDialogue(false)
+                refreshDatabase()
+            }
         }
     }
 
@@ -191,25 +210,36 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                         {
                             showEditDialogue &&
                             <div className='flex flex-col mx-2 py-2 px-2 border border-black not-sm:w-5/6 sm:w-2/5'>
-                                <label className='flex justify-between py-1'>
+                                <label className='flex justify-between py-1' htmlFor="existingRadio">
                                     <div>
                                         Select: <select className="p-1 ml-4 mr-3 h-7"
                                             name="existingCategory"
-                                            defaultValue={details.category} 
-                                            onChange={(e) => setCat(e.target.value)}>
+                                            defaultValue={details.category}
+                                            onFocus={(e) => {
+                                                setCat(e.target.value)
+                                                setSelectedCat(e.target.value)
+                                                const el = document.getElementById('existingRadio') as HTMLInputElement
+                                                el.checked = true
+                                            }}
+                                            onChange={(e) => {
+                                                setCat(e.target.value)
+                                                setSelectedCat(e.target.value)
+                                            }}>
                                             {uniqueCategory.map((cat =>
                                                 <option value={cat} key={cat}>{cat}</option>
                                             ))}
                                         </select>
                                     </div>
                                     <input
+                                        id="existingRadio"
                                         name={String(details.id)}
                                         defaultChecked
+                                        onClick={() => setSelectedCat(existingCat)}
                                         type='radio' />
                                 </label>
 
                                 {/* Custom category */}
-                                <label className='flex justify-between py-1'>
+                                <label className='flex justify-between py-1' htmlFor='categoryRadio'>
                                     <div>
                                         Custom:<input
                                             name="customCategory"
@@ -217,27 +247,40 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                                             className='border-b border-black p-1 ml-2 h-7 w-1/2'
                                             ref={customCategoryRef}
                                             placeholder='Custom category'
-                                            onFocus={() => setCat(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)}
-                                            onChange={() => setCat(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)} />
+                                            onFocus={(e) => {
+                                                setCustomCat(e.target.value)
+                                                setSelectedCat(e.target.value)
+                                                const el = document.getElementById('categoryRadio') as HTMLInputElement
+                                                el.checked = true
+                                            }}
+                                            onChange={(e) => {
+                                                setCustomCat(e.target.value)
+                                                setSelectedCat(e.target.value)
+                                            }} />
                                     </div>
-
                                     <input
                                         id='categoryRadio'
                                         type='radio'
                                         name={String(details.id)}
-                                        checked={selectedCategory == (customCategoryRef.current ? customCategoryRef.current.value : '')}
-                                        onChange={() => setCat(customCategoryRef.current ? customCategoryRef.current.value : selectedCategory)} />
+                                        onClick={() => setSelectedCat(customCat)}
+                                    />
                                 </label>
                             </div>
                         }
                         <div className='p-2 flex justify-end'>
                             {showEditDialogue ?
                                 <>
+                                    <button
+                                        id='submitButton'
+                                        className={buttonStyle}
+                                        onClick={deleteTransaction}>
+                                        Delete
+                                    </button>
                                     {/* Confirm and Cancel buttons when edit is active */}
                                     <button
                                         id='submitButton'
                                         className={buttonStyle}
-                                        onClick={() => updateTransaction('category', selectedCategory)}>
+                                        onClick={() => updateTransaction('category', selectedCat)}>
                                         Confirm
                                     </button>
                                     {/* Cancel statement bugging out, must include timeout*/}
