@@ -57,8 +57,8 @@ export default function Login() {
                         placeholder="*****"
                         className="bg-transparent w-full" />
                 </div>
-                <div className="text-sm flex justify-between my-3">
-                    <div hidden={errorMessage == ''} className="text-shadow-xm text-red-600">
+                <div className="text-sm flex justify-between items-center my-3 w-full">
+                    <div className={"text-shadow-xm text-red-600 " + (errorMessage == '' ? 'invisible' : '')}>
                         {errorMessage}
                     </div>
                     <button
