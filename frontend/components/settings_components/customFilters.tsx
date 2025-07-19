@@ -1,4 +1,4 @@
-import ComponentFilterRow from "@/context/componentFilterRow"
+import ComponentFilterRow from "@/components/settings_components/componentFilterRow"
 import { useDatabase } from "@/context/DatabaseContext"
 import { useProfile } from "@/context/ProfileContext"
 import { useUserId } from "@/context/UserContext"
@@ -67,12 +67,12 @@ export default function CustomFilter() {
     return (
         <div className="pt-5 w-full">
             <div className="px-5 text-2xl">Custom Filter Condition</div>
-            <div className="px-5 text-lg">
+            <div className="px-5 py-5">
                 <div>
                     Filter priority top to bottom. Will match entire word, not partial
-                    <div className="text-base">
-                        <p>Example: Matching &quot;to&quot;: 
-                            From A <span className="text-green-400 italic">to</span> B; 
+                    <div className="text-sm">
+                        <p>Example: Matching &quot;to&quot;:
+                            From A <span className="text-green-400 italic">to</span> B;
                             Cus<span className="text-red-400 italic">to</span>m</p>
                     </div>
 
