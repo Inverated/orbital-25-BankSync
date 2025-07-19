@@ -42,20 +42,7 @@ export default function Dashboard() {
                 }
                 if (error) console.error(error)
             })
-
-        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-            event.stopImmediatePropagation()
-            if (localStorage.getItem('rememberMe') == 'false') {
-                supabase.auth.signOut()
-            }
-        }
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-            authListener.subscription.unsubscribe()
-        }
+        
     }, [router])
 
     type Page = "Overview" | "Accounts" | "Transactions" | "Analytics"
