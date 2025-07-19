@@ -46,7 +46,7 @@ export async function exportToXlsx(accountEntry: Account[], transactionEntry: Tr
         ])
     })
 
-    const transactionSheet = workbook.addWorksheet("Transaction")
+    const transactionSheet = workbook.addWorksheet("Transactions")
     transactionSheet.columns = [
         {
             header: 'Transaction Date',
@@ -69,14 +69,14 @@ export async function exportToXlsx(accountEntry: Account[], transactionEntry: Tr
             width: 'Withdrawal'.length + 3
         },
         {
-            header: 'Category',
-            key: 'Category',
-            width: 'Category'.length * 2
-        },
-        {
             header: 'Ending Balance',
             key: 'Ending Balance',
             width: 'Ending Balance'.length
+        },
+        {
+            header: 'Category',
+            key: 'Category',
+            width: 'Category'.length * 2
         },
         {
             header: 'Account No',
@@ -94,7 +94,13 @@ export async function exportToXlsx(accountEntry: Account[], transactionEntry: Tr
 
     transactionEntry.forEach(entry => {
         transactionSheet.addRow([
-            new Date(entry.transaction_date), entry.transaction_description, entry.deposit_amount, entry.withdrawal_amount, entry.category, entry.ending_balance, entry.account_no
+            new Date(entry.transaction_date),
+            entry.transaction_description,
+            entry.deposit_amount,
+            entry.withdrawal_amount,
+            entry.ending_balance,
+            entry.category,
+            entry.account_no
         ])
     })
 
@@ -105,7 +111,7 @@ export async function exportToXlsx(accountEntry: Account[], transactionEntry: Tr
 
 export async function exportToPdf(accountEntry: Account[], transactionEntry: Transaction[], accountHeader: string[], transactionHeader: string[]): Promise<Blob> {
     //const EXPORTACCOUNTHEADER = ['Bank Name', 'Account No', 'Account Name', 'Balance', 'Last Recorded Date']
-    //const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Category', 'Ending Balance', 'Account No']
+    //const EXPORTTRANSACTIONHEADER = ['Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Ending Balance', 'Category', 'Account No']
 
     const unit = 'pt'
     const size = 'A4'
@@ -152,8 +158,8 @@ export async function exportToPdf(accountEntry: Account[], transactionEntry: Tra
             each.transaction_description,
             each.deposit_amount.toFixed(2),
             each.withdrawal_amount.toFixed(2),
-            each.category,
             each.ending_balance.toFixed(2),
+            each.category,
             each.account_no
         ])
     }
@@ -174,7 +180,7 @@ export function passwordProtect(blob: Blob, exportOption: 'EXCEL' | "PDF", passw
     if (exportOption == 'PDF') {
         file = new File([blob], fileName, { type: 'application/pdf' })
     } else if (exportOption == 'EXCEL') {
-        file = new File([blob], fileName, { type:  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        file = new File([blob], fileName, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
     } else {
         return null
     }

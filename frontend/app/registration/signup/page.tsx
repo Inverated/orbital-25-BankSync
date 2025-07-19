@@ -35,13 +35,13 @@ export default function Signup() {
         });
         
         if (error) {
-            console.error("OAuth error: " + error);
+            console.error("OAuth error: " + error.message);
         }
     };
 
     const redirectToLogin = () => redirect('/registration/login')
 
-    const externalAuthButtonStyle = "my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
+    const externalAuthButtonStyle = "w-full my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
     
     return (
         currentSession == null && sessionLoaded &&
@@ -49,13 +49,13 @@ export default function Signup() {
             <div className="w-[400]">
                 <SignupHandler />
 
-                <div className="my-2 text-sm flex justify-between cursor-pointer"
+                <button className="w-full my-2 text-sm flex justify-between cursor-pointer"
                     onClick={redirectToLogin}>
                     <p>Already have an account?</p>
                     <span className="font-semibold underline">
                         Login
                     </span>
-                </div>
+                </button>
 
                 <div className="flex items-center">
                     <hr className="w-full" />
@@ -63,16 +63,16 @@ export default function Signup() {
                     <hr className="w-full" />
                 </div>
 
-                <div className={externalAuthButtonStyle}
+                <button className={externalAuthButtonStyle}
                     onClick={() => handleOAuthLogin('google')} >
                     <FcGoogle />
                     <span className="mx-2">Sign in with Google</span>
-                </div>
-                <div className={externalAuthButtonStyle}
+                </button>
+                <button className={externalAuthButtonStyle}
                     onClick={() => handleOAuthLogin('github')} >
                     <FaGithub />
                     <span className="mx-2">Sign in with GitHub</span>
-                </div>
+                </button>
             </div>
         </div>
     )

@@ -11,19 +11,20 @@ import { useUserId } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import { useDatabase } from "@/context/DatabaseContext";
 import { duplicateChecking } from "@/utils/duplicateTransactionCheck";
+import { useProfile } from "@/context/ProfileContext";
 
 export default function UploadButton() {
-    const [uploadDialogue, setDialogueStatus] = useState(false)
-    const [checkDuplicate, setDuplicateChecker] = useState(true)
+    const [uploadDialogue, setUploadDialogue] = useState(false)
+    const [checkDuplicate, setCheckDuplicate] = useState(true)
     const [duplicateShower, setDuplicateShower] = useState(true)
 
     const [errorMessage, setErrorMessage] = useState('')
-    const [errorFileType, setFileError] = useState(false)
-    const [showParsingLoading, setParsingLoading] = useState(false)
-    const [uploading, setUploadingStatus] = useState(false)
-    const [uploaded, setIsUploaded] = useState(false)
+    const [errorFileType, setErrorFileType] = useState(false)
+    const [showParsingLoading, setShowParsingLoading] = useState(false)
+    const [isUploading, setIsUploading] = useState(false)
+    const [isUploaded, setIsUploaded] = useState(false)
 
-    const [passwordQuery, setQueryPassword] = useState(false)
+    const [passwordQuery, setPasswordQuery] = useState(false)
     const filePassword = useRef<HTMLInputElement>(null)
     const passwordConfirmRef = useRef<HTMLButtonElement>(null)
 
@@ -34,43 +35,44 @@ export default function UploadButton() {
     const [activeTab, setActiveTab] = useState(0)
 
     const router = useRouter()
-    const userId = useUserId();
+    const userId = useUserId()
+    const { keywordMap } = useProfile()
     const { transactions, accounts, refreshDatabase } = useDatabase()
 
     const closeDialogue = () => {
         resetValues()
-        setDialogueStatus(false)
-        setFileError(false)
+        setUploadDialogue(false)
+        setErrorFileType(false)
         currentFile.current = null
-        setQueryPassword(false)
+        setPasswordQuery(false)
     }
 
     const resetValues = () => {
         setIsUploaded(false)
-        setParsingLoading(false)
+        setShowParsingLoading(false)
         setActiveTab(0)
         setStatements(null)
-        setUploadingStatus(false)
+        setIsUploading(false)
     }
 
     const handleUploadFile = async () => {
         resetValues()
 
         if (currentFile.current != null) {
-            setQueryPassword(false)
+            setPasswordQuery(false)
 
             if (passwordConfirmRef.current) {
                 passwordConfirmRef.current.disabled = true
             }
 
-            setParsingLoading(true)
+            setShowParsingLoading(true)
             const result: {
                 status: number,
                 data: uploadReturnData | null,
                 error: Error | null
             } = await uploadNewFile(currentFile.current, filePassword.current?.value)
 
-            setParsingLoading(false)
+            setShowParsingLoading(false)
 
             if (result.status == 404) {
                 setErrorMessage(result.error ? result.error.message : '')
@@ -86,9 +88,9 @@ export default function UploadButton() {
             if (!parsedData.success) {
                 const errorMessage = parsedData.error
                 if (errorMessage == 'Require Password') {
-                    setQueryPassword(true)
+                    setPasswordQuery(true)
                 } else if (errorMessage == 'Invalid Password') {
-                    setQueryPassword(true)
+                    setPasswordQuery(true)
                     setErrorMessage('Wrong password')
                 } else {
                     if (passwordConfirmRef.current) {
@@ -102,10 +104,14 @@ export default function UploadButton() {
                 parsedData = null
                 return
             } else {
-                setQueryPassword(false)
-                duplicateChecking(parsedData.data, transactions)
-                setStatementCategory(parsedData.data)
-                setStatements(parsedData.data)
+                const returnedData = parsedData.data
+                returnedData.forEach(response => response.transactions
+                    .toSorted((fst, snd) => fst.transaction_date > snd.transaction_date ? 1 :
+                        fst.transaction_date == snd.transaction_date ? 0 : -1))
+                setPasswordQuery(false)
+                duplicateChecking(returnedData, transactions)
+                setStatementCategory(returnedData, keywordMap)
+                setStatements(returnedData)
             }
         }
     }
@@ -125,16 +131,15 @@ export default function UploadButton() {
         const fileExt = file.name.slice(file.name.lastIndexOf(".") + 1)
         if (['pdf', 'xlsx', 'txt'].includes(fileExt.toLowerCase())) {
             currentFile.current = file
-            setFileError(false)
-            return
+            setErrorFileType(false)
         } else {
-            setFileError(true)
+            setErrorFileType(true)
             resetValues()
             currentFile.current = null
         }
     }
 
-    const handleUpdate = useCallback((index: number, updatedItem: StatementResponse) => {
+    const handleTransactionUpdate = useCallback((index: number, updatedItem: StatementResponse) => {
         if (statements) {
             const newStatement = [...statements]
             newStatement[index] = updatedItem
@@ -144,14 +149,36 @@ export default function UploadButton() {
 
     const handleDelete = useCallback((updatedStatements: StatementResponse) => {
         if (statements) {
-            statements.map(each => each.account.account_no == updatedStatements.account.account_no ? updatedStatements : each)
+            if (updatedStatements.hasData) {
+                statements.forEach(each => each.account.account_no == updatedStatements.account.account_no ? updatedStatements : each)
+            } else {
+                const newStatement = statements.filter(each => each.account.account_no != updatedStatements.account.account_no)
+                if (newStatement.length != 0) {
+                    setStatements(newStatement)
+                } else {
+                    resetValues()
+                }
+                setActiveTab(0)
+            }
         }
     }, [statements])
 
     const handleUploadData = async () => {
+        let unknownAccError = false
+        statements?.forEach(statement => {
+            if (['Unknown Acc No', ''].indexOf(statement.account.account_no) != -1) {
+                unknownAccError = true
+            }
+        })
+        if (unknownAccError) {
+            setErrorMessage('All accounts must have an account number. Please fill in the missing details')
+            return
+        }
+
         setErrorMessage('')
-        setUploadingStatus(true)
+        setIsUploading(true)
         if (statements == null || statements?.length == 0) {
+            setIsUploading(false)
             return
         }
 
@@ -174,7 +201,7 @@ export default function UploadButton() {
                 })
         }
 
-        uploadData.map(newStatement => {
+        uploadData.forEach(newStatement => {
             const latestAcc = currAccount?.filter(curr => curr.account_no == newStatement.account.account_no)[0]
             if (latestAcc && (newStatement.account.latest_recorded_date < latestAcc.latest_recorded_date)) {
                 newStatement.account.balance = latestAcc.balance
@@ -219,12 +246,12 @@ export default function UploadButton() {
         return () => {
             document.removeEventListener('keydown', handleButtonDown)
         }
-    }, [handleUpdate, router, accounts])
+    }, [handleTransactionUpdate, router, accounts])
 
     return (
         <div>
             <Upload
-                onClick={() => setDialogueStatus(true)}
+                onClick={() => setUploadDialogue(true)}
                 className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'} />
             {uploadDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
@@ -248,7 +275,10 @@ export default function UploadButton() {
                                     PDF or XLSX
                                 </p>
                             </div>
-                            <input id="dropzone-file" type="file"
+                            <input
+                                id="dropzone-file"
+                                type="file"
+                                name="fileUploadArea"
                                 onChange={(e) => {
                                     setCurrentFile(e)
                                     handleUploadFile()
@@ -270,7 +300,10 @@ export default function UploadButton() {
                                     }} className="flex justify-between">
                                         <span>
                                             <b className="text-red-400">Please enter password: </b>
-                                            <input className='border border-black' ref={filePassword} type="password" />
+                                            <input className='border border-black'
+                                                name="passwordInput"
+                                                ref={filePassword}
+                                                type="password" />
                                         </span>
                                         <button
                                             ref={passwordConfirmRef}
@@ -293,18 +326,16 @@ export default function UploadButton() {
                                                 }`}
                                             onClick={() => setActiveTab(index)}
                                         >
-                                            {statement.account.account_name}
+                                            {statement.account.account_name != '' ? statement.account.account_name : statement.account.account_no}
                                         </button>
                                     )}
                                 </div>
 
                                 <PreviewTable
                                     currIndex={activeTab}
-                                    transactionData={statements[activeTab].transactions}
-                                    accountData={statements[activeTab].account}
-                                    onUpdate={handleUpdate}
+                                    statement={statements[activeTab]}
+                                    onTransactionUpdate={handleTransactionUpdate}
                                     onDelete={handleDelete}
-                                    accountInDatabase={currAccount?.filter(acc => acc.account_no == statements[activeTab].account.account_no)[0]}
                                     duplicateChecker={checkDuplicate}
                                     duplicateShower={duplicateShower}
                                 />
@@ -312,7 +343,7 @@ export default function UploadButton() {
                         }
                         <div className="flex justify-end text-sm p-2">
                             <p className="text-red-500" hidden={errorMessage == ''}>{errorMessage}</p>
-                            <p className="text-green-500" hidden={!uploaded}>File uploaded</p>
+                            <p className="text-green-500" hidden={!isUploaded}>File uploaded</p>
                         </div>
                         {errorFileType && <p className="text-xs italic text-red-600">Please upload the correct file type</p>}
                         <div className="flex justify-end">
@@ -320,29 +351,30 @@ export default function UploadButton() {
                                 <label className="text-xs space-x-2 items-center flex justify-between">
                                     <p>Check for duplicates</p>
                                     <input
+                                        name="duplicateChecker"
                                         type="checkbox"
                                         defaultChecked={checkDuplicate}
-                                        onClick={e => setDuplicateChecker(e.currentTarget.checked)} />
+                                        onClick={e => setCheckDuplicate(e.currentTarget.checked)} />
                                 </label>
                                 <label className="text-xs space-x-2 items-center flex justify-between">
                                     <p>Show duplicates</p>
                                     <input
+                                        name="duplicateShower"
                                         type="checkbox"
                                         defaultChecked={duplicateShower}
                                         onClick={e => setDuplicateShower(e.currentTarget.checked)} />
                                 </label>
                             </div>
-
                             <button
                                 onClick={closeDialogue}
-                                className="border border-black mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                                className="border border-black mx-4 p-1 rounded text-base flex self-center h-fit justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
                             >
                                 Close
                             </button>
                             <button
-                                disabled={statements === null || uploading}
+                                disabled={statements === null || isUploading}
                                 onClick={handleUploadData}
-                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
+                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black p-1 self-center h-fit rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
                             >
                                 Upload
                             </button>
