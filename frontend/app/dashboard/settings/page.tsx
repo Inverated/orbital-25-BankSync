@@ -44,8 +44,19 @@ export default function Settings() {
                     setSessionLoaded(true);
                 }
             }
-        );
-    }, [])
+        )
+        supabase.auth.getSession()
+            .then(({ data: { session }, error }) => {
+                if (!session) {
+                    router.push('/registration/login')
+                } else {
+                    setSession(session)
+                    setSessionLoaded(true)
+                }
+                if (error) console.error(error)
+            })
+
+    }, [currentTab])
 
     return (
         sessionLoaded && currentSession &&
