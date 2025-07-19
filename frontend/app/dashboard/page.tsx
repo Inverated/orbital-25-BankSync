@@ -29,9 +29,7 @@ export default function Dashboard() {
                     setSession(session)
                     setSessionLoaded(true);
                 }
-            }
-        }
-    );
+            })
 
         supabase.auth.getSession()
             .then(({ data: { session }, error }) => {
