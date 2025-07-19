@@ -21,7 +21,7 @@ export default function Dashboard() {
     const [sessionLoaded, setSessionLoaded] = useState(false)
 
     useEffect(() => {
-        const { data: authListener } = supabase.auth.onAuthStateChange(
+        supabase.auth.onAuthStateChange(
             (_, session) => {
                 if (!session) {
                     router.push('/registration/login');
