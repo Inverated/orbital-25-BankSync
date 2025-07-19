@@ -21,16 +21,16 @@ export default function Dashboard() {
     const [sessionLoaded, setSessionLoaded] = useState(false)
 
     useEffect(() => {
-        const { data: authListener } = supabase.auth.onAuthStateChange(
-            (_, session) => {
-                if (!session) {
-                    router.push('/registration/login');
-                } else {
-                    setSession(session)
-                    setSessionLoaded(true);
-                }
+        /* const { data: authListener } =  */supabase.auth.onAuthStateChange(
+        (_, session) => {
+            if (!session) {
+                router.push('/registration/login');
+            } else {
+                setSession(session)
+                setSessionLoaded(true);
             }
-        );
+        }
+    );
 
         supabase.auth.getSession()
             .then(({ data: { session }, error }) => {
@@ -43,7 +43,7 @@ export default function Dashboard() {
                 if (error) console.error(error)
             })
 
-        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+        /* const handleBeforeUnload = (event: BeforeUnloadEvent) => {
             event.stopImmediatePropagation()
             if (localStorage.getItem('rememberMe') == 'false') {
                 supabase.auth.signOut()
@@ -55,7 +55,7 @@ export default function Dashboard() {
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
             authListener.subscription.unsubscribe()
-        }
+        } */
     }, [router])
 
     type Page = "Overview" | "Accounts" | "Transactions" | "Analytics"

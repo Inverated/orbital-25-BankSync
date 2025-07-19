@@ -63,7 +63,7 @@ export default function Login() {
                         className="bg-transparent w-full" />
                 </div>
                 <div className="text-sm flex justify-between my-3">
-                    <label className="flex space-x-1">
+                    <label hidden className="flex space-x-1">
                         <input
                             type='checkbox'
                             checked={rememberMe}
