@@ -1,12 +1,11 @@
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { UserRoundPen, KeyRound } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Login() {
     const router = useRouter()
     const [savedEmail, setEmail] = useState('')
-    const [rememberMe, setRememberMe] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
 
     const loginUser = async (formData: FormData) => {
@@ -27,10 +26,6 @@ export default function Login() {
 
         router.push('/dashboard')
     }
-
-    useEffect(() => {
-        localStorage.setItem('rememberMe', '' + rememberMe)
-    }, [rememberMe])
 
     const redirectToForgetPassword = () => {
         const emailLogin = document.getElementById('loginEmailInput') as HTMLInputElement
@@ -63,14 +58,9 @@ export default function Login() {
                         className="bg-transparent w-full" />
                 </div>
                 <div className="text-sm flex justify-between my-3">
-                    <label hidden className="flex space-x-1">
-                        <input
-                            type='checkbox'
-                            checked={rememberMe}
-                            onChange={() => setRememberMe(!rememberMe)}
-                        />
-                        <p>Keep me signed in</p>
-                    </label>
+                    <div hidden={errorMessage == ''} className="text-shadow-xm text-red-600">
+                        {errorMessage}
+                    </div>
                     <button
                         type='button'
                         className="cursor-pointer"
@@ -80,9 +70,7 @@ export default function Login() {
                         </span>
                     </button>
                 </div>
-                <div hidden={errorMessage == ''} className="text-shadow-xm text-red-600">
-                    {errorMessage}
-                </div>
+
                 <div>
                     <button type="submit" className="bg-black active:bg-gray-900 active:scale-95 w-full transition cursor-pointer text-white p-2 rounded-lg">
                         Login
