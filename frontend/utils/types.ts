@@ -72,5 +72,7 @@ export interface Profile {
     user_id: string,
     id?: number,
     created_at?: string,
-    category_filter?: string
+    category_filter?: {
+        [category: string]: string[];
+    }
 }

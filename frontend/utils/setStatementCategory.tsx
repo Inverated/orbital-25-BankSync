@@ -4,7 +4,7 @@ export default function setStatementCategory(statements: StatementResponse[], ke
     statements.forEach((statement) => {
         statement.transactions.forEach((entry) => {
             const description = entry.transaction_description.toLowerCase() + ' '
-            for (const [category, keywords] of Object.entries(keywordMap)) {
+            for (const [category, keywords] of keywordMap) {
                 if (keywords.some((kw) => description.includes(kw + ' '))) {
                     entry.category = category
                     break

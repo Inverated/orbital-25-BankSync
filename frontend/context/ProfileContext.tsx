@@ -6,6 +6,7 @@ type ProfileContextType = {
     profile: Profile;
     keywordMap: keywordMapType;
     refreshProfile: () => Promise<void>;
+    refreshStatus: boolean;
 }
 
 const ProfileContext = createContext<ProfileContextType | null>(null);
@@ -15,11 +16,11 @@ type ProfileProviderProps = {
     userId: string;
 };
 
-const convertKeywordMap = (categoryFilter: string | undefined): keywordMapType => {
+const convertKeywordMap = (categoryFilter: Object | undefined): keywordMapType => {
     let keywordMap: keywordMapType = new Map(Object.entries(defaultKeywordMap))
     if (categoryFilter) {
         try {
-            const obj = categoryFilter as Object
+            const obj = categoryFilter
             const newMap = new Map<string, string[]>()
             for (const [category, keywords] of Object.entries(obj)) {
                 newMap.set(category, keywords)
@@ -35,11 +36,14 @@ const convertKeywordMap = (categoryFilter: string | undefined): keywordMapType =
 export const ProfileProvider = ({ children, userId }: ProfileProviderProps) => {
     const [profile, setProfile] = useState<Profile>({ user_id: userId })
     const [keywordMap, setKeywordMap] = useState<keywordMapType>(new Map())
+    const [refreshStatus, setRefreshStatus] = useState(false)
 
     const refreshProfile = async () => {
+        setRefreshStatus(false)
         const newProfile = await queryProfileDetails(userId)
         setProfile(newProfile)
         setKeywordMap(convertKeywordMap(newProfile.category_filter))
+        setRefreshStatus(true)
     };
 
     useEffect(() => {
@@ -47,7 +51,7 @@ export const ProfileProvider = ({ children, userId }: ProfileProviderProps) => {
     }, [])
 
     return (
-        <ProfileContext.Provider value={{ profile, keywordMap, refreshProfile }}>
+        <ProfileContext.Provider value={{ profile, keywordMap, refreshProfile, refreshStatus }}>
             {children}
         </ProfileContext.Provider>
     )

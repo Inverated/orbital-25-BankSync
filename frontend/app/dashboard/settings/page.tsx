@@ -53,15 +53,15 @@ export default function Settings() {
             <DatabaseProvider userId={currentSession.user.id}>
                 <UserProvider userId={currentSession.user.id}>
                     <div className="flex flex-col h-screen">
-                        <div className="min-h-1/10 border-b items-center py-7 px-4 flex justify-between">
+                        <div className="h-20 border-b items-center py-7 px-4 flex justify-between">
                             <div className="flex flex-row items-center">
                                 <Menu className="hover:cursor-pointer" onClick={() => setSideMenuVisible(!sideMenuVisible)} />
                                 <p className="text-3xl px-4">Settings</p>
                             </div>
                             <X onClick={() => router.push('/dashboard')} className="hover:cursor-pointer" />
                         </div>
-                        <div className="flex h-full">
-                            <div className="flex flex-col transition-all min-w-fit  border-r py-4 px-5 space-y-3 text-lg" hidden={!sideMenuVisible}>
+                        <div className="flex h-auto">
+                            <div className="flex flex-col transition-all min-w-fit min-h-screen border-r py-4 px-5 space-y-3 text-lg" hidden={!sideMenuVisible}>
                                 {selector.map(option =>
                                     <button
                                         key={option}

@@ -365,17 +365,16 @@ export default function UploadButton() {
                                         onClick={e => setDuplicateShower(e.currentTarget.checked)} />
                                 </label>
                             </div>
-
                             <button
                                 onClick={closeDialogue}
-                                className="border border-black mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                                className="border border-black mx-4 p-1 rounded text-base flex self-center h-fit justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
                             >
                                 Close
                             </button>
                             <button
                                 disabled={statements === null || isUploading}
                                 onClick={handleUploadData}
-                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
+                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black p-1 self-center h-fit rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
                             >
                                 Upload
                             </button>
