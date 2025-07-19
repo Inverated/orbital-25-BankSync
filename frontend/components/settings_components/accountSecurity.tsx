@@ -26,6 +26,7 @@ export default function AccountSecurity() {
 
     const deleteAccount = async () => {
         if (confirmDeleteAccount && currSession) {
+            await deleteData()
             const { error } = await supabase.functions.invoke('deleteUser', {
                 body: { userId: currSession.user.id },
                 headers: {
@@ -55,6 +56,13 @@ export default function AccountSecurity() {
                 .eq('user_id', currSession.user.id)
             if (deleteAccError) {
                 console.error(deleteAccError.message)
+            }
+
+            const { error: deleteProfileError } = await supabase.from('profile')
+                .delete()
+                .eq('user_id', currSession.user.id)
+            if (deleteProfileError) {
+                console.error(deleteProfileError.message)
             }
             redirect('/dashboard')
         }

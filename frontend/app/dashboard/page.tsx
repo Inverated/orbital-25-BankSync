@@ -30,7 +30,8 @@ export default function Dashboard() {
                     setSessionLoaded(true);
                 }
             }
-        );
+        }
+    );
 
         supabase.auth.getSession()
             .then(({ data: { session }, error }) => {
