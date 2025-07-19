@@ -5,8 +5,7 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: {
-        persistSession: !!localStorage.getItem('rememberMe'),
+        persistSession: true,
         autoRefreshToken: true,
-        storage: localStorage.getItem('rememberMe') ? localStorage : sessionStorage
     }
 })

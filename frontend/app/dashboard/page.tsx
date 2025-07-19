@@ -42,7 +42,7 @@ export default function Dashboard() {
                 }
                 if (error) console.error(error)
             })
-        
+
     }, [router])
 
     type Page = "Overview" | "Accounts" | "Transactions" | "Analytics"
