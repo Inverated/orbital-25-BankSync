@@ -57,7 +57,10 @@ export default function Login() {
                         placeholder="*****"
                         className="bg-transparent w-full" />
                 </div>
-                <div className="text-sm flex justify-end my-3">
+                <div className="text-sm flex justify-between my-3">
+                    <div hidden={errorMessage == ''} className="text-shadow-xm text-red-600">
+                        {errorMessage}
+                    </div>
                     <button
                         type='button'
                         className="cursor-pointer"
@@ -67,9 +70,7 @@ export default function Login() {
                         </span>
                     </button>
                 </div>
-                <div hidden={errorMessage == ''} className="text-shadow-xm text-red-600">
-                    {errorMessage}
-                </div>
+
                 <div>
                     <button type="submit" className="bg-black active:bg-gray-900 active:scale-95 w-full transition cursor-pointer text-white p-2 rounded-lg">
                         Login
