@@ -29,7 +29,6 @@ export default function OptionMenu({ user }: OptionMenuProps) {
         }
     }
 
-    type SelectionOption = typeof selection[number]
     const selectOption = (label: string) => {
         switch (label) {
             case "Logout":
