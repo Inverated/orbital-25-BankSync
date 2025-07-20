@@ -9,7 +9,7 @@ export default function Home() {
 
     return (
         <div>
-            <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50 flex justify-between items-center px-40 py-4">
+            <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50 flex justify-between items-center px-40 py-6">
                 <div>
                     <Image src="/logo.png" alt="BankSync" width={250} height={125} />
                 </div>
