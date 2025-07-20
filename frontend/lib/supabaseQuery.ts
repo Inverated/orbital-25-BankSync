@@ -27,6 +27,14 @@ type EncryptedAccount = {
     latest_recorded_date: string;
 }
 
+type Profile = {
+    id?: number,
+    created_at?: Timestamp;
+    user_id?: string;
+    category_filter: JSON;
+    user_name?: Text;
+}
+
 export async function queryTransactionDetails(userId: string): Promise<Transaction[]> {
     const { data: transaction_details, error } = await supabase
         .from('encryptedTransactionDetails')
@@ -114,3 +122,16 @@ async function decryptAccount(accounts: EncryptedAccount[]): Promise<Account[]> 
     return decryptedAccounts
 }
 
+export async function queryProfile(userId: string): Promise<Profile> {
+    const { data: profile, error } = await supabase
+        .from('profile')
+        .select('*')
+        .eq('user_id', userId)
+        .single()
+
+    if (error || !profile) {
+        throw new Error(error?.message || "Profile not found")
+    }
+
+    return profile
+}
