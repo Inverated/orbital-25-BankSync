@@ -2,7 +2,7 @@
 
 import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
-import { Settings } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 import OptionMenu from "./OptionMenu";
 import UploadButton from "./upload_util/UploadButton";
 
@@ -32,16 +32,20 @@ export default function NavBar(user: { user: User | undefined; }) {
     }, [])
 
     return (
-        <div className='flex justify-between'>
+        <div className='flex justify-between gap-2 mx-3'>
             <div>
                 <UploadButton />
             </div>
             
-            <div id='optionMenu'>
-                <Settings 
+            <div id='optionMenu' className="relative group">
+                <CircleUserRound
                     onClick={() => setSettingOpen(!settingsIsOpened)}
                     className='mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer' 
                 />
+
+                <div className="absolute -top-7 -translate-x-1/2 left-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                    Your account
+                </div>
                 
                 <div className='relative'>
                     {settingsIsOpened && <OptionMenu />}

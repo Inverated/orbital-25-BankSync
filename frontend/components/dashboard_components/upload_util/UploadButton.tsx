@@ -222,10 +222,16 @@ export default function UploadButton() {
     }, [handleUpdate, router, accounts])
 
     return (
-        <div>
+        <div className="relative group">
             <Upload
                 onClick={() => setDialogueStatus(true)}
-                className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'} />
+                className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'} 
+            />
+
+            <div className="absolute -top-7 -translate-x-1/2 left-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                Upload your bank statements
+            </div>
+
             {uploadDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
