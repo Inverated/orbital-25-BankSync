@@ -43,6 +43,7 @@ export default function UploadButton() {
         setFileError(false)
         currentFile.current = null
         setQueryPassword(false)
+        setTimeout(() => setShowTooltip(true), 100)
     }
 
     const resetValues = () => {
@@ -207,6 +208,8 @@ export default function UploadButton() {
         e.preventDefault(); // necessary to allow drop
     }
 
+    const [showTooltip, setShowTooltip] = useState(true);
+
     useEffect(() => {
         setErrorMessage('')
         setCurrAccount(accounts)
@@ -224,19 +227,24 @@ export default function UploadButton() {
     return (
         <div className="relative group">
             <Upload
-                onClick={() => setDialogueStatus(true)}
+                onClick={() => {
+                    setDialogueStatus(true);
+                    setShowTooltip(false);
+                }}
                 className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'} 
             />
 
-            <div className="absolute -top-7 -translate-x-1/2 left-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                Upload your bank statements
-            </div>
+            {showTooltip && (
+                <div className="absolute -top-7 -translate-x-1/2 left-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointers-events-none">
+                    Upload your bank statements
+                </div>
+            )}
 
             {uploadDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white rounded-lg shadow-lg px-8 py-5 max-w-5/6 w-full z-60 max-h-11/12 overflow-y-auto">
-                        <div className="flex flex-row space-x-2">
+                    <div className="bg-white rounded-lg shadow-lg px-8 py-5 max-w-5/8 w-full z-60 max-h-11/12 overflow-y-auto">
+                        <div className="flex flex-row space-x-2 items-center">
                             <p className="text-2xl mb-3">File Upload</p>
                             <Info onClick={() => alert('Current supported bank: DBS/POSB, OCBC, UOB and SC pdf only')} className='h-5 hover:cursor-pointer' />
                         </div>
