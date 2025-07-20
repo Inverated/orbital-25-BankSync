@@ -44,7 +44,7 @@ export default function NavBar(user: { user: User | undefined; }) {
                 />
 
                 {!profileIsOpened && (
-                    <div className="absolute -top-7 -translate-x-1/2 left-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                    <div className="absolute -top-7 -translate-x-1/2 left-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointers-events-none">
                         Your profile
                     </div>
                 )}

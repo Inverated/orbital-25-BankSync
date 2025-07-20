@@ -195,7 +195,7 @@ export default function UploadButton() {
         }
     }
 
-    const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const file = e.dataTransfer.files[0];
         if (file) {
@@ -204,7 +204,7 @@ export default function UploadButton() {
         }
     }
 
-    const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault(); // necessary to allow drop
     }
 
@@ -244,39 +244,57 @@ export default function UploadButton() {
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
                     <div className="bg-white rounded-lg shadow-lg px-8 py-5 max-w-5/8 w-full z-60 max-h-11/12 overflow-y-auto">
-                        <div className="flex flex-row space-x-2 items-center">
-                            <p className="text-2xl mb-3">File Upload</p>
-                            <Info onClick={() => alert('Current supported bank: DBS/POSB, OCBC, UOB and SC pdf only')} className='h-5 hover:cursor-pointer' />
+                        <div className="flex flex-row space-x-2 items-center mb-3">
+                            <p className="text-2xl">File Upload</p>
+                            
+                            <Info 
+                                onClick={() => alert('Current supported bank: DBS/POSB, OCBC, UOB and SC pdf only')} 
+                                className='hover:cursor-pointer h-6 w-6' 
+                            />
                         </div>
-                        <label
+                        
+                        <div
                             onDrop={handleDrop}
                             onDragOver={handleDragOver}
-                            htmlFor="dropzone-file"
-                            className="z-100 flex flex-col items-center justify-center w-full h-32 border-2 border-black border-dashed rounded-lg cursor-pointer hover:bg-gray-300">
-                            <div className="flex flex-col items-center justify-center">
-                                <FileUp />
-                                <p className="mb-2 text-sm text-gray-500">
-                                    <span className="font-semibold">Click to upload</span> drag and drop
+                            className="z-100 flex flex-col items-center justify-center w-full border-2 border-black border-dashed rounded-lg">
+                            <div className="flex flex-col items-center justify-center py-15">
+                                <FileUp className="h-9 w-9"/>
+
+                                <p className="pt-5 text-med text-gray-500">
+                                    Choose a file or drag & drop it here
                                 </p>
-                                <p className="text-xs text-gray-500">
-                                    PDF or XLSX
+                                
+                                <p className="pt-1 text-med text-gray-400">
+                                    PDF and XLSX format
                                 </p>
+                                
+                                <div className="pt-5">
+                                    <button
+                                        type="button"
+                                        className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 rounded-full text-white text-med font-sans font-semibold tracking-widest px-4 py-2 transition cursor-pointer"
+                                        onClick={() => document.getElementById("dropzone-file")?.click()}
+                                    >
+                                        Browse files
+                                    </button>
+                                </div>
                             </div>
+
                             <input id="dropzone-file" type="file"
                                 onChange={(e) => {
                                     setCurrentFile(e)
                                     handleUploadFile()
                                 }}
                                 className="hidden" />
-                        </label>
+                        </div>
 
                         {currentFile.current &&
-                            <div className="text-sm">
+                            <div className="text-sm pt-3">
                                 <p><b>Uploaded file: </b>{currentFile.current.name}</p>
                                 <div className="flex items-center justify-center"
                                     hidden={!showParsingLoading}>
                                     <Loader className="animate-spin w-12 h-12 text-blue-500" />
                                 </div>
+                                
                                 {passwordQuery &&
                                     <form onSubmit={(event) => {
                                         event.preventDefault()
@@ -329,16 +347,16 @@ export default function UploadButton() {
                             <p className="text-green-500" hidden={!uploaded}>File uploaded</p>
                         </div>
                         {errorFileType && <p className="text-xs italic text-red-600">Please upload the correct file type</p>}
-                        <div className="flex justify-end">
+                        <div className="flex flex-row justify-end gap-4">
                             <div className="flex flex-col">
-                                <label className="text-xs space-x-2 items-center flex justify-between">
+                                <label className="text-sm space-x-2 items-center flex justify-between">
                                     <p>Check for duplicates</p>
                                     <input
                                         type="checkbox"
                                         defaultChecked={checkDuplicate}
                                         onClick={e => setDuplicateChecker(e.currentTarget.checked)} />
                                 </label>
-                                <label className="text-xs space-x-2 items-center flex justify-between">
+                                <label className="text-sm space-x-2 items-center flex justify-between">
                                     <p>Show duplicates</p>
                                     <input
                                         type="checkbox"
@@ -348,17 +366,18 @@ export default function UploadButton() {
                             </div>
 
                             <button
-                                onClick={closeDialogue}
-                                className="border border-black mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
-                            >
-                                Close
-                            </button>
-                            <button
                                 disabled={statements === null || uploading}
                                 onClick={handleUploadData}
-                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
+                                className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg text-green-500 font-sans font-semibold tracking-widest border border-green-500 px-4 py-2 transition cursor-pointer"
                             >
                                 Upload
+                            </button>
+
+                            <button
+                                onClick={closeDialogue}
+                                className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg text-green-500 font-sans font-semibold tracking-widest border border-green-500 px-4 py-2 transition cursor-pointer"
+                            >
+                                Close
                             </button>
                         </div>
                     </div>
