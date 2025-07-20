@@ -83,7 +83,7 @@ export default function Dashboard() {
                         </div>
                     </header>
 
-                    <div className="pt-44">
+                    <div className="pt-46">
                         <CurrentComponent />
                     </div>
                 </div>

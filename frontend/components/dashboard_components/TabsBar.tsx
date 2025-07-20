@@ -1,5 +1,7 @@
 "use client"
 
+import { BanknoteArrowUp, ChartPie, CreditCard, FileSearch } from "lucide-react";
+
 export type Page = "Overview" | "Accounts" | "Transactions" | "Analytics";
 
 interface TabBarProps {
@@ -9,6 +11,13 @@ interface TabBarProps {
 
 export default function TabBar({ currentPage, setPage }: TabBarProps) {
     const pages: Page[] = ["Overview", "Accounts", "Transactions", "Analytics"];
+
+    const pagesIcon: Record<Page, React.ReactNode> = {
+        Overview: <FileSearch className="inline mr-2 w-7 h-7" />,
+        Accounts: <CreditCard className="inline mr-2 w-7 h-7"/>,
+        Transactions: <BanknoteArrowUp className="inline mr-2 w-7 h-7"/>,
+        Analytics: <ChartPie className="inline mr-2 w-7 h-7"/>,
+    }
 
     return (
         <div className="transition">
@@ -26,7 +35,9 @@ export default function TabBar({ currentPage, setPage }: TabBarProps) {
                             `}
                             aria-current={currentPage === tab ? "page" : undefined}
                         >
-                            {tab}
+                            <span className="flex items-center">
+                                {pagesIcon[tab]} {tab}
+                            </span>
                         </button>
                     </li>
                 ))}
