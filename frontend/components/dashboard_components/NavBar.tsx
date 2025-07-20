@@ -50,7 +50,7 @@ export default function NavBar(user: { user: User | undefined; }) {
                 )}
                 
                 <div className='relative'>
-                    {profileIsOpened && <OptionMenu />}
+                    {profileIsOpened && <OptionMenu user={user.user}/>}
                 </div>
             </div>
         </div>

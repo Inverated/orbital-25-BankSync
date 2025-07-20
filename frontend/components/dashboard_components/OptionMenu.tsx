@@ -1,9 +1,18 @@
 import { supabase } from "@/lib/supabase"
+import { User } from "@supabase/supabase-js"
+import { LogOut, Settings } from "lucide-react";
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-export default function OptionMenu() {
-    const selection = ["Profile (WIP)", "Settings (WIP)", "Logout"] as const
+interface OptionMenuProps {
+    user?: User;
+};
+
+export default function OptionMenu({ user }: OptionMenuProps) {
+    const selection = [
+        { label: "Settings", icon: <Settings className="" /> },
+        { label: "Logout", icon: <LogOut className="" /> }
+    ] as const
     const router = useRouter()
     const [logoutDialogue, togglePopout] = useState(false)
 
@@ -21,14 +30,12 @@ export default function OptionMenu() {
     }
 
     type SelectionOption = typeof selection[number]
-    const selectOption = (option: SelectionOption) => {
-        switch (option) {
+    const selectOption = (label: string) => {
+        switch (label) {
             case "Logout":
                 togglePopout(true)
                 break
-            case "Profile (WIP)":
-                break
-            case "Settings (WIP)":
+            case "Settings":
                 break
             default:
                 console.error("Unknown option")
@@ -49,13 +56,24 @@ export default function OptionMenu() {
     }, [])
 
     return (
-        <div>
-            <div className="flex flex-col absolute right-0 mx-4 text-2xl border border-black px-2 py-4 bg-white w-[200px] rounded-lg">
+        <div>            
+            <div className="flex flex-col absolute -right-6 z-10 mt-3 origin-top-right rounded-2xl shadow-lg ring-1 ring-black/5 focus:outline-none bg-white px-4 py-4 text-2xl w-[250px]">
+                {user?.email?.slice(0, user.email.indexOf('@')) &&
+                    <p>{user?.email?.slice(0, user.email.indexOf('@'))}</p>                    
+                }
+                
+                {user?.email && 
+                    <p className="text-sm text-gray-500 mb-2">{user.email}</p>
+                }
+
+                <hr className="my-3 border-t border-gray-400" />
+                
                 {selection.map((tab) =>
-                    <span key={tab}
-                        className="px-2 py-2 rounded-lg bg-white hover:bg-gray-400 hover:cursor-pointer active:bg-gray-500"
-                        onClick={() => selectOption(tab)}>
-                        {tab}
+                    <span key={tab.label}
+                        className="flex flex-row items-center gap-3 px-3 py-2 rounded-lg bg-white hover:bg-gray-200 hover:cursor-pointer active:bg-gray-300 active:scale-95"
+                        onClick={() => selectOption(tab.label)}>
+                        {tab.icon}
+                        {tab.label}
                     </span>
                 )}
             </div>
@@ -63,20 +81,21 @@ export default function OptionMenu() {
             {logoutDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full z-10">
+                    <div className="bg-white p-8 shadow-lg w-1/4 z-10 rounded-2xl">
                         <p className="text-xl font-semibold">Are you sure you want to logout?</p>
-                        <div className="flex justify-end">
+                        
+                        <div className="flex justify-end pt-6 gap-4">
                             <button
                                 onClick={() => {
                                     togglePopout(false)
                                 }}
-                                className="mt-7 border border-black m-2 p-2 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                                className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg font-sans font-semibold tracking-widest border px-3 py-2 transition cursor-pointer"
                             >
                                 Close
                             </button>
                             <button
                                 onClick={logout}
-                                className="mt-7 border border-black m-2 p-2 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                                className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg font-sans font-semibold tracking-widest border px-3 py-2 transition cursor-pointer"
                             >
                                 Confirm
                             </button>
