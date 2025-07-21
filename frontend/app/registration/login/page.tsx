@@ -65,7 +65,7 @@ export default function Login() {
                 <div className="flex flex-col flex-grow w-[95%] pr-7 pt-3">
                     <LoginHandler />
 
-                    <div className="flex flex-col items-center justify-center text-center pt-5 pb-1">
+                    <div className="flex flex-col items-center justify-center text-center pt-10 pb-1">
                         <p className="text-sans text-gray-500 tracking-wider text-sm">
                             Or login with
                         </p>
@@ -85,7 +85,7 @@ export default function Login() {
                         </button>
                     </div>
 
-                    <div className="text-sans text-sm text-gray-500 flex flex-col items-center pt-3">
+                    <div className="text-sans text-sm text-gray-500 flex flex-col items-center pt-25">
                         <p>Don&#39;t have an account? <button className="font-semibold underline cursor-pointer" onClick={redirectToSignUp}>Sign up now</button></p>
                     </div>
                 </div>

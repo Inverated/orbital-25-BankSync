@@ -141,40 +141,46 @@ export default function ResetPassword() {
                             Confirm new password
                         </label>
                     </div>
-                </form>
-                    {alertMessage && alertSeverity && (
-                        <Alert
-                            sx={{
-                                position: "static",
-                                alignItems: "center",
-                                display: "flex",
-                                borderRadius: "12px",
-                            }}
-                            severity={alertSeverity}
-                            className="mt-2"
-                        >
-                            <p id="message">{alertMessage}</p>
-                        </Alert>
-                    )}
-                </div>
 
-                <div>
-                    <button
-                        type="submit"
-                        className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
-                    >
-                        Update Password
+                    <div className="pb-6">
+                        {alertMessage && alertSeverity && (
+                            <Alert
+                                sx={{
+                                    position: "static",
+                                    alignItems: "center",
+                                    display: "flex",
+                                    borderRadius: "12px",
+                                }}
+                                severity={alertSeverity}
+                                className="mt-2"
+                            >
+                                <p id="message">{alertMessage}</p>
+                            </Alert>
+                        )}
+                    </div>
+
+                    <div>
+                        <button
+                            type="submit"
+                            className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
+                        >
+                            Update Password
+                        </button>
+                    </div>
+                </form>
+
+                <div className="flex flex-col items-center pt-7">
+                    <button className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
+                        onClick={() => router.push('/registration/login')}>
+                        <p>Back to <a className="font-semibold underline">Login</a></p>
+                    </button>
+
+                    <button className="pb-2 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
+                        onClick={() => router.push('/forgetpassword')}>
+                        <p>Back to <a className="font-semibold underline">Forget Password</a></p>
                     </button>
                 </div>
-                <button className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
-                    onClick={() => router.push('/registration/login')}>
-                    <p>Back to <a className="font-semibold underline">Login</a></p>
-                </button>
-
-                <button className="pb-2 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
-                    onClick={() => router.push('/forgetpassword')}>
-                    <p>Back to <a className="font-semibold underline">Forget Password</a></p>
-                </button>
             </div>
+        </div>
     )
 }
