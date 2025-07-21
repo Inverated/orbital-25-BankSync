@@ -2,7 +2,7 @@ import { Account } from '@/utils/types';
 import AccountsTransactionsTable from "./AccountsTransactionsTable";
 import { ArrowDown } from "lucide-react";
 
-export interface AccountExpandProps {
+interface AccountExpandProps {
   account: Account;
   index: number;
 }

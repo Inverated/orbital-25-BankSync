@@ -1,13 +1,14 @@
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { UserRoundPen, KeyRound } from "lucide-react";
+import { LockKeyhole, UserRound } from "lucide-react";
+import { Alert } from "@mui/material";
 import { checkPasswordRequirement } from "@/utils/passwordRequirement";
 
 export default function Signup() {
     const router = useRouter();
-    const [showSuccessfulSignup, setIsSuccess] = useState(false)
-    const [signupErrorMessage, setErrorMessage] = useState('')
+    const [alertMessage, setAlertMessage] = useState('')
+    const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "warning" | null>(null)
 
     const signupUser = async (event: FormEvent) => {
         event.preventDefault()
@@ -17,7 +18,8 @@ export default function Signup() {
         const confirmPassword = document.getElementById('confirmPassword') as HTMLInputElement
 
         if (userEmail.value == '') {
-            setErrorMessage('Email is required')
+            setAlertSeverity('warning')
+            setAlertMessage('Email is required')
             return
         }
 
@@ -27,7 +29,8 @@ export default function Signup() {
 
         const missing = checkPasswordRequirement(confirmPassword.value)
         if (missing) {
-            setErrorMessage(missing)
+            setAlertSeverity('warning')
+            setAlertMessage(missing)
             return
         }
 
@@ -37,11 +40,13 @@ export default function Signup() {
         })
 
         if (error) {
-            setErrorMessage(error.message)
+            setAlertSeverity('error')
+            setAlertMessage(error.message)
             return
         }
 
-        setIsSuccess(true)
+        setAlertSeverity('success')
+        setAlertMessage('Signup successful. Check your email to confirm your account')
         setTimeout(() => router.push('/registration/login'), 2000)
     }
 
@@ -50,60 +55,113 @@ export default function Signup() {
         const confirmPassword = document.getElementById('confirmPassword') as HTMLInputElement
 
         if (confirmPassword.value != '' && userPassword.value != confirmPassword.value) {
-            setErrorMessage('Password do not match!')
+            setAlertSeverity('error')
+            setAlertMessage('Password do not match!')
         } else {
-            setErrorMessage('')
+            setAlertMessage('')
         }
     }
 
     return (
         <div>
-            <div className="text-center py-4">
-                <h1 className="text-6xl font-bold">Welcome</h1>
+            <div className="text-center pt-7 pb-11">
+                <h1 className="text-4xl font-sans font-bold tracking-wider">Get Started</h1>
             </div>
-            {/* use form instead of div onclick for keyboard accessibility*/}
+
             <form onSubmit={signupUser}>
-                <div className="my-2 flex bg-gray-300 rounded-lg">
-                    <UserRoundPen className="m-1" />
+                <div className="relative w-full flex items-center pb-2">
+                    <UserRound className="absolute left-1 top-5.5 text-gray-500" />
+
                     <input
-                        type="email"
                         id="email"
-                        placeholder="example@email.com"
-                        className="bg-transparent w-full" />
+                        type="email"
+                        placeholder=" "
+                        className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
+                            pl-10 pt-6 pb-1
+                            focus:outline-none focus:border-black"
+                    />
+
+                    <label
+                        htmlFor="email"
+                        className="absolute left-10 text-gray-400 text-sm transition-all 
+                            peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm 
+                            peer-focus:top-2 peer-focus:text-xs 
+                            peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs"
+                    >
+                        Email address
+                    </label>
                 </div>
-                <div className="my-2 flex bg-gray-300 rounded-lg">
-                    <KeyRound className="m-1" />
+
+                <div className="relative w-full flex items-center pb-2">
+                    <LockKeyhole className="absolute left-1 top-5.5 text-gray-500" />
+
                     <input
+                        id="password"
                         type="password"
-                        id='password'
-                        placeholder="Enter new password"
-                        className="bg-transparent w-full"
-                        onChange={updatePasswordSimilarity} />
+                        placeholder=" "
+                        className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
+                            pl-10 pt-6 pb-1
+                            focus:outline-none focus:border-black"
+                        onChange={updatePasswordSimilarity}
+                    />
+
+                    <label
+                        htmlFor="password"
+                        className="absolute left-10 text-gray-400 text-sm transition-all 
+                            peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm 
+                            peer-focus:top-2 peer-focus:text-xs 
+                            peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs"
+                    >
+                        Create password
+                    </label>
                 </div>
-                <div className="my-2 flex bg-gray-300 rounded-lg">
-                    <KeyRound className="m-1" />
+
+                <div className="relative w-full flex items-center">
+                    <LockKeyhole className="absolute left-1 top-5.5 text-gray-500" />
+
                     <input
+                        id="confirmPassword"
                         type="password"
-                        id='confirmPassword'
-                        placeholder='Confirm your password'
-                        className="bg-transparent w-full"
-                        onChange={updatePasswordSimilarity} />
+                        placeholder=" "
+                        className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
+                            pl-10 pt-6 pb-1
+                            focus:outline-none focus:border-black"
+                        onChange={updatePasswordSimilarity}
+                    />
+
+                    <label
+                        htmlFor="confirmPassword"
+                        className="absolute left-10 text-gray-400 text-sm transition-all 
+                            peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm 
+                            peer-focus:top-2 peer-focus:text-xs 
+                            peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs"
+                    >
+                        Confirm password
+                    </label>
                 </div>
-                <div className="my-2">
-                    <div hidden={signupErrorMessage == ''} className="text-shadow-xm text-red-600">
-                        {signupErrorMessage}
-                    </div>
-                    {
-                        showSuccessfulSignup &&
-                        <div className="text-sm text-green-600">
-                            Signup successful. Check your email to confirm your account
-                        </div>
-                    }
+
+                <div className="pb-6">
+                    {alertMessage && alertSeverity && (
+                        <Alert
+                            sx={{
+                                position: "static",
+                                alignItems: "center",
+                                display: "flex",
+                                borderRadius: "12px",
+                            }}
+                            severity={alertSeverity}
+                            className="mt-2"
+                        >
+                            <p id="message">{alertMessage}</p>
+                        </Alert>
+                    )}
                 </div>
+
                 <div>
-                    <button type='submit'
-                        className="bg-black active:bg-gray-900 active:scale-95 w-full 
-                    transition cursor-pointer text-white p-2 rounded-lg">
+                    <button
+                        type='submit'
+                        className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
+                    >
                         Sign Up
                     </button>
                 </div>

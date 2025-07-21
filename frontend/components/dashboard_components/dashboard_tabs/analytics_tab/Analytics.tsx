@@ -42,7 +42,7 @@ export default function Analytics() {
                             position: "static",
                             alignItems: "center",
                             display: "flex",
-
+                            borderRadius: "12px",
                         }}
                         severity="info"
                         icon={<MousePointer2 />}
@@ -58,6 +58,7 @@ export default function Analytics() {
                             position: "static",
                             alignItems: "center",
                             display: "flex",
+                            borderRadius: "12px",
                         }}
                         severity="error"
                         icon={<Ban className="w-8 h-8"/>}

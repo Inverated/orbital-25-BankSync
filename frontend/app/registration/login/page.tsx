@@ -7,6 +7,7 @@ import { redirect, useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js";
 import LoginHandler from "@/components/LoginHandler";
 import { supabase } from "@/lib/supabase";
+import { ChevronLeft } from "lucide-react";
 
 export default function Login() {
     const [currentSession, setSession] = useState<Session | null>(null)
@@ -35,46 +36,60 @@ export default function Login() {
         });
 
         if (error) {
-            console.error("OAuth error: " + error);
+            console.error("OAuth error: " + error.message);
         }
     };
 
     const redirectToSignUp = () => redirect("/registration/signup")
 
-    const externalAuthButtonStyle = "w-full my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
+    const externalAuthButtonStyle = "w-full my-3 p-2 flex hover:bg-gray-200 active:bg-gray-300 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-xl"
 
     return (
-        <div className={(currentSession == null && sessionLoaded ? '' : 'hidden ') + "flex justify-center items-center h-screen"}>
-            <div className="w-[400]">
-                <LoginHandler />
-
-                <button className="w-full my-2 text-sm flex justify-between cursor-pointer"
-                    onClick={redirectToSignUp}>
-                    <p>Don&#39;t have an account?</p>
-                    <span className="font-semibold underline">
-                        Signup
-                    </span>
-                </button>
-
-                <div className="flex items-center">
-                    <hr className="w-full" />
-                    <p className="shrink-0">Login with others</p>
-                    <hr className="w-full" />
+        <div 
+            className={
+                (currentSession == null && sessionLoaded ? '' : 'hidden ') + 
+                "flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat"
+            }
+            style={{
+                backgroundImage: "url('/background.jpg')",
+            }}
+        >
+            <div className="w-[600px] rounded-3xl shadow-xl bg-white px-10 py-7 flex flex-row gap-1">
+                <div className="flex items-start justify-start w-[5%] pt-1">
+                    <ChevronLeft
+                        className="cursor-pointer transition" 
+                        onClick={() => router.push('/')}
+                    />
                 </div>
 
-                <button className={externalAuthButtonStyle}
-                    onClick={() => handleOAuthLogin('google')} >
-                    <FcGoogle />
-                    <span className="mx-2">Sign in with Google</span>
-                </button>
-                <button className={externalAuthButtonStyle}
-                    onClick={() => handleOAuthLogin('github')} >
-                    <FaGithub />
-                    <span className="mx-2">Sign in with GitHub</span>
-                </button>
+                <div className="flex flex-col flex-grow w-[95%] pr-7 pt-3">
+                    <LoginHandler />
+
+                    <div className="flex flex-col items-center justify-center text-center pt-5 pb-1">
+                        <p className="text-sans text-gray-500 tracking-wider text-sm">
+                            Or login with
+                        </p>
+                    </div>
+
+                    <div className="flex flex-row items-center justify-center gap-4">
+                        <button className={externalAuthButtonStyle}
+                            onClick={() => handleOAuthLogin('google')} >
+                            <FcGoogle />
+                            <span className="mx-2 font-sans font-semibold">Google</span>
+                        </button>
+
+                        <button className={externalAuthButtonStyle}
+                            onClick={() => handleOAuthLogin('github')} >
+                            <FaGithub />
+                            <span className="mx-2 font-sans font-semibold">GitHub</span>
+                        </button>
+                    </div>
+
+                    <div className="text-sans text-sm text-gray-500 flex flex-col items-center pt-3">
+                        <p>Don&#39;t have an account? <button className="font-semibold underline cursor-pointer" onClick={redirectToSignUp}>Sign up now</button></p>
+                    </div>
+                </div>
             </div>
         </div>
     )
-
-
 }

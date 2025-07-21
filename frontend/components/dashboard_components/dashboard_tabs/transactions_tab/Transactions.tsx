@@ -178,15 +178,12 @@ export default function Transactions() {
 
     return (
         <div>
-            <div className='flex justify-between'>
-                <p className='mx-4 text-2xl'>All Transactions</p>
-                <div className="flex justify-between space-x-4 mx-4">
-                    <ExportButton
-                        filteredAccount={accountEntry}
-                        filteredTransaction={transactionEntry} />
-                    <FilterButton
-                        setFilter={handleFilterQuery} />
-                </div>
+            <div className="flex justify-end space-x-4 mx-4">
+                <ExportButton
+                    filteredAccount={accountEntry}
+                    filteredTransaction={transactionEntry} />
+                <FilterButton
+                    setFilter={handleFilterQuery} />
             </div>
             <div id='load_transaction_data' className='hidden'>
                 {

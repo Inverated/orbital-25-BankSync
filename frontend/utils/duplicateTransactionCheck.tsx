@@ -7,8 +7,8 @@ export function duplicateChecking(statements: StatementResponse[], existingTrans
             each.withdrawal_amount.toString() + each.category + each.ending_balance.toString() +
             each.account_no
     }))
-    statements.map(statement => {
-        statement.transactions.map(each => {
+    statements.forEach(statement => {
+        statement.transactions.forEach(each => {
             const description = each.transaction_description.replaceAll(' ', '').replaceAll('\n', '')
             each.duplicate = dbSet.has('' + each.transaction_date + description + each.deposit_amount.toString() +
                 each.withdrawal_amount.toString() + each.category + each.ending_balance.toString() +
