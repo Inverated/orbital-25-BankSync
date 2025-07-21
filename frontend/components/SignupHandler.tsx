@@ -7,8 +7,8 @@ import { checkPasswordRequirement } from "@/utils/passwordRequirement";
 
 export default function Signup() {
     const router = useRouter();
-    const [showSuccessfulSignup, setIsSuccess] = useState(false)
-    const [signupErrorMessage, setErrorMessage] = useState('')
+    const [alertMessage, setAlertMessage] = useState('')
+    const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "warning" | null>(null)
 
     const signupUser = async (event: FormEvent) => {
         event.preventDefault()
@@ -18,7 +18,8 @@ export default function Signup() {
         const confirmPassword = document.getElementById('confirmPassword') as HTMLInputElement
 
         if (userEmail.value == '') {
-            setErrorMessage('Email is required')
+            setAlertSeverity('warning')
+            setAlertMessage('Email is required')
             return
         }
 
@@ -28,7 +29,8 @@ export default function Signup() {
 
         const missing = checkPasswordRequirement(confirmPassword.value)
         if (missing) {
-            setErrorMessage(missing)
+            setAlertSeverity('warning')
+            setAlertMessage(missing)
             return
         }
 
@@ -38,11 +40,13 @@ export default function Signup() {
         })
 
         if (error) {
-            setErrorMessage(error.message)
+            setAlertSeverity('error')
+            setAlertMessage(error.message)
             return
         }
 
-        setIsSuccess(true)
+        setAlertSeverity('success')
+        setAlertMessage('Signup successful. Check your email to confirm your account')
         setTimeout(() => router.push('/registration/login'), 2000)
     }
 
@@ -51,9 +55,10 @@ export default function Signup() {
         const confirmPassword = document.getElementById('confirmPassword') as HTMLInputElement
 
         if (confirmPassword.value != '' && userPassword.value != confirmPassword.value) {
-            setErrorMessage('Password do not match!')
+            setAlertSeverity('error')
+            setAlertMessage('Password do not match!')
         } else {
-            setErrorMessage('')
+            setAlertMessage('')
         }
     }
 
@@ -62,11 +67,11 @@ export default function Signup() {
             <div className="text-center pt-7 pb-11">
                 <h1 className="text-4xl font-sans font-bold tracking-wider">Get Started</h1>
             </div>
-            
+
             <form onSubmit={signupUser}>
                 <div className="relative w-full flex items-center pb-2">
                     <UserRound className="absolute left-1 top-5.5 text-gray-500" />
-                    
+
                     <input
                         id="email"
                         type="email"
@@ -86,10 +91,10 @@ export default function Signup() {
                         Email address
                     </label>
                 </div>
-                
+
                 <div className="relative w-full flex items-center pb-2">
                     <LockKeyhole className="absolute left-1 top-5.5 text-gray-500" />
-                    
+
                     <input
                         id="password"
                         type="password"
@@ -97,7 +102,7 @@ export default function Signup() {
                         className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
                             pl-10 pt-6 pb-1
                             focus:outline-none focus:border-black"
-                        onChange={updatePasswordSimilarity} 
+                        onChange={updatePasswordSimilarity}
                     />
 
                     <label
@@ -121,9 +126,9 @@ export default function Signup() {
                         className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
                             pl-10 pt-6 pb-1
                             focus:outline-none focus:border-black"
-                        onChange={updatePasswordSimilarity} 
+                        onChange={updatePasswordSimilarity}
                     />
-            
+
                     <label
                         htmlFor="confirmPassword"
                         className="absolute left-10 text-gray-400 text-sm transition-all 
@@ -134,43 +139,26 @@ export default function Signup() {
                         Confirm password
                     </label>
                 </div>
-              
-                <div className="pb-6">
-                    {showIncorrectConfirmPassword &&
-                        <Alert 
-                            sx={{
-                                position: "static",
-                                alignItems: "center",
-                                display: "flex",
-                                borderRadius: "12px",
-                            }}
-                            severity="error"
-                            className="mt-3"
-                        >
-                            <div className="font-bold text-sm">Error</div>
-                            <div className="text-xs">Passwords do not match!</div>
-                        </Alert>
-                    }
 
-                    {showSuccessfulSignup &&
-                        <Alert 
+                <div className="pb-6">
+                    {alertMessage && alertSeverity && (
+                        <Alert
                             sx={{
                                 position: "static",
                                 alignItems: "center",
                                 display: "flex",
                                 borderRadius: "12px",
                             }}
-                            severity="success"
+                            severity={alertSeverity}
                             className="mt-2"
                         >
-                            <div className="font-bold text-sm">Success</div>
-                            <div className="text-xs">Check your email to confirm your account.</div>
+                            <p id="message">{alertMessage}</p>
                         </Alert>
-                    }
+                    )}
                 </div>
-                
+
                 <div>
-                    <button 
+                    <button
                         type='submit'
                         className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
                     >

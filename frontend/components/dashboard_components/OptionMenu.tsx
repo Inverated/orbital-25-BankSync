@@ -69,12 +69,12 @@ export default function OptionMenu({ user }: OptionMenuProps) {
                 <hr className="my-3 border-t border-gray-400" />
                 
                 {selection.map((tab) =>
-                    <span key={tab.label}
+                    <button key={tab.label}
                         className="flex flex-row items-center gap-3 px-3 py-2 rounded-lg bg-white hover:bg-gray-200 hover:cursor-pointer active:bg-gray-300 active:scale-95"
                         onClick={() => selectOption(tab.label)}>
                         {tab.icon}
                         {tab.label}
-                    </span>
+                    </button>
                 )}
             </div>
 

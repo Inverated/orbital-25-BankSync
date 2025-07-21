@@ -62,29 +62,28 @@ export default function Dashboard() {
         <ProfileProvider userId={currentSession.user.id}>
             <DatabaseProvider userId={currentSession.user.id}>
                 <UserProvider userId={currentSession.user.id}>
-                    <div>
-                    <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50 flex flex-col px-40 pt-6 pb-4">
-                        <div className="w-full flex flex-row justify-between items-center">
-                            <div>
-                                <Image src="/logo.png" alt="BankSync" width={250} height={125} />
+                    <div className="flex flex-col">
+                        <header className="bg-white shadow-md z-50 flex flex-col pt-6 pb-4 mb-2 transition-all lg:px-40 md:px-25 not-lg:px-12">
+                            <div className="w-full flex flex-row justify-between items-center">
+                                <div>
+                                    <Image src="/logo.png" alt="BankSync" width={250} height={125} />
+                                </div>
+
+                                <div className="py-2">
+                                    <NavBar user={currentSession?.user} />
+                                </div>
                             </div>
 
-                            <div className="py-2">
-                                <NavBar user={currentSession?.user} />
+                            <div className="flex justify-end pt-2">
+                                <div className="w-fit rounded-xl px-1 pl-3 py-3 bg-gray-100 flex flex-row items-center">
+                                    <TabsBar currentPage={currentPage} setPage={setPage} />
+                                </div>
                             </div>
+                        </header>
+                        <div>
+                            <CurrentComponent />
                         </div>
-
-                        <div className="flex justify-end pt-2">
-                            <div className="w-fit rounded-xl px-1 pl-3 py-3 bg-gray-100 flex flex-row items-center">
-                                <TabsBar currentPage={currentPage} setPage={setPage} />
-                            </div>
-                        </div>
-                    </header>
-
-                    <div className="pt-46">
-                        <CurrentComponent />
                     </div>
-                </div>
                 </UserProvider>
             </DatabaseProvider>
         </ProfileProvider>

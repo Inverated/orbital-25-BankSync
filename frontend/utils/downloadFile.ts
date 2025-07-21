@@ -171,7 +171,7 @@ export async function exportToPdf(accountEntry: Account[], transactionEntry: Tra
 }
 
 export async function downloadBlob(blob: Blob) {
-    saveAs(await blob, 'Transaction History')
+    saveAs(blob, 'Transaction History')
 }
 
 export function passwordProtect(blob: Blob, exportOption: 'EXCEL' | "PDF", password: string) {

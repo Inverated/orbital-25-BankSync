@@ -10,8 +10,7 @@ import { useEffect, useRef, useState } from 'react'
 export default function ResetPassword() {
     const newPassword = useRef<HTMLInputElement>(null)
     const confirmNewPassword = useRef<HTMLInputElement>(null)
-    const [showIncorrectConfirmPassword, setPasswordDifference] = useState(false)
-    const [alertMessage, setAlertMessage] = useState(" ")
+    const [alertMessage, setAlertMessage] = useState("")
     const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "warning" | null>(null)
 
     const router = useRouter()
@@ -50,8 +49,8 @@ export default function ResetPassword() {
 
         const missing = checkPasswordRequirement(confirmPassword.value)
         if (missing) {
-            
-          (missing)
+            setAlertSeverity("error")
+            setAlertMessage(missing)
             return
         }
 
@@ -75,14 +74,15 @@ export default function ResetPassword() {
 
     const updatePasswordSimilarity = () => {
         if (confirmNewPassword.current?.value != '' && newPassword.current?.value != confirmNewPassword.current?.value) {
-            setErrorMessage('Password do not match!')
+            setAlertSeverity("error")
+            setAlertMessage('Password do not match!')
         } else {
-            setErrorMessage('Password do not match!')
+            setAlertMessage('')
         }
     }
 
     return (
-        <div 
+        <div
             className="flex justify-center items-center h-screen bg-cover bg-center bg-no-repeat"
             style={{
                 backgroundImage: "url('/background.jpg')",
@@ -96,7 +96,7 @@ export default function ResetPassword() {
                 <form onSubmit={updatePassword}>
                     <div className="relative w-full flex items-center pb-3">
                         <LockKeyhole className="absolute left-1 top-5.5 text-gray-500" />
-                        
+
                         <input
                             id="newPassword"
                             type="password"
@@ -104,7 +104,7 @@ export default function ResetPassword() {
                             className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
                                 pl-10 pt-6 pb-1
                                 focus:outline-none focus:border-black"
-                            onChange={updatePasswordSimilarity} 
+                            onChange={updatePasswordSimilarity}
                         />
 
                         <label
@@ -128,7 +128,7 @@ export default function ResetPassword() {
                             className="peer w-full border-b-2 border-gray-400 bg-transparent text-base
                                 pl-10 pt-6 pb-1
                                 focus:outline-none focus:border-black"
-                            onChange={updatePasswordSimilarity} 
+                            onChange={updatePasswordSimilarity}
                         />
 
                         <label
@@ -142,24 +142,6 @@ export default function ResetPassword() {
                         </label>
                     </div>
                 </form>
-
-                <div className="pb-6">
-                    {showIncorrectConfirmPassword && (
-                        <Alert 
-                            sx={{
-                                position: "static",
-                                alignItems: "center",
-                                display: "flex",
-                                borderRadius: "12px",
-                            }}
-                            severity="error"
-                            className="mt-3"
-                        >
-                            <div className="font-bold text-sm">Error</div>
-                            <div className="text-xs">Passwords do not match!</div>
-                        </Alert>
-                    )}
-
                     {alertMessage && alertSeverity && (
                         <Alert
                             sx={{
@@ -177,23 +159,22 @@ export default function ResetPassword() {
                 </div>
 
                 <div>
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
                     >
                         Update Password
                     </button>
                 </div>
-                <div className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
-                        onClick={() => router.push('/registration/login')}>
+                <button className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
+                    onClick={() => router.push('/registration/login')}>
                     <p>Back to <a className="font-semibold underline">Login</a></p>
-                </div>
+                </button>
 
-                <div className="pb-2 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
-                        onClick={() => router.push('/forgetpassword')}>
+                <button className="pb-2 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
+                    onClick={() => router.push('/forgetpassword')}>
                     <p>Back to <a className="font-semibold underline">Forget Password</a></p>
-                </div>
+                </button>
             </div>
-        </div>
     )
 }

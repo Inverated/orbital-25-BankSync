@@ -44,7 +44,7 @@ export default function UploadButton() {
         setUploadDialogue(false)
         setErrorFileType(false)
         currentFile.current = null
-        setQueryPassword(false)
+        setPasswordQuery(false)
         setTimeout(() => setShowTooltip(true), 100)
     }
 
@@ -255,7 +255,7 @@ export default function UploadButton() {
         <div className="relative group">
             <Upload
                 onClick={() => {
-                    setDialogueStatus(true);
+                    setUploadDialogue(true);
                     setShowTooltip(false);
                 }}
                 className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'} 
@@ -395,7 +395,7 @@ export default function UploadButton() {
                                 </label>
                             </div>
                             <button
-                                disabled={statements === null || uploading}
+                                disabled={statements === null || isUploading}
                                 onClick={handleUploadData}
                                 className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg text-green-500 font-sans font-semibold tracking-widest border border-green-500 px-4 py-2 transition cursor-pointer"
                             >

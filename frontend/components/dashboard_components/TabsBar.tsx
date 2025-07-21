@@ -12,20 +12,21 @@ interface TabBarProps {
 export default function TabBar({ currentPage, setPage }: TabBarProps) {
     const pages: Page[] = ["Overview", "Accounts", "Transactions", "Analytics"];
 
+    const ICONSTYLE = "inline mr-2 lg:w-7 not-lg:w-5"
     const pagesIcon: Record<Page, React.ReactNode> = {
-        Overview: <PanelsTopLeft className="inline mr-2 w-7 h-7" />,
-        Accounts: <CreditCard className="inline mr-2 w-7 h-7"/>,
-        Transactions: <BanknoteArrowUp className="inline mr-2 w-7 h-7"/>,
-        Analytics: <ChartPie className="inline mr-2 w-7 h-7"/>,
+        Overview: <PanelsTopLeft className={ICONSTYLE}/>,
+        Accounts: <CreditCard className={ICONSTYLE}/>,
+        Transactions: <BanknoteArrowUp className={ICONSTYLE}/>,
+        Analytics: <ChartPie className={ICONSTYLE}/>,
     }
 
     return (
-        <div className="transition">
+        <div className="transition-all">
             <ul className="flex flex-wrap">
                 {pages.map((tab) => (
                     <li key={tab} className="me-2">
                         <button
-                            onClick={() => setPage(tab as Page)}
+                            onClick={() => setPage(tab)}
                             className={`inline-block px-4 py-2 rounded-xl transition cursor-pointer text-xl text-center
                                 ${
                                     currentPage === tab 
@@ -35,7 +36,7 @@ export default function TabBar({ currentPage, setPage }: TabBarProps) {
                             `}
                             aria-current={currentPage === tab ? "page" : undefined}
                         >
-                            <span className="flex items-center">
+                            <span className="flex items-center lg:text-xl not-xl:text-base">
                                 {pagesIcon[tab]} {tab}
                             </span>
                         </button>

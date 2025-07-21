@@ -46,10 +46,10 @@ export default function Signup() {
     
     return (
         currentSession == null && sessionLoaded &&
-        <div className="flex justify-center items-center h-screen bg-cover bg-center bg-no-repeat"
+        <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: "url('/background.jpg')" }}
         >
-            <div className="w-[600px] rounded-3xl shadow-xl bg-white p-10 flex flex-row gap-1">
+            <div className="w-[600px] rounded-3xl shadow-xl bg-white px-10 py-7 flex flex-row gap-1">
                 <div className="flex items-start justify-start w-[5%] pt-1">
                     <ChevronLeft
                         className="cursor-pointer transition" 
@@ -60,29 +60,28 @@ export default function Signup() {
                 <div className="flex flex-col flex-grow w-[95%] pr-7 pt-3">
                     <SignupHandler />
 
-                    <div className="flex flex-col items-center justify-center text-center pt-10 pb-1">
+                    <div className="flex flex-col items-center justify-center text-center pt-5 pb-1">
                         <p className="text-sans text-gray-500 tracking-wider text-sm">
                             Or sign up with
                         </p>
                     </div>
 
                     <div className="flex flex-row items-center justify-center gap-4">
-                        <div className={externalAuthButtonStyle}
+                        <button className={externalAuthButtonStyle}
                             onClick={() => handleOAuthLogin('google')} >
                             <FcGoogle />
                             <span className="mx-2 font-sans font-semibold">Google</span>
-                        </div>
+                        </button>
 
-                        <div className={externalAuthButtonStyle}
+                        <button className={externalAuthButtonStyle}
                             onClick={() => handleOAuthLogin('github')} >
                             <FaGithub />
                             <span className="mx-2 font-sans font-semibold">GitHub</span>
-                        </div>
+                        </button>
                     </div>
 
-                    <div className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
-                        onClick={redirectToLogin}>
-                        <p>Already have an account? <a className="font-semibold underline">Login</a></p>
+                    <div className="text-sans text-sm text-gray-500 flex flex-col items-center pt-3">
+                        <p>Already have an account? <button className="font-semibold underline cursor-pointer" onClick={redirectToLogin}>Login</button></p>
                     </div>
                 </div>
             </div>
