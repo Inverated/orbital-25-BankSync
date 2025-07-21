@@ -2,7 +2,8 @@ import ComponentFilterRow from "@/components/settings_components/componentFilter
 import { useDatabase } from "@/context/DatabaseContext"
 import { useProfile } from "@/context/ProfileContext"
 import { useUserId } from "@/context/UserContext"
-import { addProfileDetails } from "@/lib/supabaseUpload"
+import { addProfileDetails } from "@/lib/supabaseUpdate"
+
 import { defaultKeywordMap, Profile } from "@/utils/types"
 import { useEffect, useState } from "react"
 
