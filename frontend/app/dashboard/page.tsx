@@ -14,6 +14,7 @@ import { registerCharts } from "@/utils/RegisterCharts";
 import { DatabaseProvider } from "@/context/DatabaseContext";
 import Image from "next/image";
 import TabsBar, { Page } from "@/components/dashboard_components/TabsBar";
+import { ProfileProvider } from "@/context/ProfileContext";
 
 export default function Dashboard() {
     const [currentSession, setSession] = useState<Session | null>(null)
@@ -21,7 +22,7 @@ export default function Dashboard() {
     const [sessionLoaded, setSessionLoaded] = useState(false)
 
     useEffect(() => {
-        const { data: authListener } = supabase.auth.onAuthStateChange(
+        supabase.auth.onAuthStateChange(
             (_, session) => {
                 if (!session) {
                     router.push('/registration/login');
@@ -29,8 +30,7 @@ export default function Dashboard() {
                     setSession(session)
                     setSessionLoaded(true);
                 }
-            }
-        );
+            })
 
         supabase.auth.getSession()
             .then(({ data: { session }, error }) => {
@@ -43,9 +43,6 @@ export default function Dashboard() {
                 if (error) console.error(error)
             })
 
-        return () => {
-            authListener.subscription.unsubscribe()
-        }
     }, [router])
 
     const componentSelector: Record<Page, React.FC> = {
@@ -62,9 +59,10 @@ export default function Dashboard() {
 
     return (
         sessionLoaded && currentSession &&
-        <DatabaseProvider userId={currentSession.user.id}>
-            <UserProvider userId={currentSession.user.id}>
-                <div>
+        <ProfileProvider userId={currentSession.user.id}>
+            <DatabaseProvider userId={currentSession.user.id}>
+                <UserProvider userId={currentSession.user.id}>
+                    <div>
                     <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50 flex flex-col px-40 pt-6 pb-4">
                         <div className="w-full flex flex-row justify-between items-center">
                             <div>
@@ -87,7 +85,8 @@ export default function Dashboard() {
                         <CurrentComponent />
                     </div>
                 </div>
-            </UserProvider>
-        </DatabaseProvider>
+                </UserProvider>
+            </DatabaseProvider>
+        </ProfileProvider>
     )
 }

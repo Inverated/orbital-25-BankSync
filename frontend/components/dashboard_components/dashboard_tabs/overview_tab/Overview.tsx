@@ -64,28 +64,28 @@ export default function Overview() {
     return (
         isLoaded &&
         <div className="flex flex-col items-center justify-center">
-            <div onClick={expandTotalBal}
+            <div 
                 className="py-5 px-7 m-5 w-2/3 border border-black hover:cursor-pointer rounded-lg">
-                <label className="text-2xl hover:cursor-pointer">
+                <button onClick={expandTotalBal} className="text-2xl hover:cursor-pointer w-full text-start">
                     <b>Total balance:</b> ${totalBal.toFixed(2)}
-                </label>
+                </button>
 
                 <div id="expanded_account" className="hidden">
                     {accountArray.map((account, index) =>
                         <div key={account.id} className="rounded-lg">
-                            <div className="m-2 flex justify-between hover:cursor-pointer"
+                            <button className="m-2 flex justify-between hover:cursor-pointer w-full"
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     setExpandAccount(expandAccount == account.account_no ? null : account.account_no!)
                                 }}>
                                 <div>
-                                    <b>{account.account_name}:</b> {account.account_no}
+                                    <b>{account.account_name ? account.account_name : 'Account No'}:</b> {account.account_no}
                                 </div>
 
                                 <div>
                                     ${account.balance ? account.balance.toFixed(2) : '0.00'}
                                 </div>
-                            </div>
+                            </button>
 
                             {expandAccount === account.account_no && (
                                 <div>

@@ -1,6 +1,5 @@
 import { AccountDetails, TransactionDetails, getAccountDetails, getTransactionDetails } from "@/lib/databaseQuery";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Transaction_Row from "./TransactionRow";
 import { Account, Transaction } from "@/utils/types";
 import FilterButton from "./FilterButton";
 import ExportButton from "./ExportButton";
@@ -8,6 +7,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-r
 import { useUserId } from "@/context/UserContext";
 import { Dayjs } from "dayjs";
 import { useDatabase } from "@/context/DatabaseContext";
+import TransactionRow from "./TransactionRow";
 
 type AccountMap = {
     [account_no: string]: {
@@ -26,9 +26,9 @@ export default function Transactions() {
     const [transFilterCondition, setTransFilterCondition] = useState<TransactionDetails>({ transactions: transactions, ascending_date: isAscending })
     const [accFilterCondition, setAccFilterCondition] = useState<AccountDetails>({ accounts: accounts })
 
-    const [transactionEntry, setEntry] = useState<Transaction[]>([])
-    const [accountEntry, setAccount] = useState<Account[]>([])
-    const [uniqueCategory, setUnique] = useState<Set<string>>(new Set())
+    const [transactionEntry, setTransactionEntry] = useState<Transaction[]>([])
+    const [accountEntry, setAccountEntry] = useState<Account[]>([])
+    const [uniqueCategory, setUniqueCategory] = useState<Set<string>>(new Set())
     const currAccounts: AccountMap = {}
 
     // useState to update html and useRef to get the latest value to run in function
@@ -37,16 +37,16 @@ export default function Transactions() {
     const [totalEntries, setTotalEntries] = useState(0)
     const [pageNo, setPageNo] = useState(1)
     const maxPageNo = useRef(Math.ceil(transactionEntry.length / 10))
-    const [selPageDialogue, setPageDialogue] = useState(false)
+    const [selPageDialogue, setSelPageDialogue] = useState(false)
 
     const resetAllValues = () => {
         transFilterCondition.transactions = transactions
         accFilterCondition.accounts = accounts
-        setEntry([])
-        setAccount([])
+        setTransactionEntry([])
+        setAccountEntry([])
         currPageRef.current = 1
         setPageNo(1)
-        setUnique(new Set())
+        setUniqueCategory(new Set())
     }
 
     const addPageNo = (num: number) => {
@@ -75,12 +75,12 @@ export default function Transactions() {
             currPageRef.current = userInput
             setPageNo(userInput)
         }
-        setPageDialogue(false)
+        setSelPageDialogue(false)
     }
 
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == 'Escape') {
-            setPageDialogue(false)
+            setSelPageDialogue(false)
         } else if (event.key == 'Enter') {
             jumpToPage()
         } else if (event.key == 'ArrowRight') {
@@ -95,7 +95,7 @@ export default function Transactions() {
         const transConditionFilter: { key: keyof Transaction, value: string[] }[] = []
         const transactionFilter: TransactionDetails = { transactions, ascending_date: ascendingSelection }
         const accountFilter: AccountDetails = { accounts }
-        setIsAscending(isAscending)
+        setIsAscending(ascendingSelection)
 
         if (accountSelection.length != 0) {
             transConditionFilter.push({ key: 'account_no', value: accountSelection })
@@ -127,7 +127,7 @@ export default function Transactions() {
                 account_name: entry.account_name,
                 bank_name: entry.bank_name
             }
-            setAccount(prev => {
+            setAccountEntry(prev => {
                 if (prev.filter(e => e.account_no == entry.account_no).length == 0) {
                     return [...prev, {
                         user_id: userId,
@@ -148,9 +148,9 @@ export default function Transactions() {
 
         transArray.forEach(entry => {
             if (entry.category) {
-                setUnique(uniqueCategory.add(entry.category))
+                setUniqueCategory(uniqueCategory.add(entry.category))
             }
-            setEntry(prev =>
+            setTransactionEntry(prev =>
                 [...prev, {
                     id: entry.id,
                     user_id: userId,
@@ -195,7 +195,7 @@ export default function Transactions() {
                         Math.min(totalEntries, pageNo * NUMBER_OF_ENTRIES_PER_PAGE)
                     )
                         .map((entry) =>
-                            <Transaction_Row
+                            <TransactionRow
                                 key={entry.id}
                                 details={{ ...entry }}
                                 uniqueCategory={[...uniqueCategory]} />
@@ -203,9 +203,9 @@ export default function Transactions() {
                 <div className='my-10 flex items-center justify-center'>
                     <ChevronsLeft className='hover:cursor-pointer' onClick={() => addPageNo(-10)} />
                     <ChevronLeft className='hover:cursor-pointer' onClick={() => addPageNo(-1)} />
-                    <div className='px-5 hover:cursor-pointer' onClick={() => setPageDialogue(true)}>
+                    <button className='px-5 hover:cursor-pointer' onClick={() => setSelPageDialogue(true)}>
                         {pageNo} of {maxPageNo.current}
-                    </div>
+                    </button>
                     <ChevronRight className='hover:cursor-pointer' onClick={() => addPageNo(1)} />
                     <ChevronsRight className='hover:cursor-pointer' onClick={() => addPageNo(10)} />
                 </div>
@@ -227,7 +227,7 @@ export default function Transactions() {
                             <span>of {maxPageNo.current}</span>
                         </div>
                         <div className='flex justify-end'>
-                            <button onClick={() => setPageDialogue(false)}
+                            <button onClick={() => setSelPageDialogue(false)}
                                 className={buttonStyle}>
                                 Close
                             </button>

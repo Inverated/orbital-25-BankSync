@@ -36,7 +36,7 @@ export default function Signup() {
         });
         
         if (error) {
-            console.error("OAuth error: " + error);
+            console.error("OAuth error: " + error.message);
         }
     };
 

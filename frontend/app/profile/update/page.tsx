@@ -3,6 +3,7 @@
 import { supabase } from '@/lib/supabase'
 import { Alert } from '@mui/material'
 import { LockKeyhole } from 'lucide-react'
+import { checkPasswordRequirement } from '@/utils/passwordRequirement'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
@@ -12,6 +13,7 @@ export default function ResetPassword() {
     const [showIncorrectConfirmPassword, setPasswordDifference] = useState(false)
     const [alertMessage, setAlertMessage] = useState(" ")
     const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "warning" | null>(null)
+
     const router = useRouter()
 
     useEffect(() => {
@@ -38,12 +40,18 @@ export default function ResetPassword() {
 
     const updatePassword = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (showIncorrectConfirmPassword) return
 
         const userPassword = document.getElementById('newPassword') as HTMLInputElement
         const confirmPassword = document.getElementById('confirmNewPassword') as HTMLInputElement
 
         if (userPassword.value != confirmPassword.value) {
+            return
+        }
+
+        const missing = checkPasswordRequirement(confirmPassword.value)
+        if (missing) {
+            
+          (missing)
             return
         }
 
@@ -67,9 +75,9 @@ export default function ResetPassword() {
 
     const updatePasswordSimilarity = () => {
         if (confirmNewPassword.current?.value != '' && newPassword.current?.value != confirmNewPassword.current?.value) {
-            setPasswordDifference(true)
+            setErrorMessage('Password do not match!')
         } else {
-            setPasswordDifference(false)
+            setErrorMessage('Password do not match!')
         }
     }
 
@@ -176,7 +184,6 @@ export default function ResetPassword() {
                         Update Password
                     </button>
                 </div>
-
                 <div className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
                         onClick={() => router.push('/registration/login')}>
                     <p>Back to <a className="font-semibold underline">Login</a></p>

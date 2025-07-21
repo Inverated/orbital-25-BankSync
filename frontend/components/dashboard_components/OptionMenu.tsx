@@ -14,7 +14,7 @@ export default function OptionMenu({ user }: OptionMenuProps) {
         { label: "Logout", icon: <LogOut className="" /> }
     ] as const
     const router = useRouter()
-    const [logoutDialogue, togglePopout] = useState(false)
+    const [logoutDialogue, setLogoutDialogue] = useState(false)
 
     const logout = async () => {
         await supabase.auth.refreshSession();
@@ -32,9 +32,10 @@ export default function OptionMenu({ user }: OptionMenuProps) {
     const selectOption = (label: string) => {
         switch (label) {
             case "Logout":
-                togglePopout(true)
+                setLogoutDialogue(true)
                 break
             case "Settings":
+                router.push('/dashboard/settings')
                 break
             default:
                 console.error("Unknown option")
@@ -43,7 +44,7 @@ export default function OptionMenu({ user }: OptionMenuProps) {
 
     const handleButtonDown = (event: KeyboardEvent) => {
         if (event.key == "Escape") {
-            togglePopout(false)
+            setLogoutDialogue(false)
         }
     }
 
@@ -86,7 +87,7 @@ export default function OptionMenu({ user }: OptionMenuProps) {
                         <div className="flex justify-end pt-6 gap-4">
                             <button
                                 onClick={() => {
-                                    togglePopout(false)
+                                    setLogoutDialogue(false)
                                 }}
                                 className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg font-sans font-semibold tracking-widest border px-3 py-2 transition cursor-pointer"
                             >

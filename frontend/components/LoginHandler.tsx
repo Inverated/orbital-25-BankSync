@@ -6,7 +6,8 @@ import { useState } from "react";
 export default function Login() {
     const router = useRouter()
     const [savedEmail, setEmail] = useState('')
-    
+    const [errorMessage, setErrorMessage] = useState('')
+
     const loginUser = async (formData: FormData) => {
         const userEmail = formData.get('email') as string;
         const userPassword = formData.get('password') as string;
@@ -15,11 +16,11 @@ export default function Login() {
             email: userEmail,
             password: userPassword
         })
-        
+
         setEmail(userEmail)
 
         if (error) {
-            alert(error.message)
+            setErrorMessage(error.message)
             return
         }
 
@@ -41,7 +42,6 @@ export default function Login() {
             <form action={loginUser}>
                 <div className="relative w-full flex items-center pb-2">
                     <UserRound className="absolute left-1 top-5.5 text-gray-500" />
-
                     <input
                         id='loginEmailInput'
                         type="email"
@@ -93,6 +93,19 @@ export default function Login() {
                     <span className="ml-auto text-sans text-sm text-gray-500 tracking-wider">
                         Forgot your password?
                     </span>
+                </div>
+                <div className="text-sm flex justify-between items-center my-3 w-full">
+                    <div className={"text-shadow-xm text-red-600 " + (errorMessage == '' ? 'invisible' : '')}>
+                        {errorMessage}
+                    </div>
+                    <button
+                        type='button'
+                        className="cursor-pointer"
+                        onClick={redirectToForgetPassword}>
+                        <span className="font-semibold underline ml-auto">
+                            Forgot your password?
+                        </span>
+                    </button>
                 </div>
 
                 <div>

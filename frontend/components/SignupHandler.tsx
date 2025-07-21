@@ -3,22 +3,32 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { LockKeyhole, UserRound } from "lucide-react";
 import { Alert } from "@mui/material";
+import { checkPasswordRequirement } from "@/utils/passwordRequirement";
 
 export default function Signup() {
     const router = useRouter();
-    const [showIncorrectConfirmPassword, setPasswordDifference] = useState(false)
     const [showSuccessfulSignup, setIsSuccess] = useState(false)
+    const [signupErrorMessage, setErrorMessage] = useState('')
 
     const signupUser = async (event: FormEvent) => {
         event.preventDefault()
-
-        if (showIncorrectConfirmPassword) return
 
         const userEmail = document.getElementById('email') as HTMLInputElement
         const userPassword = document.getElementById('password') as HTMLInputElement
         const confirmPassword = document.getElementById('confirmPassword') as HTMLInputElement
 
+        if (userEmail.value == '') {
+            setErrorMessage('Email is required')
+            return
+        }
+
         if (userPassword.value != confirmPassword.value) {
+            return
+        }
+
+        const missing = checkPasswordRequirement(confirmPassword.value)
+        if (missing) {
+            setErrorMessage(missing)
             return
         }
 
@@ -28,7 +38,7 @@ export default function Signup() {
         })
 
         if (error) {
-            alert(error.message)
+            setErrorMessage(error.message)
             return
         }
 
@@ -41,9 +51,9 @@ export default function Signup() {
         const confirmPassword = document.getElementById('confirmPassword') as HTMLInputElement
 
         if (confirmPassword.value != '' && userPassword.value != confirmPassword.value) {
-            setPasswordDifference(true)
+            setErrorMessage('Password do not match!')
         } else {
-            setPasswordDifference(false)
+            setErrorMessage('')
         }
     }
 
@@ -124,7 +134,7 @@ export default function Signup() {
                         Confirm password
                     </label>
                 </div>
-
+              
                 <div className="pb-6">
                     {showIncorrectConfirmPassword &&
                         <Alert 

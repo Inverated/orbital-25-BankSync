@@ -6,21 +6,21 @@ export default function ExportTable(selectedTable: {
     data: Transaction[] | Account[],
     dataHeader: string[]
 }) {
-    const [transactionEntry, setTransaction] = useState<Transaction[]>([])
-    const [accountEntry, setAccount] = useState<Account[]>([])
-    const [tableHeader, setHeader] = useState<string[]>([])
+    const [transactionEntry, setTransactionEntry] = useState<Transaction[]>([])
+    const [accountEntry, setAccountEntry] = useState<Account[]>([])
+    const [tableHeader, setTableHeader] = useState<string[]>([])
 
     useEffect(() => {
         // Data load instantly if set both at once
-        setTransaction(selectedTable.data as Transaction[])
-        setAccount(selectedTable.data as Account[])
-        setHeader(selectedTable.dataHeader)
+        setTransactionEntry(selectedTable.data as Transaction[])
+        setAccountEntry(selectedTable.data as Account[])
+        setTableHeader(selectedTable.dataHeader)
     }, [selectedTable.table, selectedTable.data, selectedTable.dataHeader])
 
     const rowStyle = "px-4 py-2 whitespace-pre-line max-w-fit overflow-hidden"
 
     return (
-        transactionEntry.length != 0 && accountEntry.length != 0 && <>
+        transactionEntry.length != 0 && accountEntry.length != 0 &&
             <div className="overflow-auto shadow-md mt-4 max-h-[60vh]">
                 {selectedTable.table == 'account' ?
                     <table className="text-xs w-full text-left rtl:text-right text-gray-500">
@@ -73,10 +73,10 @@ export default function ExportTable(selectedTable: {
                                     Withdrawal
                                 </th>
                                 <th scope="col" className={rowStyle}>
-                                    Category
+                                    Ending Balance
                                 </th>
                                 <th scope="col" className={rowStyle}>
-                                    Ending Balance
+                                    Category
                                 </th>
                                 <th scope="col" className={rowStyle}>
                                     Account No
@@ -100,10 +100,10 @@ export default function ExportTable(selectedTable: {
                                         {transaction.withdrawal_amount && transaction.withdrawal_amount != 0 ? transaction.withdrawal_amount.toFixed(2) : ''}
                                     </td>
                                     <td className={rowStyle}>
-                                        {transaction.category}
+                                        {transaction.ending_balance?.toFixed(2)}
                                     </td>
                                     <td className={rowStyle}>
-                                        {transaction.ending_balance?.toFixed(2)}
+                                        {transaction.category}
                                     </td>
                                     <td className={rowStyle}>
                                         {transaction.account_no}
@@ -114,6 +114,5 @@ export default function ExportTable(selectedTable: {
                     </table>
                 }
             </div>
-        </>
     )
 }
