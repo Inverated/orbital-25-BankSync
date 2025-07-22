@@ -6,7 +6,7 @@
     "build": "npm --prefix frontend run build",
     "start": "npm --prefix frontend run start",
     "lint": "npm --prefix frontend run lint",
-    "test": "python -m pytest --html=report.html --self-contained-html"
+    "test": "python -m pytest -s"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

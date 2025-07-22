@@ -27,16 +27,21 @@ def parseDate(splitted: list[str], yyyy: str) -> bool | tuple[str, str]:
         # length of transaction and credited date same, shortest possible d/m d/m, ensure 2nd d/m is not month
         # 1/1 1/1 ...,  not 1 May ... 
         # dd/mm dd/mm ...
+        descriptionStartIndex = 2
         try:
             date = parse(splitted[0], dayfirst=True, default=defaultDate)
             date2 = parse(splitted[1], dayfirst=True, default=defaultDate)
             if date.month == date2.month:
-                return (date.date().isoformat(), splitted[2])
+                while (splitted[descriptionStartIndex].strip() == '' and descriptionStartIndex >= 0):
+                    descriptionStartIndex -= 1
+                return (date.date().isoformat(), splitted[descriptionStartIndex])
         except:
             None
             
     for index in range(3, 0, -1):
         descriptionStartIndex = index
+        while (splitted[descriptionStartIndex].strip() == '' and descriptionStartIndex >= 0):
+            descriptionStartIndex -= 1
         
         each = ' '.join(splitted[:index])
         try:
@@ -102,4 +107,10 @@ def standardRowBreakdown(row: str, yyyy: str = '1900') -> list[str] | bool:
             break
 
     description = ' '.join(splitted[descriptionStartIndex: descriptionEndIndex])
+    if description.strip() == '':
+        if descriptionEndIndex - 1 != 0:
+            description = ' '.join(splitted[descriptionEndIndex - 1: descriptionEndIndex])
+        else:
+            description = ' '.join(splitted[descriptionStartIndex: descriptionStartIndex + 1])
+            
     return [date, description, change, balance]

@@ -1,0 +1,149 @@
+Information
+12916\N\503\M
+As part of our efforts to be a more environmentally-friendly bank, all our account
+statements will now be printed on both sides of the page.
+123456
+STATEMENT  OF ACCOUNT
+NAME
+ADDRESS                                          Page 1 of 4
+ADDRESS                                                     For enquiries, please call
+SINGAPORE ADDRESS                                 our Customer Service Officers at 1800 363 3333
+OCBC North Branch
+FRANK ACCOUNT                                             1 AUG 2019 TO 31 AUG 2019
+Account No. 655881011010
+Transaction Value
+Date   Date  Description  Cheque        Withdrawal   Deposit     Balance
+BALANCE B/F                                            4,119.17
+01 AUG 01 AUG Long long long long long long long 6.89             4,112.28
+Long long long long long long long
+Long long long long long long long
+Long long long long long long long
+Long long long long long long long
+Long long long long long long long
+Long long long long long long long
+Long long long long long long long
+
+01 AUG 01 AUG Short                             13.37                   4,098.91
+01 AUG 01 AUG S                 1.70                    4,097.21
+04 AUG 04 AUG 1                  2.00                    4,095.21
+05 AUG 05 AUG 2               100.00                   3,995.21
+06 AUG 06 AUG 3               1.70                    3,993.51
+06 AUG 06 AUG Next row date dd/mm/yyyy          50.00                   3,943.51
+04/08/19
+07 AUG 08 AUG Next row date dd mmm           50.00                   3,893.51
+07 AUG
+07 AUG 08 AUG Next row date dd mmm and description    13.50                   3,880.01
+07 AUG Description
+RNB69SASY\1
+TRANSACTION CODE DESCRIPTION
+A/C       Account       ??         INT      Interest   ??
+A/C CLOSED Account Closed ????     I/COLLN  Inward Collection ????
+ATM O     ATM Overseas  ???????    IBG      Inter-Bank GIRO ??
+ATM PAYMENT Automated Teller Machine Payment ??????? INB Internet Banking ????
+ATM TRANSFER Automated Teller Machine Transfer ??????? INB TRANSFER Internet Banking Transfer ??????
+ACU       Foreign Currency ??      INS      Insurance  ??
+ADJ       Adjustment    ??         L/C      Letter of Credit ???
+ADV       Advance       ???        L CHQ    Late Cheque ????
+AMD       Amendment     ??         MER      Merchant   ???????
+ASI       Automated Standing Instruction ?????? NEGN Negotiation ?????
+BANK CHARGES Bank Charges ????     NETS     NETS       ????????
+BAL       Balance       ??         NOM      Nominee    ???
+C/Order   Cashier's Order ??       O/COLLN  Outward Collection ????
+CHQ DP    Cheque Deposit ????      PAYMENT-MAS MEPS Payment ????(MAS)??????-??
+CC        Cash Card     ???        PER LOAN Personal Loan ????
+CDP       Central Depository ?????????? PHN TRANSFER PhoneBank Transfer ??????
+COM       Commission    ??         POS      Point of Sale ????
+CONV      Conversion    ????       POST     Postage    ??
+CR        Credit        ??/??      PREM     Premium    ???
+CRVISA    VISA Electron Credit ?????? PS    Power Supply ??????
+CANC TT   Telegraphic Transfer Cancellation ?????? REIMB Reimbursement ??
+DIV       Dividend      ??         RTN GIRO Return GIRO ????
+DR        Debit         ??/??      RTN CHQ  Return Cheque ????
+DD        Demand Draft  ????       RECEIPTS-MAS MEPS Receipts ???????????-??
+DVE       VISA Electron Purchases ???? SEC  Security   ??
+DDB       Direct Debit  ??????     SGD      Singapore Dollar ??
+DCR       Direct Credit ??????     SATM     Shared ATM ???????
+EPS       Electronic Payment of Shares ?????? ST SingTel ???
+ES        EasiSave      ??????     SER CHARGE Service Charge ???
+ES FIXED FEE EasiSave Fixed Fee ???????? SHR Share NETS ??????????
+ESA       Electronic Share Application ?????? T/R Trust Receipt ????
+EXPORT LOAN Export Loan ????       TT       Telegraphic Transfer ????
+FCY       Foreign Currency ??      TRAN CHARGE Transaction Charge ????
+HSE LOAN  House Loan    ????       TRADE FINANCE Trade Finance ????
+IMPORT LOAN Import Loan ????       TRANSFER Transfer   ??
+Contact for Consumer Banking:    Contact for Business Banking:
+Phone Bank:  1800 363 3333       Commercial Service Centre: 6538 1111
+Online Feedback and Enquiry: Visit the OCBC website > Contact us Online Feedback and Enquiry: Visit the OCBC website > Business Banking > Contact us
+(at the top right corner)        (at the top right corner)
+APPLICATIONS FOR INDIVIDUALS
+ATM Card      PHONE/INTERNET/MOBILE BANKING
+Application for Banking Services Apply at any OCBC Bank Branch Three easy ways to apply:-
+1. Apply at any OCBC ATM with your ATM Card and PIN.
+Select 'Other Services'
+Select 'Phone Banking Application' or
+'Internet Banking/Mobile Banking Application';
+or
+2. Download the following forms from the OCBC website > Personal Banking >
+Help and Support > Banking Forms. Complete and mail them to us (the
+address can be found on the forms).
+Phone Banking Services Form (Personal)
+Internet / Mobile Banking Services Form (Personal)
+or
+3. Apply at any OCBC Branch
+eBANKING APPLICATIONS FOR CORPORATES
+ATM Card      PHONE BANKING   INTERNET BANKING
+Application for Access   Apply at any OCBC Bank Branch Download the Apply for Business Download the Apply & Manage
+PhoneBanking and eAlerts Form from OCBC Velocity Form from the
+the OCBC website > Business Banking > OCBC website > Business
+Help and Support > Banking Forms. Banking > Help and Support >
+Complete and mail it to us (the address Banking Forms. Complete and
+can be found on the form). mail it to us (the address can be
+found on the form).
+NAME                                     STATEMENT  OF ACCOUNT
+Page 2 of 4
+FRANK ACCOUNT                                             1 AUG 2019 TO 31 AUG 2019
+Account No. 655881011010
+Transaction Value
+Date   Date  Description  Cheque        Withdrawal   Deposit     Balance
+07 AUG 08 AUG Single Transaction Page                 7.50        3,887.51
+RNB69SASY\2
+Page 2 of 4
+
+FRANK ACCOUNT                                             1 AUG 2019 TO 31 AUG 2019
+Account No. 655881011010
+Transaction Value
+Date   Date  Description  Cheque        Withdrawal   Deposit     Balance
+RNB69SASY\2
+
+NAME                                     STATEMENT  OF ACCOUNT
+Page 3 of 4
+FRANK ACCOUNT                                             1 AUG 2019 TO 31 AUG 2019
+Account No. 655881011010
+Transaction Value
+Date   Date  Description  Cheque        Withdrawal   Deposit     Balance
+BALANCE C/F                                            4,095.69
+Total Withdrawals/Deposits    824.54      801.06
+Total Interest Paid This Year              1.95
+Average Balance                          4,264.45
+CHECK YOUR STATEMENT
+Please check this statement & advise us of any discrepancies within 14 days of receipt. If we do not hear from you,
+we will take this statement as correct and binding.
+For enquiries, please call our Customer Service Officers at 1800 363 3333.
+RNB69SASY\3
+NAME                                     STATEMENT  OF ACCOUNT
+Page 4 of 4
+UPDATING YOUR PERSONAL PARTICULARS
+You may update your address and contact numbers via OCBC Online Banking or our ATMs. Alternatively, complete and mail us
+the Change of address / Contact details form: OCBC website > Personal Banking > Help and Support > Banking Forms.
+OCBC  PROMOTION  & INFORMATION
+REVISION OF INTEREST RATES  From 1 September 2019, interest rates for 360 Account
+and Premier Dividend+ Savings Account will be raised.
+To view the new rates and more details, visit
+OCBC website > Notices.
+REVISION OF BRANCH OPERATING Choa Chu Kang and Marine Parade branches have revised
+HOURS                       operating hours from 22 Aug. Clementi and Compass One
+branches will follow suit on 1 Sep. The branches
+will open from 11am to 7pm on Mon to Fri; 11am to 1.30
+pm on Sat and are closed on Sun and Public Holidays.
+For more information, visit any of our branches or log on to OCBC Website.
+RNB69SASY\4
