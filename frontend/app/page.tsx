@@ -34,7 +34,7 @@ export default function Home() {
             <section className="bg-gray-100 pt-39 pb-17 flex-col items-center text-center">
                 <h1 className="text-6xl font-sans font-bold">Welcome to</h1>
 
-                <Image src="/name.png" alt="BankSync" width={500} height={250} className="mx-auto" />
+                <Image src="/name.png" alt="BankSync" width={500} height={250} className="mx-auto brightness-109" />
                 
                 <p className="text-lg text-gray-500 w-3/8 mx-auto">
                     A simple, centralized platform to manage all your finances.
