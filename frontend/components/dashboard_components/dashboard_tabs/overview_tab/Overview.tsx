@@ -6,6 +6,7 @@ import { useDatabase } from "@/context/DatabaseContext";
 import AnalyticsDatePicker from "@/utils/DatePicker";
 import { Dayjs } from "dayjs";
 import IncomeExpensesPie from "./IncomeExpensesPie";
+import { CircleArrowDown, CircleArrowUp, CircleDollarSign } from "lucide-react";
 
 export default function Overview() {
     const [totalBal, setTotalBal] = useState(0.0);
@@ -75,9 +76,14 @@ export default function Overview() {
         isLoaded &&
         <div className="flex flex-col items-center justify-center">
             <div 
-                className="py-5 px-7 m-5 w-2/3 border border-green-500 border-2 shadow-md hover:cursor-pointer rounded-lg">
-                <button onClick={expandTotalBal} className="text-2xl hover:cursor-pointer w-full text-start">
-                    <b>Total balance:</b> ${totalBal.toFixed(2)}
+                className="py-5 px-7 m-5 w-2/3 border border-green-500 border-2 hover:cursor-pointer rounded-lg"
+            >
+                <button onClick={expandTotalBal} className="flex flex-row items-center gap-3 hover:cursor-pointer">
+                    <CircleDollarSign className="h-9 w-9 text-green-500" />
+                    
+                    <div className="text-2xl w-full text-start">
+                        <b>Total balance:</b> ${totalBal.toFixed(2)}
+                    </div>
                 </button>
 
                 <div id="expanded_account" className="hidden">
@@ -110,23 +116,27 @@ export default function Overview() {
             </div>
 
             <div className="flex flex-col space-y-5 space-x-5 sm:flex-row justify-between w-2/3">
-                <div className="justify-items-start w-1/1 h-full py-3 px-7 border border-green-500 border-2 shadow-md hover:cursor-pointer rounded-lg">
+                <div className="justify-items-start w-1/1 h-full py-5 px-7 border border-green-500 border-2 hover:cursor-pointer rounded-lg">
                     <button 
                         onClick={() => {
-                            if (showIncomeDatePicker) {
-                                setShowIncomeDatePicker(false);
-                                setIncomeDate(null);
-                            } else {
-                                setShowIncomeDatePicker(true);
-                            }
-                        }}
-                        className="text-2xl hover:cursor-pointer text-start"
+                                if (showIncomeDatePicker) {
+                                    setShowIncomeDatePicker(false);
+                                    setIncomeDate(null);
+                                } else {
+                                    setShowIncomeDatePicker(true);
+                                }
+                            }}
+                        className="flex flex-row items-center gap-3 hover:cursor-pointer"
                     >
-                        <b>Income:</b> ${income.toFixed(2)}
+                        <CircleArrowUp className="h-9 w-9 text-blue-500" />
+                        
+                        <div className="text-2xl w-full text-start">
+                            <b>Income:</b> ${income.toFixed(2)}
+                        </div>
                     </button>
 
                     {showIncomeDatePicker && (
-                        <div className="flex flex-row items-center justify-center p-2">
+                        <div className="flex flex-row items-center justify-center p-3">
                             <AnalyticsDatePicker 
                                 label="Select a date"
                                 value={incomeDate}
@@ -141,23 +151,27 @@ export default function Overview() {
                         </div>
                     )}
                 </div>
-                <div className="justify-items-start w-1/1 h-full py-3 px-7 border border-green-500 border-2 shadow-md hover:cursor-pointer rounded-lg">
+                <div className="justify-items-start w-1/1 h-full py-5 px-7 border border-green-500 border-2 hover:cursor-pointer rounded-lg">
                     <button 
                         onClick={() => {
-                            if (showExpensesDatePicker) {
-                                setShowExpensesDatePicker(false);
-                                setExpensesDate(null);
-                            } else {
-                                setShowExpensesDatePicker(true);
-                            }
-                        }}
-                        className="text-2xl hover:cursor-pointer text-start"
+                                if (showExpensesDatePicker) {
+                                    setShowExpensesDatePicker(false);
+                                    setExpensesDate(null);
+                                } else {
+                                    setShowExpensesDatePicker(true);
+                                }
+                            }}
+                        className="flex flex-row items-center gap-3 hover:cursor-pointer"
                     >
-                        <b>Expenses:</b> ${expenses.toFixed(2)}
+                        <CircleArrowDown className="h-9 w-9 text-red-500" />
+                        
+                        <div className="text-2xl w-full text-start">
+                            <b>Expenses:</b> ${expenses.toFixed(2)}
+                        </div>
                     </button>
 
                     {showExpensesDatePicker && (
-                        <div className="flex flex-row items-center justify-center p-2">
+                        <div className="flex flex-row items-center justify-center p-3">
                             <AnalyticsDatePicker 
                                 label="Select a date"
                                 value={expensesDate}

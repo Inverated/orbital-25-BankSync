@@ -79,8 +79,15 @@ export default function IncomeExpensesPie({ date, category }: IncomeExpensesPieP
     }, [date, transactions])
 
     const generateSliceColors = (index: number, total: number) => {
-        const hue = (index * (360 / total)) % 360;
-        return `hsl(${hue}, 70%, 80%)`;
+        const hue = (category === "income") ? 210 : 0;
+        const saturation = 50 + (index * (30 / (total - 1)));
+        const lightness = 80 + (index * (50 / (total - 1)));
+
+        if (total === 1) {
+            return `hsl(${hue}, 70%, 65%)`
+        } else {
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
     }
 
     const chartData = {

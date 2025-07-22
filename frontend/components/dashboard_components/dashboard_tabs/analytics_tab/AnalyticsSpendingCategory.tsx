@@ -62,9 +62,9 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
         }
     }, [startDate, endDate, transactions])
 
-    const generateSliceColors = (index: number, total: number) => {
+    const generateSliceColors = (index: number, total: number) => { 
         const hue = (index * (360 / total)) % 360;
-        return `hsl(${hue}, 70%, 80%)`;
+        return `hsl(${hue}, 70%, 70%)`;
     }
 
     const chartData = {
