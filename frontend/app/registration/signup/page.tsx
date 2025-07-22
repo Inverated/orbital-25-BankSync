@@ -47,7 +47,7 @@ export default function Signup() {
     return (
         currentSession == null && sessionLoaded &&
         <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: "url('/background.jpg')" }}
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1617957743043-91ba3aa22558?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}
         >
             <div className="w-[600px] rounded-3xl shadow-xl bg-white px-10 py-7 flex flex-row gap-1">
                 <div className="flex items-start justify-start w-[5%] pt-1">
