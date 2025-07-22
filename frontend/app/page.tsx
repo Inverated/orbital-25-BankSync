@@ -119,7 +119,7 @@ export default function Home() {
 
             <footer className="bg-white pt-5 pb-5 flex items-center justify-center text-center">
                 <p className="text-md text-gray-500">
-                    Copyright &copy; { new Date().getFullYear()} Orbital &middot; BankSync | All rights reserved.
+                    Copyright &copy; { new Date().getFullYear()} Orbital <a className="font-bold">&middot;</a> BankSync | All rights reserved.
                 </p>
             </footer>
         </div>
