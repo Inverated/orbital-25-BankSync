@@ -41,7 +41,7 @@ export default function Home() {
                 </p>
 
                 <p className="text-lg text-gray-500 w-5/16 mx-auto">
-                    <a className="underline decoration-green-500 decoration-2 underline-offset-5">Monitor balances</a>, <a className="underline decoration-green-500 decoration-2 underline-offset-5">track spending</a> and <a className="underline decoration-green-500 decoration-2 underline-offset-5">uncover financial insights</a> across all your accounts — all in one place.
+                    <a className="text-green-500 font-semibold">Monitor balances</a>, <a className="text-green-500 font-semibold">track spending</a> and <a className="text-green-500 font-semibold">uncover financial insights</a> across all your accounts — all in one place.
                 </p>
             </section>
 
@@ -87,13 +87,13 @@ export default function Home() {
                 </p>
 
                 <div className="grid grid-cols-2 px-130">
-                    <Image src="/DBS.png" alt="DBS" width={200} height={250} className="mx-auto" />
-                    <Image src="/POSB.png" alt="BankSync" width={250} height={250} className="mx-auto" />
+                    <Image src="https://1000logos.net/wp-content/uploads/2021/05/DBS-Bank-logo.png" alt="DBS" width={200} height={250} className="mx-auto" />
+                    <Image src="https://www.posb.com.sg/iwov-resources/flp/images/posb_logo.svg?1" alt="POSB" width={200} height={200} className="mx-auto pt-4 bg-transparent" />
                 </div>
                 <div className="grid grid-cols-3 px-70">
-                    <Image src="/OCBC.png" alt="BankSync" width={250} height={250} className="mx-auto" />
-                    <Image src="/SC.png" alt="BankSync" width={250} height={250} className="mx-auto" />
-                    <Image src="/UOB.png" alt="BankSync" width={250} height={250} className="mx-auto" />
+                    <Image src="https://1000logos.net/wp-content/uploads/2021/10/OCBC-Bank-Logo.png" alt="OCBC" width={250} height={250} className="mx-auto" />
+                    <Image src="https://1000logos.net/wp-content/uploads/2021/11/Standard-Chartered-logo.png" alt="Standard Charter" width={250} height={250} className="mx-auto" />
+                    <Image src="https://1000logos.net/wp-content/uploads/2021/09/UOB-Logo.png" alt="UOB" width={250} height={250} className="mx-auto" />
                 </div>
             </section>
 
