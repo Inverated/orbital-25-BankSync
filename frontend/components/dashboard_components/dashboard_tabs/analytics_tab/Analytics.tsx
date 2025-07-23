@@ -2,18 +2,17 @@ import { useState } from "react";
 import IncomeExpenses from "./AnalyticsIncomeVsExpenses";
 import SpendingCategory from "./AnalyticsSpendingCategory";
 import SpendingTrend from "./AnalyticsSpendingTrend";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { Ban, MousePointer2 } from "lucide-react";
 import { Alert } from "@mui/material";
 import AnalyticsDatePicker from "@/utils/DatePicker";
 
 export default function Analytics() {
     const [startDate, setStartDate] = useState<Dayjs | null>(null);
-    const [endDate, setEndDate] = useState<Dayjs | null>(null);
+    const [endDate, setEndDate] = useState<Dayjs | null>(dayjs().subtract(1, "month"));
 
-    const nullDates = !startDate && !endDate;
+    const nullDates = !startDate;
     const invalidDate = 
-        (!startDate && endDate) || 
         (startDate && !endDate) || 
         (startDate && endDate && startDate.isAfter(endDate));
 
