@@ -116,7 +116,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
     }
 
     return (
-        <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-3">
+        <div className="border border-gray-300 border-2 p-4 rounded-lg flex-1 flex flex-col gap-3">
             <h1 className="font-bold text-xl">Spending by Category</h1>
 
             <div className="flex flex-col justify-center items-center gap-2 h-full w-full">
@@ -145,7 +145,7 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
                     )
                 ) : (
                     <div className="flex flex-col justify-center items-center gap-2 h-[500px]">
-                        <PieChart className="h-12 w-12" />
+                        <PieChart className="h-12 w-12 text-green-500" />
                         <p className="text-sm text-gray-400">Category Breakdown Chart</p>
                     </div>
                 )}
