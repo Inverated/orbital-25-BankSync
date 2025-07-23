@@ -57,7 +57,7 @@ export default function IncomeExpensesPie({ date, category }: IncomeExpensesPieP
                         
                         return {
                             account_no,
-                            account_name: account?.account_name || account_no,
+                            account_name: account?.account_name || "",
                             cash
                         };
                     }
