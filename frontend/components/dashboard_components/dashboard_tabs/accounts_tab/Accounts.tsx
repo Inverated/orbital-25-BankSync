@@ -23,7 +23,7 @@ export default function Accounts() {
             <div className="w-3/4">
                 {currAccounts.map((account, index) => (
                     <div 
-                        className="rounded-lg p-7 m-5 border border-gray-300 border-2 space-y-1 hover:cursor-pointer" 
+                        className="rounded-lg p-7 m-5 border border-gray-300 border-2 space-y-2 hover:cursor-pointer" 
                         key={index}
                         onClick={() => toggleExpand(index)}
                     >
