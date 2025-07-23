@@ -218,7 +218,7 @@ export default function Transactions() {
                             <div className='flex justify-center items-center my-7'>
                                 <input
                                     id='select_page_num'
-                                    className='border border-black w-[40px] mx-1'
+                                    className='w-[40px] mx-1'
                                     type='number'
                                     min='1' max={maxPageNo.current}
                                     defaultValue={currPageRef.current}

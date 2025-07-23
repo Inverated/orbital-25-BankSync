@@ -100,7 +100,6 @@ export default function OptionMenu({ user }: OptionMenuProps) {
                                 Confirm
                             </button>
                         </div>
-
                     </div>
                 </div>
             }

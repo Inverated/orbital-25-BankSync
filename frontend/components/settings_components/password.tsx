@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { checkPasswordRequirement } from "@/utils/passwordRequirement";
-import { KeyRound } from "lucide-react";
+import { LockKeyhole } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useState } from "react"
 
@@ -50,16 +50,16 @@ export default function Password() {
     }
 
     return (
-        <div className="px-5 py-5">
-            <div className="text-2xl">Change Password</div>
-            <form className="space-y-2">
+        <div className="px-7 py-4.5">
+            <div className="text-2xl font-semibold">Change Password</div>
+            <form className="space-y-3.5">
                 <div>
-                    <div className="mt-5">Change user password</div>
-                    <div className="text-red-400">Note: If signed up using OAuth, set password login here</div>
+                    <div className="mt-5">Change your password.</div>
+                    <div className="text-red-400">Note: If signed up using OAuth, set password login here.</div>
                 </div>
                 <div>
-                    <div className="my-2 flex border">
-                        <KeyRound className="m-1" />
+                    <div className="my-2 flex border rounded-lg">
+                        <LockKeyhole className="m-1.5" />
                         <input
                             type="password"
                             id='changePassword'
@@ -67,12 +67,12 @@ export default function Password() {
                             className="bg-transparent w-full"
                             onChange={updatePasswordSimilarity} />
                     </div>
-                    <div className="my-2 flex border">
-                        <KeyRound className="m-1" />
+                    <div className="my-2 flex border rounded-lg">
+                        <LockKeyhole className="m-1.5" />
                         <input
                             type="password"
                             id='confirmChangePassword'
-                            placeholder='Confirm your password'
+                            placeholder='Confirm new password'
                             className="bg-transparent w-full"
                             onChange={updatePasswordSimilarity} />
                     </div>
@@ -83,12 +83,14 @@ export default function Password() {
                 <div hidden={!passwordResetSuccess} className="text-shadow-xm text-green-600">
                     Password reset successful
                 </div>
-                <button
-                    className="border rounded-lg justify-end w-fit px-3 py-1 my-3 hover:cursor-pointer active:scale-95"
-                    type='submit'
-                    onClick={(e) => updatePassword(e)}>
-                    Update
-                </button>
+                <div className="flex justify-end">
+                    <button
+                        className="px-3 py-1.5 my-1 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition"
+                        type='submit'
+                        onClick={(e) => updatePassword(e)}>
+                        Update
+                    </button>
+                </div>
             </form>
         </div>
     )

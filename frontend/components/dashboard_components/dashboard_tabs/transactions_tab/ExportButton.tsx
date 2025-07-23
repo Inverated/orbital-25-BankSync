@@ -156,7 +156,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                     <div className="absolute inset-0 bg-black opacity-50"></div>
                     <div className="bg-white rounded-lg shadow-lg px-9 max-w-5/6 w-full z-60 py-7 max-h-[90vh] overflow-auto">
                         <div className="flex flex-row justify-between">
-                            <p className="text-2xl font-bold">Export</p>
+                            <p className="text-2xl font-bold tracking-wide">Export</p>
                             <label className="flex flex-row space-x-2 py-1">
                                 <p>Use filtered data</p>
                                 <input id='filterCheck' checked={useFiltered} onChange={() => setUseFiltered(!useFiltered)} type="checkbox" />

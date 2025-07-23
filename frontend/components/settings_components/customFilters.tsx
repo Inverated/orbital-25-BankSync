@@ -4,6 +4,7 @@ import { useProfile } from "@/context/ProfileContext"
 import { useUserId } from "@/context/UserContext"
 import { addProfileDetails } from "@/lib/supabaseUpdate"
 import { defaultKeywordMap, Profile } from "@/utils/types"
+import { CircleCheck, CircleX } from "lucide-react"
 import { useEffect, useState } from "react"
 
 export default function CustomFilter() {
@@ -65,21 +66,26 @@ export default function CustomFilter() {
     }, [refreshStatus])
 
     return (
-        <div className="pt-5 w-full">
-            <div className="px-5 text-2xl">Custom Filter Condition</div>
-            <div className="px-5 py-5">
+        <div className="px-7 py-4.5 w-full">
+            <div className="text-2xl font-semibold">Custom Filter Condition</div>
+            <div className="pt-5">
                 <div>
-                    Filter priority top to bottom. Will match entire word, not partial
-                    <div className="text-sm">
-                        <p>Example: Matching &quot;to&quot;:
-                            From A <span className="text-green-400 italic">to</span> B;
-                            Cus<span className="text-red-400 italic">to</span>m</p>
+                    The filters are checked in the order listed, from top to bottom. 
+                    A filter will only match if the whole word matches -- partical matches will be ignored.
+                    <div className="pt-1 text-sm text-gray-400">
+                        <p>Example: Matching the word &quot;to&quot;</p>
+                        <div className="flex flex-row items-center px-1 p-0.5">
+                            <CircleCheck className="w-5 h-5 text-blue-400 mx-1" />From A <span className="text-blue-400 italic mx-1">to</span> B (matches because it contains the whole word "to")
+                        </div> 
+                        <div className="flex flex-row items-center px-1">
+                            <CircleX className="w-5 h-5 text-red-400 mx-1" />Cus<span className="text-red-400 italic">to</span>m (does not match because "to" is not a whole word by itself)
+                        </div> 
                     </div>
 
                 </div>
             </div>
             {categoryArray.map(([category, items], index) =>
-                <div key={category} className="flex flex-col my-4 px-8 py-1">
+                <div key={category} className="flex flex-col my-4 py-1">
                     <ComponentFilterRow
                         category={category}
                         items={items}
@@ -88,17 +94,17 @@ export default function CustomFilter() {
                         updateContentPosition={updateContentPosition} />
                 </div>)
             }
-            <div className="flex sm:flex-row not-sm:flex-col not-sm:space-y-2 items-center bottom-0 sticky w-full border-t justify-between px-4 py-2 bg-white z-50">
-                <button className="h-fit border rounded-lg px-3 py-2 hover:bg-gray-300 hover:cursor-pointer active:scale-95"
+            <div className="flex sm:flex-row not-sm:flex-col not-sm:space-y-2 items-center bottom-0 sticky w-full border-t border-t border-t-2 border-t-gray-300 justify-between px-4 py-2 bg-white z-50">
+                <button className="h-fit px-3 py-1.5 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition"
                     onClick={resetFilter}>
                     Reset Filters
                 </button>
                 <div className="overflow-visible space-x-3 not-sm:flex-col">
-                    <button className="h-fit border rounded-lg px-3 py-2 hover:bg-gray-300 hover:cursor-pointer active:scale-95"
+                    <button className="h-fit px-3 py-1.5 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition"
                         onClick={initialiseCategoryArray}>
                         Cancel
                     </button>
-                    <button className="h-fit border rounded-lg px-3 py-2 hover:bg-gray-300 hover:cursor-pointer active:scale-95"
+                    <button className="h-fit px-3 py-1.5 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition"
                         onClick={setNewCategoryArray}>
                         Confirm
                     </button>

@@ -64,19 +64,19 @@ export default function Settings() {
             <DatabaseProvider userId={currentSession.user.id}>
                 <UserProvider userId={currentSession.user.id}>
                     <div className="flex flex-col h-screen">
-                        <div className="h-20 border-b items-center py-7 px-4 flex justify-between">
+                        <div className="h-20 border-b border-b-gray-300 border-b-2 items-center py-7 px-5 pr-6 flex justify-between">
                             <div className="flex flex-row items-center">
                                 <Menu className="hover:cursor-pointer" onClick={() => setSideMenuVisible(!sideMenuVisible)} />
-                                <p className="text-3xl px-4">Settings</p>
+                                <p className="text-3xl px-4 font-bold tracking-wide">Settings</p>
                             </div>
                             <X onClick={() => router.push('/dashboard')} className="hover:cursor-pointer" />
                         </div>
                         <div className="flex h-auto">
-                            <div className="flex flex-col transition-all min-w-fit min-h-screen border-r py-4 px-5 space-y-3 text-lg" hidden={!sideMenuVisible}>
+                            <div className="flex flex-col transition-all min-w-fit min-h-screen border-r border-r-gray-300 border-r-2 py-4 px-4 space-y-1 text-lg" hidden={!sideMenuVisible}>
                                 {selector.map(option =>
                                     <button
                                         key={option}
-                                        className={"hover:cursor-pointer text-start " + (currentTab == option ? 'text-black' : 'text-gray-400')}
+                                        className={"hover:cursor-pointer hover:bg-gray-200 rounded-lg px-3 py-1 text-start " + (currentTab == option ? 'text-green-500' : 'text-gray-500')}
                                         onClick={() => setCurrentTab(option)}>
                                         {option}
                                     </button>
