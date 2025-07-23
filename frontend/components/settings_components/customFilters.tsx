@@ -75,10 +75,10 @@ export default function CustomFilter() {
                     <div className="pt-1 text-sm text-gray-400">
                         <p>Example: Matching the word &quot;to&quot;</p>
                         <div className="flex flex-row items-center px-1 p-0.5">
-                            <CircleCheck className="w-5 h-5 text-blue-400 mx-1" />From A <span className="text-blue-400 italic mx-1">to</span> B (matches because it contains the whole word "to")
+                            <CircleCheck className="w-5 h-5 text-blue-400 mx-1" />From A <span className="text-blue-400 italic mx-1">to</span> B (matches because it contains the whole word &quot;to&quot;)
                         </div> 
                         <div className="flex flex-row items-center px-1">
-                            <CircleX className="w-5 h-5 text-red-400 mx-1" />Cus<span className="text-red-400 italic">to</span>m (does not match because "to" is not a whole word by itself)
+                            <CircleX className="w-5 h-5 text-red-400 mx-1" />Cus<span className="text-red-400 italic">to</span>m (does not match because &quot;to&quot; is not a whole word by itself)
                         </div> 
                     </div>
 
@@ -110,7 +110,6 @@ export default function CustomFilter() {
                     </button>
                 </div>
             </div>
-
         </div>
     )
 }
