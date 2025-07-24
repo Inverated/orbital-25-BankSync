@@ -94,7 +94,7 @@ export default function CustomFilter() {
                         updateContentPosition={updateContentPosition} />
                 </div>)
             }
-            <div className="flex sm:flex-row not-sm:flex-col not-sm:space-y-2 items-center bottom-0 sticky w-full border-t border-t border-t-2 border-t-gray-300 justify-between px-4 py-2 bg-white z-50">
+            <div className="flex sm:flex-row not-sm:flex-col not-sm:space-y-2 items-center bottom-0 sticky w-full border-t-2 border-t-gray-300 justify-between px-4 py-2 bg-white z-50">
                 <button className="h-fit px-3 py-1.5 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition"
                     onClick={resetFilter}>
                     Reset Filters
