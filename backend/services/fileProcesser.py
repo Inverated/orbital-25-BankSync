@@ -21,6 +21,7 @@ def fileParser(content: bytes, extension: str, password: Optional[str]):
         return parseXlsx(content, password)
     elif (extension == 'txt'):
         return parseTxt(content)
+    return (False, 'Please use a valid file extension')
     """ elif (extension == 'csv'):
         return parseCSV(content) """
 
@@ -87,7 +88,7 @@ def parseTxt(content: bytes):
         stripped = re.sub(r'[^\x20-\x7E\n\r\t]', '', each.strip())
         if len(stripped) > 0:
             extractedText.append(stripped)
-    bank = pdfTextProcesser.detectBank(extractedText)
+    bank = detectBank(extractedText)
     return extractTableDetailsFromText(bank, extractedText)
 
 def extractTableDetailsFromText(bank, extractedText, pypdf = None):
