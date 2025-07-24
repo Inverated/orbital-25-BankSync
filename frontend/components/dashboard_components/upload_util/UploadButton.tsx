@@ -258,7 +258,7 @@ export default function UploadButton() {
                     setUploadDialogue(true);
                     setShowTooltip(false);
                 }}
-                className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'} 
+                className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'}
             />
 
             {showTooltip && (
@@ -268,33 +268,37 @@ export default function UploadButton() {
             )}
 
             {uploadDialogue &&
-                <div className="fixed inset-0 flex justify-center items-center z-50">
+                <div className="fixed inset-0 flex justify-center items-center z-40">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
                     <div className="bg-white rounded-lg shadow-lg px-8 py-5 max-w-5/8 w-full z-60 max-h-11/12 overflow-y-auto">
                         <div className="flex flex-row space-x-2 items-center mb-3">
                             <p className="text-2xl">File Upload</p>
-                            
-                            <Info 
-                                onClick={() => alert('Current supported bank: DBS/POSB, OCBC, UOB and SC pdf only or exported files from BankSync.')} 
-                                className='hover:cursor-pointer h-6 w-6' 
-                            />
+                
+                            <button className="hover:cursor-pointer relative group/help inline-block"
+                                onClick={() => alert('Current supported bank: DBS/POSB, OCBC, UOB and SC pdf only or exported files from BankSync.\n\nGeneric file types with header \nDate  |  Description  |  W.D / D.P  |  D.P / W.D  |  Balance\nworks with some issues in description ending')}>
+                                <Info className='h-6 w-6' />
+                                <span className="z-50 absolute left-8 top-0  bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover/help:opacity-100 transition whitespace-nowrap pointers-events-none">
+                                    Current supported bank: DBS/POSB, OCBC, UOB and SC pdf or exported files from BankSync.
+                                </span>
+                            </button>
+
                         </div>
-                        
+
                         <div
                             onDrop={handleDrop}
                             onDragOver={handleDragOver}
                             className="z-100 flex flex-col items-center justify-center w-full border-2 border-black border-dashed rounded-lg">
-                            <div className="flex flex-col items-center justify-center py-15">
-                                <FileUp className="h-9 w-9"/>
+                            <div className="flex flex-col items-center justify-center py-10">
+                                <FileUp className="h-9 w-9" />
 
                                 <p className="pt-5 text-med text-gray-500">
                                     Choose a file or drag & drop it here
                                 </p>
-                                
+
                                 <p className="pt-1 text-med text-gray-400">
                                     PDF and XLSX format
                                 </p>
-                                
+
                                 <div className="pt-5">
                                     <button
                                         type="button"
@@ -321,7 +325,7 @@ export default function UploadButton() {
                                     hidden={!showParsingLoading}>
                                     <Loader className="animate-spin w-12 h-12 text-blue-500" />
                                 </div>
-                                
+
                                 {passwordQuery &&
                                     <form onSubmit={(event) => {
                                         event.preventDefault()

@@ -32,22 +32,18 @@ export default function AccountsTransactionsTable({ account, resetToggle }: Acco
 
     return (
         <div className="pt-1">
-            <table className="table-fixed"
-                style={{ margin: "0 auto", width: "100%" }}>
+            <table className="table-auto border-separate border-spacing-x-2">
                 <thead>
                     <tr>
-                        <th className="p-1 text-left"
-                            style={{ width: "80%" }}>
+                        <th className="p-1 text-left w-screen">
                             Description
                         </th>
 
-                        <th className="p-1 text-left"
-                            style={{ width: "10%" }}>
+                        <th className="p-1 text-left whitespace-nowrap">
                             Amount
                         </th>
 
-                        <th className="p-1 text-left"
-                            style={{ width: "10%" }}>
+                        <th className="p-1 text-left whitespace-nowrap">
                             Date
                         </th>
                     </tr>
@@ -56,22 +52,15 @@ export default function AccountsTransactionsTable({ account, resetToggle }: Acco
                 <tbody>
                     {currTransactions.slice(0, transactionsCount).map((transaction, index) => (
                         <tr key={index}>
-                            <td className="p-1 text-left"
-                                style={{
-                                    width: "60%",
-                                    wordBreak: "break-word",
-                                    overflowWrap: "anywhere"
-                                }}>
+                            <td className="p-1 text-left break-words">
                                 {transaction.transaction_description}
                             </td>
 
-                            <td className="p-1 text-left"
-                                style={{ width: "20%" }}>
+                            <td className="p-1 text-left whitespace-nowrap">
                                 <TransactionAmount transaction={transaction} />
                             </td>
 
-                            <td className="p-1 text-left"
-                                style={{ width: "20%" }}>
+                            <td className="p-1 text-left whitespace-nowrap">
                                 {transaction.transaction_date}
                             </td>
                         </tr>

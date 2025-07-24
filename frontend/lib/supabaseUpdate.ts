@@ -33,8 +33,9 @@ export async function updateTransactionDetails(userId: string, rowId: number, up
     if (error) throw error
 }
 
-export async function addProfileDetails(userId: string, profile: Profile) {
-    const spb = supabase.from('profile')
-    const { error } = await spb.upsert(profile, { onConflict: 'user_id' })
+export async function updateProfileDetails(profile: Profile) {
+    const { error } = await supabase.from('profile')
+        .upsert(profile,
+            { onConflict: 'user_id' })
     if (error) throw error
 }

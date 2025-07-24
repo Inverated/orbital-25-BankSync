@@ -1,18 +1,36 @@
 import { useProfile } from "@/context/ProfileContext";
-import { queryProfileDetails } from "@/lib/supabaseQuery";
+import { updateProfileDetails } from "@/lib/supabaseUpdate";
+import { Profile } from "@/utils/types";
+import { Alert } from "@mui/material";
 import { UserRound } from "lucide-react";
 import { useState } from "react";
 
 export default function Username() {
     const { profile } = useProfile();
-
-    const [newName, setNewName] = useState(profile.user_name || "User");
+    const [alertMessage, setAlertMessage] = useState('')
+    const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "warning" | null>(null)
+    const [newName, setNewName] = useState(profile.user_name || "");
     const { refreshProfile } = useProfile();
-    
+
     const updateUsername = async (e: React.FormEvent) => {
         e.preventDefault();
-        await queryProfileDetails(profile.user_id, newName);
+        setAlertMessage('')
+        if (newName == profile.user_name) {
+            console.log('wet')
+            setAlertSeverity('warning')
+            setAlertMessage('New username must be different')
+            return
+        }
+        if (newName == '') {
+            setAlertSeverity('warning')
+            setAlertMessage('New username cannot be empty')
+            return
+        }
+        const newProfile: Profile = { ...profile, user_name: newName }
+        await updateProfileDetails(newProfile);
         await refreshProfile();
+        setAlertSeverity('success')
+        setAlertMessage('Username successfully updated')
     }
 
     return (
@@ -36,6 +54,20 @@ export default function Username() {
                             className="bg-transparent w-full"
                             onChange={(e) => setNewName(e.target.value)} />
                     </div>
+                    {alertMessage && alertSeverity && (
+                        <Alert
+                            sx={{
+                                position: "static",
+                                alignItems: "center",
+                                display: "flex",
+                                borderRadius: "12px",
+                            }}
+                            severity={alertSeverity}
+                            className="mt-2"
+                        >
+                            <p id="message">{alertMessage}</p>
+                        </Alert>
+                    )}
                 </div>
 
                 <div className="flex justify-end pt-1.5">

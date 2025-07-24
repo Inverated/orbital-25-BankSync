@@ -2,7 +2,7 @@ import ComponentFilterRow from "@/components/settings_components/componentFilter
 import { useDatabase } from "@/context/DatabaseContext"
 import { useProfile } from "@/context/ProfileContext"
 import { useUserId } from "@/context/UserContext"
-import { addProfileDetails } from "@/lib/supabaseUpdate"
+import { updateProfileDetails } from "@/lib/supabaseUpdate"
 import { defaultKeywordMap, Profile } from "@/utils/types"
 import { CircleCheck, CircleX } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -36,7 +36,7 @@ export default function CustomFilter() {
             user_id: userId,
             category_filter: defaultKeywordMap
         }
-        await addProfileDetails(userId, profile)
+        await updateProfileDetails(profile)
         await refreshProfile()
     }
 
@@ -45,7 +45,7 @@ export default function CustomFilter() {
             user_id: userId,
             category_filter: Object.fromEntries(categoryArray)
         }
-        await addProfileDetails(userId, profile)
+        await updateProfileDetails(profile)
         await refreshProfile()
     }
 

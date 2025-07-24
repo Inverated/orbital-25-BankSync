@@ -75,7 +75,7 @@ export default function Dashboard() {
                             </div>
 
                             <div className="flex justify-end pt-3">
-                                <div className="w-fit rounded-xl px-1 pl-3 py-3 bg-gray-100 flex flex-row items-center">
+                                <div className="max-w-fit  rounded-xl lg:px-3 md:px-1 lg:py-3 md:py-1 bg-gray-100 flex flex-row items-center">
                                     <TabsBar currentPage={currentPage} setPage={setPage} />
                                 </div>
                             </div>

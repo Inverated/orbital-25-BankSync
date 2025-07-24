@@ -22,8 +22,8 @@ export default function Accounts() {
         <div className="flex justify-center">
             <div className="w-3/4">
                 {currAccounts.map((account, index) => (
-                    <div 
-                        className="rounded-lg p-7 m-5 border border-gray-300 border-2 space-y-2 hover:cursor-pointer" 
+                    <div
+                        className="rounded-lg p-7 m-5 border-gray-300 border-2 space-y-2 hover:cursor-pointer" 
                         key={index}
                         onClick={() => toggleExpand(index)}
                     >

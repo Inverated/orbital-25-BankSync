@@ -22,12 +22,12 @@ export default function TabBar({ currentPage, setPage }: TabBarProps) {
 
     return (
         <div className="transition-all">
-            <ul className="flex flex-wrap">
+            <ul className="flex flex-wrap lg:space-x-2 justify-end">
                 {pages.map((tab) => (
-                    <li key={tab} className="me-2">
+                    <li key={tab} className="">
                         <button
                             onClick={() => setPage(tab)}
-                            className={`inline-block px-4 py-2 rounded-xl transition cursor-pointer text-xl text-center
+                            className={`inline-block px-4 py-2 rounded-xl transition cursor-pointer lg:text-xl md:text-base not-lg:text-sm text-center
                                 ${
                                     currentPage === tab 
                                         ? "bg-green-500 text-white hover:bg-green-600"
@@ -36,7 +36,7 @@ export default function TabBar({ currentPage, setPage }: TabBarProps) {
                             `}
                             aria-current={currentPage === tab ? "page" : undefined}
                         >
-                            <span className="flex items-center lg:text-xl not-xl:text-base">
+                            <span className="flex items-center">
                                 {pagesIcon[tab]} {tab}
                             </span>
                         </button>
