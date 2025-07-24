@@ -116,7 +116,7 @@ async function decryptAccount(accounts: EncryptedAccount[]): Promise<Account[]> 
     return decryptedAccounts
 }
 
-export async function queryProfileDetails(userId: string, userName?:string): Promise<Profile> {
+export async function queryProfileDetails(userId: string): Promise<Profile> {
     const { data: profileDetails, error } = await supabase
         .from('profile')
         .select('*')
@@ -126,19 +126,13 @@ export async function queryProfileDetails(userId: string, userName?:string): Pro
         throw error.message
     }
 
-    const profile = profileDetails[0] as Profile | undefined;
+    const profile = profileDetails[0]
 
     // if profile doesnt exist, insert one
     if (!profile) {
-        const newProfile: Profile = { user_id: userId, user_name: userName}
+        const newProfile: Profile = { user_id: userId }
         await supabase.from('profile')
             .upsert(newProfile, { onConflict: 'user_id' })
-    
-    // if profile exists but user_name is null, update it
-    } else if (!profile.user_name && userName) {
-        await supabase.from('profile')
-            .update({ user_name: userName })
-            .eq('user_id', userId)
     }
 
     const { data: updatedProfileDetails, error: finalError } = await supabase

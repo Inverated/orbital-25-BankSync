@@ -88,18 +88,19 @@ export default function OptionMenu({ user }: OptionMenuProps) {
                         
                         <div className="flex justify-end pt-6 gap-4">
                             <button
+                                onClick={logout}
+                                className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg font-sans font-semibold tracking-widest border px-3 py-2 transition cursor-pointer"
+                            >
+                                Confirm
+                            </button>
+                            
+                            <button
                                 onClick={() => {
                                     setLogoutDialogue(false)
                                 }}
                                 className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg font-sans font-semibold tracking-widest border px-3 py-2 transition cursor-pointer"
                             >
                                 Close
-                            </button>
-                            <button
-                                onClick={logout}
-                                className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg font-sans font-semibold tracking-widest border px-3 py-2 transition cursor-pointer"
-                            >
-                                Confirm
                             </button>
                         </div>
                     </div>

@@ -1,28 +1,29 @@
 import { supabase } from "@/lib/supabase";
 import { checkPasswordRequirement } from "@/utils/passwordRequirement";
+import { Alert } from "@mui/material";
 import { LockKeyhole } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useState } from "react"
 
 export default function Password() {
-    const [errorMessage, setErrorMessage] = useState('')
-    const [passwordResetSuccess, setPasswordResetSuccess] = useState(false)
+    const [alertMessage, setAlertMessage] = useState('')
+    const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "warning" | null>(null)
 
     const updatePasswordSimilarity = () => {
         const userPassword = document.getElementById('changePassword') as HTMLInputElement
         const confirmPassword = document.getElementById('confirmChangePassword') as HTMLInputElement
 
         if (confirmPassword.value != '' && userPassword.value != confirmPassword.value) {
-            setErrorMessage('Password do not match!')
+            setAlertSeverity('error')
+            setAlertMessage('Password do not match!')
         } else {
-            setErrorMessage('')
+            setAlertMessage('')
         }
     }
 
     const updatePassword = async (e: React.FormEvent) => {
         e.preventDefault()
-        setErrorMessage('')
-        setPasswordResetSuccess(false)
+        setAlertMessage('')
         const userPassword = document.getElementById('changePassword') as HTMLInputElement
         const confirmPassword = document.getElementById('confirmChangePassword') as HTMLInputElement
 
@@ -32,7 +33,8 @@ export default function Password() {
 
         const missingItem = checkPasswordRequirement(confirmPassword.value)
         if (missingItem) {
-            setErrorMessage(missingItem)
+            setAlertSeverity('warning')
+            setAlertMessage(missingItem)
             return
         }
 
@@ -41,9 +43,11 @@ export default function Password() {
         })
 
         if (newPasswordError) {
-            setErrorMessage(newPasswordError.message)
+            setAlertSeverity('error')
+            setAlertMessage(newPasswordError.message)
         } else {
-            setPasswordResetSuccess(true)
+            setAlertSeverity('success')
+            setAlertMessage('Password reset successful')
             await supabase.auth.signOut()
             redirect('/')
         }
@@ -77,12 +81,20 @@ export default function Password() {
                             onChange={updatePasswordSimilarity} />
                     </div>
                 </div>
-                <div hidden={errorMessage == ''} className="text-shadow-xm text-red-400">
-                    {errorMessage}
-                </div>
-                <div hidden={!passwordResetSuccess} className="text-shadow-xm text-green-400">
-                    Password reset successful
-                </div>
+                {alertMessage && alertSeverity && (
+                    <Alert
+                        sx={{
+                            position: "static",
+                            alignItems: "center",
+                            display: "flex",
+                            borderRadius: "12px",
+                        }}
+                        severity={alertSeverity}
+                        className="mt-2"
+                    >
+                        <p id="message">{alertMessage}</p>
+                    </Alert>
+                )}
                 <div className="flex justify-end">
                     <button
                         className="px-3 py-1.5 my-1 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition"

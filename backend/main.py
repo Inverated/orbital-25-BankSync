@@ -77,7 +77,7 @@ async def read_root():
     return {"status": "Backend is running"}
 
 
-@app.head('/ping')
+@app.api_route("/ping", methods=["GET", "HEAD"])
 async def ping():
     return {'status': 'poooong', 'status_code': '200'}
 

@@ -94,7 +94,7 @@ export default function Overview() {
         isLoaded &&
         <div className="flex flex-col items-center justify-center">
             <div 
-                className="py-5 px-7 m-5 w-3/4 border border-gray-300 border-2 hover:cursor-pointer rounded-lg"
+                className="py-5 px-7 m-5 w-3/4 border-gray-300 border-2 hover:cursor-pointer rounded-lg"
             >
                 <button onClick={expandTotalBal} className="flex flex-row items-center gap-3 hover:cursor-pointer">
                     <CircleDollarSign className="h-9 w-9 text-green-500" />
@@ -182,7 +182,7 @@ export default function Overview() {
                     )}
                 </div>
 
-                <div className="justify-items-start w-1/1 h-full py-5 px-7 border border-gray-300 border-2 hover:cursor-pointer rounded-lg">
+                <div className="justify-items-start w-1/1 h-full py-5 px-7 border-gray-300 border-2 hover:cursor-pointer rounded-lg">
                     <button 
                         onClick={() => {
                             if (showExpandedExpenses) {

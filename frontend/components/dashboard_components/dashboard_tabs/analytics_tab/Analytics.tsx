@@ -6,31 +6,36 @@ import dayjs, { Dayjs } from "dayjs";
 import { Ban, MousePointer2 } from "lucide-react";
 import { Alert } from "@mui/material";
 import AnalyticsDatePicker from "@/utils/DatePicker";
+import { useDatabase } from "@/context/DatabaseContext";
 
 export default function Analytics() {
     const [startDate, setStartDate] = useState<Dayjs | null>(null);
-    const [endDate, setEndDate] = useState<Dayjs | null>(dayjs().subtract(1, "month"));
+    const [endDate, setEndDate] = useState<Dayjs | null>(null);
+    
+    const { transactions } = useDatabase()
+    if (!startDate) setStartDate(dayjs(transactions[transactions.length - 1].transaction_date))
+    if (!endDate) setEndDate(dayjs(transactions[0].transaction_date))
 
     const nullDates = !startDate;
-    const invalidDate = 
-        (startDate && !endDate) || 
+    const invalidDate =
+        (startDate && !endDate) ||
         (startDate && endDate && startDate.isAfter(endDate));
 
-    return(
+    return (
         <div className="flex justify-center">
             <div className="flex flex-col w-3/4">
-                <div className="border border-gray-300 border-2 p-3 m-5 rounded-lg">
+                <div className="border-gray-300 border-2 p-3 m-5 rounded-lg">
                     <div className="flex flex-row items-center p-2 gap-2">
-                        <AnalyticsDatePicker 
+                        <AnalyticsDatePicker
                             label="Start Date"
                             value={startDate}
-                            onChange={setStartDate} 
+                            onChange={setStartDate}
                         />
 
                         <p>to</p>
 
-                        <AnalyticsDatePicker 
-                            label="End Date" 
+                        <AnalyticsDatePicker
+                            label="End Date"
                             value={endDate}
                             onChange={setEndDate}
                         />
@@ -38,7 +43,7 @@ export default function Analytics() {
 
                     {nullDates && (
                         <Alert
-                            sx={{ 
+                            sx={{
                                 position: "static",
                                 alignItems: "center",
                                 display: "flex",
@@ -51,17 +56,17 @@ export default function Analytics() {
                             Please select a date range.
                         </Alert>
                     )}
-                    
+
                     {invalidDate && (
                         <Alert
-                            sx={{ 
+                            sx={{
                                 position: "static",
                                 alignItems: "center",
                                 display: "flex",
                                 borderRadius: "12px",
                             }}
                             severity="error"
-                            icon={<Ban className="w-8 h-8"/>}
+                            icon={<Ban className="w-8 h-8" />}
                             className="mt-2"
                         >
                             <div className="font-bold">Invalid date</div>
@@ -71,7 +76,7 @@ export default function Analytics() {
                 </div>
 
                 <SpendingTrend startDate={startDate} endDate={endDate} />
-                
+
                 <div className="flex flex-row justify-center m-5 gap-5">
                     <SpendingCategory startDate={startDate} endDate={endDate} />
                     <IncomeExpenses startDate={startDate} endDate={endDate} />

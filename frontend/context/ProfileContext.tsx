@@ -41,12 +41,15 @@ export const ProfileProvider = ({ children, userId }: ProfileProviderProps) => {
 
     const refreshProfile = async () => {
         const { data } = await supabase.auth.getUser()
-        const userName = data.user && data.user.email
+        const userName = (data.user && data.user.email)
             ? data.user.email.slice(0, data.user.email.indexOf('@'))
             : "User"
 
         setRefreshStatus(false)
-        const newProfile = await queryProfileDetails(userId, userName)
+        const newProfile = await queryProfileDetails(userId)
+        if (!newProfile.user_name) {
+            newProfile.user_name = userName
+        }
         setProfile(newProfile)
         setKeywordMap(convertKeywordMap(newProfile.category_filter))
         setRefreshStatus(true)

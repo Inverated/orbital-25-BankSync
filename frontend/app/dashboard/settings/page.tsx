@@ -12,6 +12,7 @@ import { ProfileProvider } from "@/context/ProfileContext";
 import { Session } from "@supabase/supabase-js";
 import { UserProvider } from "@/context/UserContext";
 import { DatabaseProvider } from "@/context/DatabaseContext";
+import Username from "@/components/settings_components/username";
 
 
 export default function Settings() {
@@ -19,13 +20,14 @@ export default function Settings() {
     const [currentSession, setSession] = useState<Session | null>(null)
     const [sessionLoaded, setSessionLoaded] = useState(false)
 
-    type MENUOPTION = 'Password' | 'Filters' | 'Connected Account' | 'Account & Security'
-    const selector: MENUOPTION[] = ['Password', 'Filters', 'Connected Account', 'Account & Security']
-    const [currentTab, setCurrentTab] = useState<MENUOPTION>('Password')
+    type MENUOPTION = 'Username' | 'Password' | 'Filters' | 'Connected Account' | 'Account & Security'
+    const selector: MENUOPTION[] = ['Username', 'Password', 'Filters', 'Connected Account', 'Account & Security']
+    const [currentTab, setCurrentTab] = useState<MENUOPTION>('Username')
 
     const router = useRouter()
 
     const componentSelector: Record<MENUOPTION, React.FC> = {
+        "Username": Username,
         "Password": Password,
         "Filters": CustomFilter,
         "Connected Account": ConnectedAccount,
