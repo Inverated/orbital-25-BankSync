@@ -13,3 +13,6 @@ next-env.d.ts
 
 # virtual environment
 venv/
+
+# testing report
+report.html
