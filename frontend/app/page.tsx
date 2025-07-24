@@ -3,9 +3,36 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ChartNoAxesCombined, FolderOutput, LayoutDashboard, MousePointer2, ShieldUser } from "lucide-react";
+import { useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function Home() {
     const router = useRouter()
+
+    useEffect(() => {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1))
+
+        const access_token = hashParams.get('access_token')
+        const refresh_token = hashParams.get('refresh_token')
+
+        const signIn = async (access_token:string, refresh_token:string) => {
+            const { error } = await supabase.auth.setSession({
+                access_token,
+                refresh_token,
+            })
+
+            if (error) {
+                console.error('Session setup failed:', error.message)
+            } else {
+                router.push('/dashboard')
+            }
+        }
+        if (access_token && refresh_token) {
+            signIn(access_token, refresh_token)
+        }
+
+        window.history.replaceState(null, '', window.location.pathname)
+    }, [])
 
     return (
         <div>
@@ -33,9 +60,7 @@ export default function Home() {
 
             <section className="bg-gray-100 flex-col items-center text-center py-17">
                 <h1 className="text-6xl font-sans font-bold">Welcome to</h1>
-
                 <Image src="/name.png" alt="BankSync" width={500} height={250} className="mx-auto brightness-109" />
-
                 <p className="text-lg text-gray-500 w-3/8 mx-auto">
                     A simple, centralized platform to manage all your finances.
                 </p>
