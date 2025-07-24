@@ -26,11 +26,12 @@ jobs:
       
       - name: Install python dependencies
         run: |
+          cd backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
       - name: Run Pytest
-        run: pytest
+        run: python -m pytest 
       
       - name: Setup node.js
         uses: actions/setup-node@v4
