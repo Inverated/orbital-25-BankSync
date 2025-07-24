@@ -1,3 +1,4 @@
+import { supabase } from '@/lib/supabase';
 import { queryProfileDetails } from '@/lib/supabaseQuery';
 import { defaultKeywordMap, keywordMapType, Profile } from '@/utils/types';
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
@@ -39,8 +40,13 @@ export const ProfileProvider = ({ children, userId }: ProfileProviderProps) => {
     const [refreshStatus, setRefreshStatus] = useState(false)
 
     const refreshProfile = async () => {
+        const { data } = await supabase.auth.getUser()
+        const userName = data.user && data.user.email
+            ? data.user.email.slice(0, data.user.email.indexOf('@'))
+            : "User"
+
         setRefreshStatus(false)
-        const newProfile = await queryProfileDetails(userId)
+        const newProfile = await queryProfileDetails(userId, userName)
         setProfile(newProfile)
         setKeywordMap(convertKeywordMap(newProfile.category_filter))
         setRefreshStatus(true)

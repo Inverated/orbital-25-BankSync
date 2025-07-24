@@ -74,5 +74,6 @@ export interface Profile {
     created_at?: string,
     category_filter?: {
         [category: string]: string[];
-    }
+    },
+    user_name?: string,
 }
