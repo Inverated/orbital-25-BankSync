@@ -174,70 +174,71 @@ export default function Transactions() {
         }
     }, [userId, transFilterCondition, accounts, transactions])
 
-    const buttonStyle = 'border border-black mx-3 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
+    const buttonStyle = "bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg font-sans font-semibold tracking-widest border px-3 py-2 transition cursor-pointer" as const
 
     return (
-        <div>
-            <div className="flex justify-end space-x-4 mx-4">
-                <ExportButton
-                    filteredAccount={accountEntry}
-                    filteredTransaction={transactionEntry} />
-                <FilterButton
-                    setFilter={handleFilterQuery} />
-            </div>
-            <div id='load_transaction_data' className='hidden'>
-                {
-                    transactionEntry.slice(
-                        (pageNo - 1) * NUMBER_OF_ENTRIES_PER_PAGE,
-                        Math.min(totalEntries, pageNo * NUMBER_OF_ENTRIES_PER_PAGE)
-                    )
-                        .map((entry) =>
-                            <TransactionRow
-                                key={entry.id}
-                                details={{ ...entry }}
-                                uniqueCategory={[...uniqueCategory]} />
-                        )}
-                <div className='my-10 flex items-center justify-center'>
-                    <ChevronsLeft className='hover:cursor-pointer' onClick={() => addPageNo(-10)} />
-                    <ChevronLeft className='hover:cursor-pointer' onClick={() => addPageNo(-1)} />
-                    <button className='px-5 hover:cursor-pointer' onClick={() => setSelPageDialogue(true)}>
-                        {pageNo} of {maxPageNo.current}
-                    </button>
-                    <ChevronRight className='hover:cursor-pointer' onClick={() => addPageNo(1)} />
-                    <ChevronsRight className='hover:cursor-pointer' onClick={() => addPageNo(10)} />
+        <div className="flex flex-col items-center justify-center">
+            <div className="w-3/4">
+                <div className="flex justify-end space-x-4 mx-4">
+                    <ExportButton
+                        filteredAccount={accountEntry}
+                        filteredTransaction={transactionEntry} />
+                    <FilterButton
+                        setFilter={handleFilterQuery} />
                 </div>
-            </div>
 
-            {selPageDialogue &&
-                <div className='fixed inset-0 flex justify-center items-center z-50'>
-                    <div className='absolute inset-0 bg-black opacity-50'></div>
-                    <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm w-full z-10'>
-                        <p className='text-xl font-semibold'>Select page number</p>
-                        <div className='flex justify-center items-center my-7'>
-                            <input
-                                id='select_page_num'
-                                className='border border-black w-[40px] mx-1'
-                                type='number'
-                                min='1' max={maxPageNo.current}
-                                defaultValue={currPageRef.current}
-                                ref={pageNoRef} />
-                            <span>of {maxPageNo.current}</span>
-                        </div>
-                        <div className='flex justify-end'>
-                            <button onClick={() => setSelPageDialogue(false)}
-                                className={buttonStyle}>
-                                Close
-                            </button>
-                            <button onClick={jumpToPage}
-                                className={buttonStyle}>
-                                Confirm
-                            </button>
-                        </div>
-
+                <div id='load_transaction_data' className='hidden'>
+                    {
+                        transactionEntry.slice(
+                            (pageNo - 1) * NUMBER_OF_ENTRIES_PER_PAGE,
+                            Math.min(totalEntries, pageNo * NUMBER_OF_ENTRIES_PER_PAGE)
+                        )
+                            .map((entry) =>
+                                <TransactionRow
+                                    key={entry.id}
+                                    details={{ ...entry }}
+                                    uniqueCategory={[...uniqueCategory]} />
+                            )}
+                    <div className='my-6 flex items-center justify-center'>
+                        <ChevronsLeft className='hover:cursor-pointer' onClick={() => addPageNo(-10)} />
+                        <ChevronLeft className='hover:cursor-pointer' onClick={() => addPageNo(-1)} />
+                        <button className='px-5 hover:cursor-pointer' onClick={() => setSelPageDialogue(true)}>
+                            {pageNo} of {maxPageNo.current}
+                        </button>
+                        <ChevronRight className='hover:cursor-pointer' onClick={() => addPageNo(1)} />
+                        <ChevronsRight className='hover:cursor-pointer' onClick={() => addPageNo(10)} />
                     </div>
                 </div>
-            }
-        </div>
 
+                {selPageDialogue &&
+                    <div className='fixed inset-0 flex justify-center items-center z-50'>
+                        <div className='absolute inset-0 bg-black opacity-50'></div>
+                        <div className='bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full z-10'>
+                            <p className='text-xl font-semibold'>Select a page number</p>
+                            <div className='flex justify-center items-center my-7'>
+                                <input
+                                    id='select_page_num'
+                                    className='w-[40px] mx-1'
+                                    type='number'
+                                    min='1' max={maxPageNo.current}
+                                    defaultValue={currPageRef.current}
+                                    ref={pageNoRef} />
+                                <span>of {maxPageNo.current}</span>
+                            </div>
+                            <div className='flex justify-end gap-4'>
+                                <button onClick={() => setSelPageDialogue(false)}
+                                    className={buttonStyle}>
+                                    Close
+                                </button>
+                                <button onClick={jumpToPage}
+                                    className={buttonStyle}>
+                                    Confirm
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
     )
 }

@@ -51,7 +51,7 @@ export default function Login() {
                 "flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat"
             }
             style={{
-                backgroundImage: "url('/background.jpg')",
+                backgroundImage: "url('https://images.unsplash.com/photo-1617957743043-91ba3aa22558?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
             }}
         >
             <div className="w-[600px] rounded-3xl shadow-xl bg-white px-10 py-7 flex flex-row gap-1">
@@ -65,7 +65,7 @@ export default function Login() {
                 <div className="flex flex-col flex-grow w-[95%] pr-7 pt-3">
                     <LoginHandler />
 
-                    <div className="flex flex-col items-center justify-center text-center pt-5 pb-1">
+                    <div className="flex flex-col items-center justify-center text-center pt-10 pb-1">
                         <p className="text-sans text-gray-500 tracking-wider text-sm">
                             Or login with
                         </p>
@@ -85,7 +85,7 @@ export default function Login() {
                         </button>
                     </div>
 
-                    <div className="text-sans text-sm text-gray-500 flex flex-col items-center pt-3">
+                    <div className="text-sans text-sm text-gray-500 flex flex-col items-center pt-25">
                         <p>Don&#39;t have an account? <button className="font-semibold underline cursor-pointer" onClick={redirectToSignUp}>Sign up now</button></p>
                     </div>
                 </div>

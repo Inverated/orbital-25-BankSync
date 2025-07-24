@@ -147,34 +147,34 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
 
     return (
         transactionEntry && accountEntry && <div>
-            <button className='border-b py-0.5 hover:cursor-pointer hover:bg-gradient-to-t hover:from-gray-400 hover:to-white active:bg-gray-500 active:scale-97 transition-all'
+            <button className="py-0.5 mt-3 mb-0.5 px-1 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition"
                 onClick={() => setExportDialogue(true)}>
                 <div className="text-base p-2">Export</div>
             </button>
             {exportDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white rounded-lg shadow-lg px-8 max-w-5/6 w-full z-60 py-5 max-h-[90vh] overflow-auto">
+                    <div className="bg-white rounded-lg shadow-lg px-9 max-w-5/6 w-full z-60 py-7 max-h-[90vh] overflow-auto">
                         <div className="flex flex-row justify-between">
-                            <p className="text-2xl">Export</p>
-                            <label className="text-sm flex flex-row space-x-2 py-1">
+                            <p className="text-2xl font-bold tracking-wide">Export</p>
+                            <label className="flex flex-row space-x-2 py-1">
                                 <p>Use filtered data</p>
                                 <input id='filterCheck' checked={useFiltered} onChange={() => setUseFiltered(!useFiltered)} type="checkbox" />
                             </label>
                         </div>
                         <button
-                            className={`px-4 py-2 border-b-2 ${activeTab === 'account'
-                                ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-blue-600'
+                            className={`px-4 py-2 mt-1 border-b-2 ${activeTab === 'account'
+                                ? 'border-green-500 text-green-600'
+                                : 'border-transparent text-gray-500 hover:text-green-600'
                                 }`}
                             onClick={() => setActiveTab('account')}
                         >
                             Accounts
                         </button>
                         <button
-                            className={`px-4 py-2 border-b-2 ${activeTab === 'transaction'
-                                ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-blue-600'
+                            className={`px-4 py-2 mt-1 border-b-2 ${activeTab === 'transaction'
+                                ? 'border-green-500 text-green-600'
+                                : 'border-transparent text-gray-500 hover:text-green-600'
                                 }`}
                             onClick={() => setActiveTab('transaction')}
                         >
@@ -192,7 +192,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                                 dataHeader={EXPORTTRANSACTIONHEADER}
                             />
                         }
-                        <div className="text-sm flex pt-3 pb-1 space-x-2 justify-between">
+                        <div className="text-sm flex pt-5 pb-1 space-x-2 justify-between">
                             <div className="flex flex-col">
                                 <div>
                                     <b>Password: </b>
@@ -201,20 +201,19 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                                         type="text"
                                         placeholder="Enter password for encryption"
                                         ref={passwordRef}
-                                        className="placeholder:left-0 placeholder:text-xs pl-1 border rounded-sm w-fit" />
+                                        className="placeholder:left-0 placeholder:text-xs pl-2 py-1 border rounded-sm w-fit" />
                                 </div>
                                 <div hidden={!networkError} className="text-sm text-red-500 mt-2">
                                     Network error, unable to encrypt with password
                                 </div>
                             </div>
                         </div>
-                        <div className="flex justify-end">
+                        <div className="flex justify-end items-center gap-3">
                             <div className="flex flex-col text-sm scale-90" id="exportType">
-
                                 <button
                                     name="exportTypeSelector"
                                     onClick={() => setShowTypeDropdown(!showTypeDropdown)}
-                                    className="hover:bg-gray-300 focus:outline-none font-medium bg-white border-b-2 mx-2 p-1 text-center inline-flex justify-between" type="button">
+                                    className="hover:bg-gray-200 focus:outline-none font-medium bg-white border-b-2 mx-1 p-2 gap-1 text-center inline-flex justify-between" type="button">
                                     {exportType}
                                     <div>
                                         <div className="absolute inset-0 z-1"></div>
@@ -224,7 +223,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                                 <div hidden={!showTypeDropdown} className="absolute self-center z-5 bg-white rounded-sm">
                                     {EXPORTOPTIONS.map((type, index) =>
                                         <ul key={index}
-                                            className="hover:bg-gray-300 text-center py-2 px-4 focus:outline-none"
+                                            className="hover:bg-gray-200 text-center py-2 px-4 focus:outline-none"
                                         >
                                             <label>
                                                 <button hidden={type == exportType} onClick={() => updateExportType(type)} />
@@ -236,19 +235,19 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                             </div>
                             <button
                                 onClick={() => setExportDialogue(false)}
-                                className="border border-black mx-4 p-1 rounded text-base flex justify-end hover:bg-gray-400 hover:cursor-pointer active:bg-gray-600 active:scale-95 transition"
+                                className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-lg font-sans font-semibold tracking-widest border px-3 py-2 transition cursor-pointer"
                             >
                                 Close
                             </button>
                             <button
                                 onClick={exportToFile}
-                                className="border disabled:border-gray-400 disabled:text-gray-400 border-black p-1 rounded text-base flex justify-end not-disabled:hover:bg-gray-400 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-600 not-disabled:active:scale-95 transition"
+                                className="bg-transparent border disabled:border-gray-300 disabled:text-gray-300 border-black px-3 py-2 rounded-lg font-sans font-semibold tracking-widest flex justify-end not-disabled:hover:bg-gray-200 not-disabled:hover:cursor-pointer not-disabled:active:bg-gray-300 not-disabled:active:scale-95 transition"
                             >
                                 Confirm
                             </button>
                         </div>
-                        <div hidden={!downloadSuccess} className="text-sm text-green-500 flex justify-end mt-2">
-                            Download successful
+                        <div hidden={!downloadSuccess} className="text-sm text-green-500 flex justify-end mt-3.5">
+                            Download successful !
                         </div>
                     </div>
                 </div>

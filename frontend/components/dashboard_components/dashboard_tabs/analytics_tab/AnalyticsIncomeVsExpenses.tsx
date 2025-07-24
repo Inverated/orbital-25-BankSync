@@ -133,7 +133,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
     }
 
     return (
-        <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-5">
+        <div className="border border-gray-300 border-2 p-4 rounded-lg flex-1 flex flex-col gap-5">
             <h1 className="font-bold text-xl">Income vs. Expenses</h1>
 
             <div className="flex flex-col justify-center items-center gap-2">
@@ -149,7 +149,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                     )
                 ) : (
                     <div className="flex flex-col justify-center items-center gap-2 h-[500px]">
-                        <LineChart className="h-12 w-12" />
+                        <LineChart className="h-12 w-12 text-green-500" />
                         <p className="text-sm text-gray-400">Income vs. Expenses Chart</p>
                     </div>
                 )}
@@ -164,9 +164,9 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
 
                     <div className="w-full h-4 bg-gray-200 rounded-lg overflow-hidden">
                         <div
-                            className="h-full rounded-lg transition-all duration-300 bg-black"
+                            className="h-full rounded-lg transition-all duration-300 bg-blue-500"
                             style={{
-                                width: `${Math.min((totalIncome / totalExpenses) * 100, 100)}%`
+                                width: `${totalExpenses === 0 ? 0 : Math.min((totalIncome / totalExpenses) * 100, 100)}%`
                             }}
                         />
                     </div>
@@ -178,9 +178,9 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
 
                     <div className="w-full h-4 bg-gray-200 rounded-lg overflow-hidden">
                         <div
-                            className="h-full rounded-lg transition-all duration-300 bg-black"
+                            className="h-full rounded-lg transition-all duration-300 bg-red-500"
                             style={{
-                                width: `${Math.min((totalExpenses / totalIncome) * 100, 100)}%`
+                                width: `${totalIncome === 0 ? 0 : Math.min((totalExpenses / totalIncome) * 100, 100)}%`
                             }}
                         />
                     </div>

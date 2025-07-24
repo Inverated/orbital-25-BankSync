@@ -1,3 +1,4 @@
+import { useProfile } from "@/context/ProfileContext";
 import { supabase } from "@/lib/supabase"
 import { User } from "@supabase/supabase-js"
 import { LogOut, Settings } from "lucide-react";
@@ -13,7 +14,10 @@ export default function OptionMenu({ user }: OptionMenuProps) {
         { label: "Settings", icon: <Settings className="" /> },
         { label: "Logout", icon: <LogOut className="" /> }
     ] as const
+
     const router = useRouter()
+    const { profile } = useProfile()
+
     const [logoutDialogue, setLogoutDialogue] = useState(false)
 
     const logout = async () => {
@@ -57,10 +61,8 @@ export default function OptionMenu({ user }: OptionMenuProps) {
 
     return (
         <div>            
-            <div className="flex flex-col absolute -right-6 z-10 mt-3 origin-top-right rounded-2xl shadow-lg ring-1 ring-black/5 focus:outline-none bg-white px-4 py-4 text-2xl w-[250px]">
-                {user?.email?.slice(0, user.email.indexOf('@')) &&
-                    <p>{user?.email?.slice(0, user.email.indexOf('@'))}</p>                    
-                }
+            <div className="flex flex-col absolute -right-6 z-10 mt-3 origin-top-right rounded-2xl shadow-lg ring-1 ring-black/5 focus:outline-none bg-white px-4 py-4 w-[250px]">
+                <p className="text-2xl">{profile.user_name}</p>
                 
                 {user?.email && 
                     <p className="text-sm text-gray-500 mb-2">{user.email}</p>
@@ -70,7 +72,7 @@ export default function OptionMenu({ user }: OptionMenuProps) {
                 
                 {selection.map((tab) =>
                     <button key={tab.label}
-                        className="flex flex-row items-center gap-3 px-3 py-2 rounded-lg bg-white hover:bg-gray-200 hover:cursor-pointer active:bg-gray-300 active:scale-95"
+                        className="flex flex-row items-center gap-3 px-3 py-2 rounded-lg bg-white hover:bg-gray-200 hover:cursor-pointer active:bg-gray-300 active:scale-95 text-2xl"
                         onClick={() => selectOption(tab.label)}>
                         {tab.icon}
                         {tab.label}
@@ -100,7 +102,6 @@ export default function OptionMenu({ user }: OptionMenuProps) {
                                 Confirm
                             </button>
                         </div>
-
                     </div>
                 </div>
             }

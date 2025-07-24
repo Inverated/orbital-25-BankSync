@@ -85,7 +85,7 @@ export default function ResetPassword() {
         <div
             className="flex justify-center items-center h-screen bg-cover bg-center bg-no-repeat"
             style={{
-                backgroundImage: "url('/background.jpg')",
+                backgroundImage: "url('https://images.unsplash.com/photo-1617957743043-91ba3aa22558?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
             }}
         >
             <div className="w-[600px] rounded-3xl shadow-xl bg-white p-10 flex flex-col px-17.5">
@@ -141,40 +141,46 @@ export default function ResetPassword() {
                             Confirm new password
                         </label>
                     </div>
-                </form>
-                    {alertMessage && alertSeverity && (
-                        <Alert
-                            sx={{
-                                position: "static",
-                                alignItems: "center",
-                                display: "flex",
-                                borderRadius: "12px",
-                            }}
-                            severity={alertSeverity}
-                            className="mt-2"
-                        >
-                            <p id="message">{alertMessage}</p>
-                        </Alert>
-                    )}
-                </div>
 
-                <div>
-                    <button
-                        type="submit"
-                        className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
-                    >
-                        Update Password
+                    <div className="pb-6">
+                        {alertMessage && alertSeverity && (
+                            <Alert
+                                sx={{
+                                    position: "static",
+                                    alignItems: "center",
+                                    display: "flex",
+                                    borderRadius: "12px",
+                                }}
+                                severity={alertSeverity}
+                                className="mt-2"
+                            >
+                                <p id="message">{alertMessage}</p>
+                            </Alert>
+                        )}
+                    </div>
+
+                    <div>
+                        <button
+                            type="submit"
+                            className="bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 w-full rounded-3xl text-white font-sans tracking-wide p-2 transition cursor-pointer"
+                        >
+                            Update Password
+                        </button>
+                    </div>
+                </form>
+
+                <div className="flex flex-col items-center pt-7">
+                    <button className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
+                        onClick={() => router.push('/registration/login')}>
+                        <p>Back to <a className="font-semibold underline">Login</a></p>
+                    </button>
+
+                    <button className="pb-2 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
+                        onClick={() => router.push('/forgetpassword')}>
+                        <p>Back to <a className="font-semibold underline">Forget Password</a></p>
                     </button>
                 </div>
-                <button className="my-2 pt-20 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
-                    onClick={() => router.push('/registration/login')}>
-                    <p>Back to <a className="font-semibold underline">Login</a></p>
-                </button>
-
-                <button className="pb-2 text-sans text-sm text-gray-500 flex flex-col items-center justify-center cursor-pointer"
-                    onClick={() => router.push('/forgetpassword')}>
-                    <p>Back to <a className="font-semibold underline">Forget Password</a></p>
-                </button>
             </div>
+        </div>
     )
 }

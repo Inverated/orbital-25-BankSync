@@ -22,6 +22,8 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
 
     const [dataPoints, setDataPoints] = useState<CategorySpending[]>([]);
 
+    const emptyData = dataPoints.length === 0;
+
     const { transactions } = useDatabase()
 
     useEffect(() => {
@@ -60,9 +62,9 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
         }
     }, [startDate, endDate, transactions])
 
-    const generateSliceColors = (index: number, total: number) => {
+    const generateSliceColors = (index: number, total: number) => { 
         const hue = (index * (360 / total)) % 360;
-        return `hsl(${hue}, 70%, 80%)`;
+        return `hsl(${hue}, 70%, 70%)`;
     }
 
     const chartData = {
@@ -114,29 +116,36 @@ export default function SpendingCategory({ startDate, endDate }: SpendingCategor
     }
 
     return (
-        <div className="border border-black p-3 rounded-lg flex-1 flex flex-col gap-3">
+        <div className="border border-gray-300 border-2 p-4 rounded-lg flex-1 flex flex-col gap-3">
             <h1 className="font-bold text-xl">Spending by Category</h1>
 
             <div className="flex flex-col justify-center items-center gap-2 h-full w-full">
                 {showChart ? (
-                    loading ? (
-                        <div className="text-gray-400 h-[500px] flex flex-col justify-center items-center">
-                            Loading data...
+                    emptyData ? (
+                        <div className="flex flex-col justify-center items-center gap-2 h-[500px]">
+                            <PieChart className="h-12 w-12 text-green-500" />
+                            <p className="text-sm text-gray-400">No transactions found for the selected date.</p>
                         </div>
-                    ) : (
-                        <div className="flex flex-col justify-center items-center gap-4 h-full w-full">
-                            <div className="flex flex-col justify-center items-center h-3/4 max-h-md w-5/8">
-                                <Pie data={chartData} options={chartOptions} />
+                    ): (
+                        loading ? (
+                            <div className="text-gray-400 h-[500px] flex flex-col justify-center items-center">
+                                Loading data...
                             </div>
+                        ) : (
+                            <div className="flex flex-col justify-center items-center gap-4 h-full w-full">
+                                <div className="flex flex-col justify-center items-center h-3/4 max-h-md w-5/8">
+                                    <Pie data={chartData} options={chartOptions} />
+                                </div>
 
-                            <div className="flex flex-col gap-1 w-full max-w-lg">
-                                {generateChartLegend()}
+                                <div className="flex flex-col gap-1 w-full max-w-lg">
+                                    {generateChartLegend()}
+                                </div>
                             </div>
-                        </div>
+                        )
                     )
                 ) : (
                     <div className="flex flex-col justify-center items-center gap-2 h-[500px]">
-                        <PieChart className="h-12 w-12" />
+                        <PieChart className="h-12 w-12 text-green-500" />
                         <p className="text-sm text-gray-400">Category Breakdown Chart</p>
                     </div>
                 )}

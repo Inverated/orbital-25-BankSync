@@ -38,17 +38,17 @@ export default function ComponentFilterRow({ category, items, position, updateAr
     return (
         <div className="flex flex-col w-full">
             <div>
-                <div className="text-xl border-b mb-2">{category}</div>
+                <div className="text-xl border-b border-b-gray-300 mb-2">{category}</div>
                 <div className="flex flex-row justify-between">
                     <div className="flex flex-wrap gap-2 mb-2 h-fit">
                         {tags.map((tag, i) => (
                             <div
                                 key={i}
-                                className="flex items-center text-nowrap bg-blue-100 text-blue-800 pl-3 py-0.5 rounded-lg text-xs"
+                                className="flex items-center text-nowrap bg-green-100 text-green-800 pl-3 py-0.5 rounded-lg text-xs"
                             >
                                 {tag}
                                 <X onClick={() => removeTag(i)}
-                                    className="ml-2 w-3/4 h-3/4 text-blue-500 hover:text-red-500 hover:cursor-pointer" />
+                                    className="ml-0.5 mr-1 w-3/4 h-3/4 text-green-700 hover:text-red-500 hover:cursor-pointer" />
                             </div>
                         ))}
                     </div>
@@ -63,7 +63,7 @@ export default function ComponentFilterRow({ category, items, position, updateAr
 
             <input
                 type="text"
-                className="w-full border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 placeholder="Type and press Enter to add new filter tag"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

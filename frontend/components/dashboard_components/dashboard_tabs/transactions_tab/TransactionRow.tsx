@@ -147,12 +147,13 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
         if (loaded) setShowEditDialogue(false)
     }, [loaded])
 
-    const buttonStyle = 'border border-black mx-2 py-2 px-3 rounded-lg hover:cursor-pointer hover:bg-gray-400 active:bg-gray-500 active:scale-97 transition ' as const
+    const buttonStyle = 'mx-2 my-1 py-2 px-3 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition' as const
+    
     return (
         <div>
             {/* Collapsed transaction row */}
             {!isRowExpanded ?
-                <div id={String(details.id)} className='flex flex-col justify-between m-3 hover:cursor-pointer hover:bg-gradient-to-t hover:from-gray-300 hover:via-gray-200 hover:to-gray-300 active:bg-gray-500 active:scale-97 transition-all border border-black rounded-lg'>
+                <div id={String(details.id)} className='flex flex-col justify-between m-3 p-1.5 hover:cursor-pointer hover:bg-gradient-to-t hover:from-gray-300 hover:via-gray-200 hover:to-gray-300 active:bg-gray-500 active:scale-97 transition-all border border-gray-300 border-2 rounded-lg'>
                     <div>
                         <p className='p-3 truncate break-after-all'>{details.transaction_description}</p>
                     </div>
@@ -172,9 +173,9 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                     </div>
                 </div>
                 :
-                <div ref={expandedRow} className='border border-black rounded-lg m-4 transition'>
+                <div ref={expandedRow} className='border border-gray-300 border-2 rounded-lg m-4 transition'>
                     {/* Expanded transaction row */}
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col p-2'>
                         <p className='flex p-3 start-0.5'>
                             <b>Description:</b>
                             <span className='px-2 whitespace-pre-line break-all'>
@@ -209,7 +210,7 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                         </p>
                         {
                             showEditDialogue &&
-                            <div className='flex flex-col mx-2 py-2 px-2 border border-black not-sm:w-5/6 sm:w-2/5'>
+                            <div className='flex flex-col mx-2 py-2 px-3 border border-gray-300 border-2 rounded-xl not-sm:w-5/6 sm:w-2/5'>
                                 <label className='flex justify-between py-1' htmlFor="existingRadio">
                                     <div>
                                         Select: <select className="p-1 ml-4 mr-3 h-7"
@@ -244,7 +245,7 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                                         Custom:<input
                                             name="customCategory"
                                             type='text'
-                                            className='border-b border-black p-1 ml-2 h-7 w-1/2'
+                                            className='border-b border-gray-300 p-2 ml-2 h-7 w-1/2'
                                             ref={customCategoryRef}
                                             placeholder='Custom category'
                                             onFocus={(e) => {

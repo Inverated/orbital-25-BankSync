@@ -34,16 +34,16 @@ export function getTransactionDetails({
     if (date) {
         if (date.startDate) {
             const start = date.startDate.startOf("month").toISOString();
-            filtered.filter(each => each.transaction_date >= start)
+            filtered = filtered.filter(each => each.transaction_date >= start)
         }
         if (date.endDate) {
             const end = date.endDate.endOf("month").toISOString();
-            filtered.filter(each => each.transaction_date <= end)
+            filtered = filtered.filter(each => each.transaction_date <= end)
         }
     }
 
     if (ascending_date) {
-        filtered.reverse()
+        filtered = filtered.reverse()
     } 
     
     return filtered

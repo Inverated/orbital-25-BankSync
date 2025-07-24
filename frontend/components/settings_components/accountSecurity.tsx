@@ -77,41 +77,45 @@ export default function AccountSecurity() {
     }, [])
 
     return (
-        <div className="px-5 py-5 w-full space-y-5">
+        <div className="px-7 py-4.5 min-w-1/4 max-w-fit space-y-5">
             <div>
-                <div className="text-2xl">Delete Data</div>
-                <div className="py-3">
-                    <div>Clear all bank account and transaction data</div>
-                    <div className="text-red-400">Warning: This action is not reversible</div>
+                <div className="text-2xl font-semibold">Delete Data</div>
+                <div className="mt-5 space-y-0.5">
+                    <div>Clear all bank account and transaction data.</div>
+                    <div className="text-red-500">Warning: This action is irreversible.</div>
                 </div>
-                <div className="flex flex-col">
-                    <div>
+                <div className="flex flex-col mt-3">
+                    <div className="pb-1">
                         To verify, type <i className="select-none">DELETE MY DATA</i> below:
                     </div>
-                    <input className="border min-w-1/4 max-w-fit px-2" onChange={(e) => checkConfirmDeleteData(e.target.value)} />
-                    <button className={"border rounded-lg text-white w-fit px-3 py-1 my-3 " +
-                        (confirmDeleteData ? 'bg-red-600 hover:cursor-pointer active:bg-red-400 active:scale-95' : 'bg-red-300')}
-                        onClick={deleteData}>
-                        Delete
-                    </button>
+                    <input className="border w-full px-2 py-0.5 rounded-lg" onChange={(e) => checkConfirmDeleteData(e.target.value)} />
+                    <div className="flex justify-end">
+                        <button className={"rounded-lg text-white tracking-wide w-fit px-3 py-1.5 my-3 " +
+                            (confirmDeleteData ? 'bg-green-600 font-semibold tracking-wide hover:cursor-pointer hover:bg-green-700 active:bg-green-800 active:scale-95' : 'bg-green-500')}
+                            onClick={deleteData}>
+                            Delete
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div>
-                <div className="text-2xl">Delete Account</div>
-                <div className="py-3">
+            <div className="space-y-3.5">
+                <div className="text-2xl font-semibold">Delete Account</div>
+                <div className="mt-5 space-y-0.5">
                     <div>Your account will be deleted, along with all its data</div>
                     <div className="text-red-400">Warning: This action is not reversible</div>
                 </div>
-                <div className="flex flex-col">
-                    <div>
+                <div className="flex flex-col mt-3">
+                    <div className="pb-1">
                         To verify, type <i className="select-none">DELETE MY ACCOUNT</i> below:
                     </div>
-                    <input className="border min-w-1/4 max-w-fit px-2" onChange={(e) => checkConfirmDeleteAccount(e.target.value)} />
-                    <button className={"border rounded-lg text-white w-fit px-3 py-1 my-3 " +
-                        (confirmDeleteAccount ? 'bg-red-600 hover:cursor-pointer active:bg-red-400 active:scale-95' : 'bg-red-300')}
-                        onClick={deleteAccount}>
-                        Delete
-                    </button>
+                    <input className="border w-full px-2 py-0.5 rounded-lg" onChange={(e) => checkConfirmDeleteAccount(e.target.value)} />
+                    <div className="flex justify-end">
+                        <button className={"rounded-lg text-white tracking-wide w-fit px-3 py-1.5 my-3 " +
+                            (confirmDeleteAccount ? 'bg-green-600 font-semibold tracking-wide hover:cursor-pointer hover:bg-green-700 active:bg-green-800 active:scale-95' : 'bg-green-500')}
+                            onClick={deleteAccount}>
+                            Delete
+                        </button>
+                    </div>
                 </div>
             </div>
 

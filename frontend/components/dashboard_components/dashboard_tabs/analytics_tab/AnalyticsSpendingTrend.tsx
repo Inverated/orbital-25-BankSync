@@ -112,7 +112,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
     }
 
     return (
-        <div className="flex flex-col border border-black p-3 mx-5 rounded-lg gap-2">
+        <div className="flex flex-col border border-gray-300 border-2 p-4 mx-5 rounded-lg gap-2">
             <h1 className="font-bold text-xl">Spending Trends</h1>
 
             <h2>Spending pattern from {formatDate(startDate)} to {formatDate(endDate)}</h2>
@@ -128,7 +128,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
                     )
                 ) : (
                     <div className="flex flex-col justify-center items-center gap-2">
-                        <LineChart className="h-12 w-12" />
+                        <LineChart className="h-12 w-12 text-green-500" />
                         <p className="text-sm text-gray-400">Spending Chart</p>
                     </div>
                 )}

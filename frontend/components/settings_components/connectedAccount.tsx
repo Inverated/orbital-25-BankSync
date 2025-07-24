@@ -4,7 +4,7 @@ import { FaGithub } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
 
 export default function ConnectedAccount() {
-    const externalAuthButtonStyle = "w-full my-4 p-2 flex hover:bg-gray-400 active:bg-gray-500 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
+    const externalAuthButtonStyle = "w-full my-4 p-2 flex hover:bg-gray-200 active:bg-gray-300 active:scale-95 cursor-pointer transition items-center justify-center border border-black rounded-lg"
     const [connectedAcc, setConnectedAcc] = useState<string[]>([])
 
     const handleOAuthLogin = async (provider: 'github' | 'google') => {
@@ -26,22 +26,22 @@ export default function ConnectedAccount() {
     }, [])
 
     return (
-        <div className="px-5 py-5">
-            <div className="text-2xl">Connected Account</div>
+        <div className="px-7 py-4.5">
+            <div className="text-2xl font-semibold">Connected Account</div>
             <div>
-                <div className="mt-5">Link to account with the same email address</div>
+                <div className="mt-5">Connect accounts with the same email address.</div>
                 <button
                     className={externalAuthButtonStyle}
                     disabled={connectedAcc.indexOf('google') != -1}
                     onClick={() => handleOAuthLogin('google')} >
-                    <FcGoogle />
+                    <FcGoogle className="w-5 h-5" />
                     <span className="mx-2">{connectedAcc.indexOf('google') == -1 ? "Sign in with Google" : "Google is connected"}</span>
                 </button>
                 <button
                     className={externalAuthButtonStyle}
                     disabled={connectedAcc.indexOf('github') != -1}
                     onClick={() => handleOAuthLogin('github')} >
-                    <FaGithub />
+                    <FaGithub className="w-5 h-5" />
                     <span className="mx-2">{connectedAcc.indexOf('github') == -1 ? "Sign in with GitHub" : "Github is connected"}</span>
                 </button>
             </div>

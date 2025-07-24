@@ -1,4 +1,4 @@
-import { Account, Profile, StatementResponse, Transaction } from "@/utils/types";
+import { Account, StatementResponse, Transaction } from "@/utils/types";
 import encryptData from "@/utils/encryptData"
 import { supabase } from "./supabase";
 
@@ -66,11 +66,5 @@ async function addTransactionDetails(userId: string, transactions: Transaction[]
         .from('encryptedTransactionDetails')
         .insert(upsertData)
 
-    if (error) throw error
-}
-
-export async function addProfileDetails(userId: string, profile: Profile) {
-    const spb = supabase.from('profile')
-    const { error } = await spb.upsert(profile, { onConflict: 'user_id' })
     if (error) throw error
 }

@@ -69,12 +69,12 @@ export default function Dashboard() {
                                     <Image src="/logo.png" alt="BankSync" width={250} height={125} />
                                 </div>
 
-                                <div className="py-2">
+                                <div>
                                     <NavBar user={currentSession?.user} />
                                 </div>
                             </div>
 
-                            <div className="flex justify-end pt-2">
+                            <div className="flex justify-end pt-3">
                                 <div className="w-fit rounded-xl px-1 pl-3 py-3 bg-gray-100 flex flex-row items-center">
                                     <TabsBar currentPage={currentPage} setPage={setPage} />
                                 </div>

@@ -92,14 +92,14 @@ export default function Login() {
                 </div>
 
 
-                <div className="text-sm flex justify-between items-center my-3 w-full">
-                    <button type="button" className="my-2 flex cursor-pointer pb-4"
+                <div className="text-sm flex flex-col pt-3 gap-2 w-full">
+                    <button type="button" className="flex cursor-pointer"
                         onClick={redirectToForgetPassword}>
                         <span className="ml-auto text-sans text-sm text-gray-500 tracking-wider">
                             Forgot your password?
                         </span>
                     </button>
-                    <div className="pb-6">
+                    <div className="pb-4">
                         {alertMessage && alertSeverity && (
                             <Alert
                                 sx={{
@@ -109,7 +109,7 @@ export default function Login() {
                                     borderRadius: "12px",
                                 }}
                                 severity={alertSeverity}
-                                className="mt-2"
+                                className=""
                             >
                                 <p id="message">{alertMessage}</p>
                             </Alert>
