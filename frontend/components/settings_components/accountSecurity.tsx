@@ -78,14 +78,14 @@ export default function AccountSecurity() {
 
     return (
         <div className="px-7 py-4.5 min-w-1/4 max-w-fit space-y-5">
-            <div className="space-y-3.5">
+            <div>
                 <div className="text-2xl font-semibold">Delete Data</div>
-                <div className="mt-5">
+                <div className="mt-5 space-y-0.5">
                     <div>Clear all bank account and transaction data.</div>
                     <div className="text-red-500">Warning: This action is irreversible.</div>
                 </div>
-                <div className="flex flex-col">
-                    <div>
+                <div className="flex flex-col mt-3">
+                    <div className="pb-1">
                         To verify, type <i className="select-none">DELETE MY DATA</i> below:
                     </div>
                     <input className="border w-full px-2 py-0.5 rounded-lg" onChange={(e) => checkConfirmDeleteData(e.target.value)} />
@@ -100,12 +100,12 @@ export default function AccountSecurity() {
             </div>
             <div className="space-y-3.5">
                 <div className="text-2xl font-semibold">Delete Account</div>
-                <div className="mt-5">
+                <div className="mt-5 space-y-0.5">
                     <div>Your account will be deleted, along with all its data</div>
                     <div className="text-red-400">Warning: This action is not reversible</div>
                 </div>
-                <div className="flex flex-col">
-                    <div>
+                <div className="flex flex-col mt-3">
+                    <div className="pb-1">
                         To verify, type <i className="select-none">DELETE MY ACCOUNT</i> below:
                     </div>
                     <input className="border w-full px-2 py-0.5 rounded-lg" onChange={(e) => checkConfirmDeleteAccount(e.target.value)} />

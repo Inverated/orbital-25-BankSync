@@ -52,12 +52,12 @@ export default function Password() {
     return (
         <div className="px-7 py-4.5">
             <div className="text-2xl font-semibold">Change Password</div>
-            <form className="space-y-3.5">
-                <div>
+            <form>
+                <div className="space-y-0.5">
                     <div className="mt-5">Change your password.</div>
                     <div className="text-red-400">Note: If signed up using OAuth, set password login here.</div>
                 </div>
-                <div>
+                <div className="pt-2">
                     <div className="my-2 flex border rounded-lg">
                         <LockKeyhole className="m-1.5" />
                         <input
@@ -77,10 +77,10 @@ export default function Password() {
                             onChange={updatePasswordSimilarity} />
                     </div>
                 </div>
-                <div hidden={errorMessage == ''} className="text-shadow-xm text-red-600">
+                <div hidden={errorMessage == ''} className="text-shadow-xm text-red-400">
                     {errorMessage}
                 </div>
-                <div hidden={!passwordResetSuccess} className="text-shadow-xm text-green-600">
+                <div hidden={!passwordResetSuccess} className="text-shadow-xm text-green-400">
                     Password reset successful
                 </div>
                 <div className="flex justify-end">

@@ -28,7 +28,7 @@ export default function ConnectedAccount() {
     return (
         <div className="px-7 py-4.5">
             <div className="text-2xl font-semibold">Connected Account</div>
-            <div className="space-y-3.5">
+            <div>
                 <div className="mt-5">Connect accounts with the same email address.</div>
                 <button
                     className={externalAuthButtonStyle}

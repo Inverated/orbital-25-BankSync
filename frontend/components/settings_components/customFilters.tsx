@@ -72,10 +72,10 @@ export default function CustomFilter() {
                 <div>
                     The filters are checked in the order listed, from top to bottom. 
                     A filter will only match if the whole word matches -- partical matches will be ignored.
-                    <div className="pt-1 text-sm text-gray-400">
+                    <div className="pt-0.5 text-sm text-gray-400">
                         <p>Example: Matching the word &quot;to&quot;</p>
                         <div className="flex flex-row items-center px-1 p-0.5">
-                            <CircleCheck className="w-5 h-5 text-blue-400 mx-1" />From A <span className="text-blue-400 italic mx-1">to</span> B (matches because it contains the whole word &quot;to&quot;)
+                            <CircleCheck className="w-5 h-5 text-green-400 mx-1" />From A <span className="text-green-400 italic mx-1">to</span> B (matches because it contains the whole word &quot;to&quot;)
                         </div> 
                         <div className="flex flex-row items-center px-1">
                             <CircleX className="w-5 h-5 text-red-400 mx-1" />Cus<span className="text-red-400 italic">to</span>m (does not match because &quot;to&quot; is not a whole word by itself)
