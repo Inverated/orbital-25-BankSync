@@ -31,7 +31,7 @@ jobs:
           pip install -r requirements.txt
       
       - name: Run Pytest
-        run: Pytest
+        run: pytest
       
       - name: Setup node.js
         uses: actions/setup-node@v4
