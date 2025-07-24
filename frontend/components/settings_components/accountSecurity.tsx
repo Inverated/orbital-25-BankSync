@@ -88,7 +88,7 @@ export default function AccountSecurity() {
                     <div>
                         To verify, type <i className="select-none">DELETE MY DATA</i> below:
                     </div>
-                    <input className="border w-full px-2" onChange={(e) => checkConfirmDeleteData(e.target.value)} />
+                    <input className="border w-full px-2 py-0.5 rounded-lg" onChange={(e) => checkConfirmDeleteData(e.target.value)} />
                     <div className="flex justify-end">
                         <button className={"rounded-lg text-white tracking-wide w-fit px-3 py-1.5 my-3 " +
                             (confirmDeleteData ? 'bg-green-600 font-semibold tracking-wide hover:cursor-pointer hover:bg-green-700 active:bg-green-800 active:scale-95' : 'bg-green-500')}
@@ -108,7 +108,7 @@ export default function AccountSecurity() {
                     <div>
                         To verify, type <i className="select-none">DELETE MY ACCOUNT</i> below:
                     </div>
-                    <input className="border w-full px-2" onChange={(e) => checkConfirmDeleteAccount(e.target.value)} />
+                    <input className="border w-full px-2 py-0.5 rounded-lg" onChange={(e) => checkConfirmDeleteAccount(e.target.value)} />
                     <div className="flex justify-end">
                         <button className={"rounded-lg text-white tracking-wide w-fit px-3 py-1.5 my-3 " +
                             (confirmDeleteAccount ? 'bg-green-600 font-semibold tracking-wide hover:cursor-pointer hover:bg-green-700 active:bg-green-800 active:scale-95' : 'bg-green-500')}
