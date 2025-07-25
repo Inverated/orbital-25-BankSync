@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
+import { useDatabase } from "@/context/DatabaseContext";
+import * as databaseQuery from "@/lib/databaseQuery";
 import { render, screen, waitFor } from "@testing-library/react";
-import SpendingTrend from "./AnalyticsSpendingTrend";
+import SpendingCategory from "./AnalyticsSpendingCategory";
 import { MockDatabaseProvider } from "@/context/MockDatabaseProvider";
 
 // mock supabase
@@ -12,16 +14,16 @@ jest.mock("@/lib/supabase", () => {
     }
 })
 
-// mock react-chartjs-2 Line component
+// mock react-chartjs-2 Pie Chart component
 let chartProps: any = null;
 jest.mock("react-chartjs-2", () => ({
-    Line: (props: any) => {
+    Pie: (props: any) => {
         chartProps = props;
-        return <div data-testid="mock-line-chart">Mock Line Chart</div>
+        return <div data-testid="mock-pie-chart">Mock Pie Chart</div>
     },
 }));
 
-describe("SpendingTrend: Unit Testing", () => {
+describe("Spending Category: Integration Testing", () => {
     const mockTransactions = [
         {
             transaction_date: "2024-05-01",
@@ -30,16 +32,16 @@ describe("SpendingTrend: Unit Testing", () => {
             deposit_amount: 0.5,
             account_no: "12345",
             category: "interest",
-            ending_balance: 0.5,
+            ending_balance: 100.5,
         },
         {
             transaction_date: "2024-05-31",
             transaction_description: "food",
-            withdrawal_amount: 0.1,
+            withdrawal_amount: 4.5,
             deposit_amount: 0,
             account_no: "12345",
             category: "food",
-            ending_balance: 0.4,
+            ending_balance: 96,
         },
         {
             transaction_date: "2024-06-01",
@@ -48,7 +50,7 @@ describe("SpendingTrend: Unit Testing", () => {
             deposit_amount: 1000,
             account_no: "12345",
             category: "salary",
-            ending_balance: 1000.4,
+            ending_balance: 1096,
         },
         {
             transaction_date: "2024-06-10",
@@ -57,7 +59,7 @@ describe("SpendingTrend: Unit Testing", () => {
             deposit_amount: 500,
             account_no: "12345",
             category: "transfer",
-            ending_balance: 1500.4,
+            ending_balance: 1596,
         },
         {
             transaction_date: "2024-06-11",
@@ -66,7 +68,7 @@ describe("SpendingTrend: Unit Testing", () => {
             deposit_amount: 0,
             account_no: "12345",
             category: "food",
-            ending_balance: 1300.4,
+            ending_balance: 1396,
         },
         {
             transaction_date: "2024-06-30",
@@ -75,7 +77,7 @@ describe("SpendingTrend: Unit Testing", () => {
             deposit_amount: 0,
             account_no: "12345",
             category: "shopping",
-            ending_balance: 1200.4,
+            ending_balance: 1296,
         },
         {
             transaction_date: "2024-07-08",
@@ -84,8 +86,8 @@ describe("SpendingTrend: Unit Testing", () => {
             deposit_amount: 0,
             account_no: "12345",
             category: "investment",
-            ending_balance: 200.4,
-        }
+            ending_balance: 2296,
+        },
     ]
 
     // rendering and checking output for valid date range
@@ -93,7 +95,7 @@ describe("SpendingTrend: Unit Testing", () => {
         // render component with valid date range
         render (
             <MockDatabaseProvider transactions={mockTransactions}>
-                <SpendingTrend
+                <SpendingCategory
                     startDate={dayjs("2024-05-01")}
                     endDate={dayjs("2024-06-30")}
                 />
@@ -105,15 +107,22 @@ describe("SpendingTrend: Unit Testing", () => {
             expect(screen.queryByText(/Loading data.../i)).not.toBeInTheDocument()
         );
 
-        // check date range indication
-        expect(screen.getByText((content) => content.includes("Spending pattern from May 2024 to June 2024"))).toBeInTheDocument();
-
         // check if chart is rendered
-        expect(screen.getByTestId("mock-line-chart")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-pie-chart")).toBeInTheDocument();
 
         // check chart props
-        expect(chartProps.data.labels).toEqual(["May 24", "Jun 24"]);
-        expect(chartProps.data.datasets[0].data).toEqual([0.1, 300]);
+        expect(chartProps.data.labels).toEqual(["food", "shopping"]);
+        expect(chartProps.data.datasets[0].data).toEqual([204.5, 100]);
+
+        // check chart legend
+        const foodSlice = screen.getByText("food").closest("div.flex.items-center.justify-between.text-sm");
+        expect(foodSlice).toHaveTextContent("food");
+        expect(foodSlice).toHaveTextContent("67.2 %");
+
+        // check chart legend
+        const shoppingSlice = screen.getByText("shopping").closest("div.flex.items-center.justify-between.text-sm");
+        expect(shoppingSlice).toHaveTextContent("shopping");
+        expect(shoppingSlice).toHaveTextContent("32.8 %");
     });
 
     // rendering and checking output for invalid date range
@@ -121,17 +130,14 @@ describe("SpendingTrend: Unit Testing", () => {
         // render component with invalid date range
         render (
             <MockDatabaseProvider transactions={mockTransactions}>
-                <SpendingTrend
+                <SpendingCategory
                     startDate={dayjs("2024-06-01")}
                     endDate={dayjs("2024-05-01")}
                 />
             </MockDatabaseProvider>
         );
-
+        
         // check placeholder text
-        expect(screen.getByText("Spending Chart")).toBeInTheDocument();
-
-        // check date range indication
-        expect(screen.getByText((content) => content.includes("Spending pattern from June 2024 to May 2024"))).toBeInTheDocument()
+        expect(screen.getByText("Category Breakdown Chart")).toBeInTheDocument();
     })
 })
