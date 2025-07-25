@@ -17,7 +17,7 @@ export const testTransactions: Transaction[] = [
         transaction_date: "2024-06-10",
         transaction_description: "transfer",
         withdrawal_amount: 0,
-        deposit_amount: 500,
+        deposit_amount: 1500,
         account_no: "12345",
         category: "transfer",
         ending_balance: 1500,
@@ -25,7 +25,7 @@ export const testTransactions: Transaction[] = [
     {
         transaction_date: "2024-06-11",
         transaction_description: "food",
-        withdrawal_amount: 200,
+        withdrawal_amount: 1200,
         deposit_amount: 0,
         account_no: "12345",
         category: "food",
