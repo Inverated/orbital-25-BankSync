@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import IncomeExpenses from "./AnalyticsIncomeVsExpenses";
 import { render, screen, waitFor } from "@testing-library/react";
+import { testTransactions } from "@/jest.setup";
 
 // mock react-chartjs-2 Line component
 jest.mock("react-chartjs-2", () => ({
@@ -19,13 +20,13 @@ describe("IncomeExpenses", () => {
                 endDate={dayjs("2024-06-30")}
             />
         );
-        screen.debug();
+        // screen.debug();
 
         // wait for loading to finish
         await waitFor(() => 
             expect(screen.queryByText(/Loading data.../i)).not.toBeInTheDocument()
         );
-
+        console.log(testTransactions)
         // check if chart is rendered
         expect(screen.getByTestId("mock-line-chart")).toBeInTheDocument();
 
