@@ -13,8 +13,8 @@ export default function Analytics() {
     const [endDate, setEndDate] = useState<Dayjs | null>(null);
     
     const { transactions } = useDatabase()
-    if (!startDate) setStartDate(dayjs(transactions[transactions.length - 1].transaction_date))
-    if (!endDate) setEndDate(dayjs(transactions[0].transaction_date))
+    if (!startDate && transactions.length > 0) setStartDate(dayjs(transactions[transactions.length - 1].transaction_date))
+    if (!endDate && transactions.length > 0) setEndDate(dayjs(transactions[0].transaction_date))
 
     const nullDates = !startDate;
     const invalidDate =
