@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
-import IncomeExpenses from "./AnalyticsIncomeVsExpenses";
 import { useDatabase } from "@/context/DatabaseContext";
 import * as databaseQuery from "@/lib/databaseQuery";
 import { render, screen, waitFor } from "@testing-library/react";
+import SpendingTrend from "./AnalyticsSpendingTrend";
 
 // mock useDatabase context
 jest.mock("@/context/DatabaseContext", () => ({
@@ -29,7 +29,7 @@ jest.mock("react-chartjs-2", () => ({
     },
 }));
 
-describe("IncomeExpenses: Unit Testing", () => {
+describe("SpendingTrend: Unit Testing", () => {
     beforeEach(() => {
         // provide mock transactions to the context
         (useDatabase as jest.Mock).mockReturnValue({
@@ -105,7 +105,7 @@ describe("IncomeExpenses: Unit Testing", () => {
     it("renders income, expenses, and net savings", async () => {        
         // render component with valid date range
         render (
-            <IncomeExpenses
+            <SpendingTrend
                 startDate={dayjs("2024-05-01")}
                 endDate={dayjs("2024-06-30")}
             />
@@ -116,30 +116,27 @@ describe("IncomeExpenses: Unit Testing", () => {
             expect(screen.queryByText(/Loading data.../i)).not.toBeInTheDocument()
         );
 
+        // check date range indication
+        expect(screen.getByText((content) => content.includes("Spending pattern from May 2024 to June 2024"))).toBeInTheDocument();
+
         // check if chart is rendered
         expect(screen.getByTestId("mock-line-chart")).toBeInTheDocument();
-
-        // check income
-        expect(screen.getByText((content) => content.includes("$1500.50"))).toBeInTheDocument()
-
-        // check expenses
-        expect(screen.getByText((content) => content.includes("$300.10"))).toBeInTheDocument()
-
-        // check net savings
-        expect(screen.getByText((content) => content.includes("$1200.40"))).toBeInTheDocument();
     });
 
     // rendering and checking output for invalid date range
     it("renders placeholder", async () => {
         // render component with invalid date range
         render (
-            <IncomeExpenses
+            <SpendingTrend
                 startDate={dayjs("2024-06-01")}
                 endDate={dayjs("2024-05-01")}
             />
         );
-        
+
         // check placeholder text
-        expect(screen.getByText("Income vs. Expenses Chart")).toBeInTheDocument();
+        expect(screen.getByText("Spending Chart")).toBeInTheDocument();
+
+        // check date range indication
+        expect(screen.getByText((content) => content.includes("Spending pattern from June 2024 to May 2024"))).toBeInTheDocument()
     })
 })
