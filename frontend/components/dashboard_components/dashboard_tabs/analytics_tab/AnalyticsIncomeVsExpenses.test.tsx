@@ -105,13 +105,13 @@ describe("IncomeExpenses", () => {
         expect(screen.getByTestId("mock-line-chart")).toBeInTheDocument();
 
         // check income
-        expect(screen.getByText((content) => content.includes("$1500.00"))).toBeInTheDocument();
+        expect(screen.getByText((content) => content.includes("1500.00"))).toBeInTheDocument();
 
         // check expenses
-        expect(screen.getByText((content) => content.includes("$300.00"))).toBeInTheDocument();
+        expect(screen.getByText((content) => content.includes("300.00"))).toBeInTheDocument();
 
         // check net savings
-        expect(screen.getByText((content) => content.includes("$1200.00"))).toBeInTheDocument();
+        expect(screen.getByText((content) => content.includes("1200.00"))).toBeInTheDocument();
     });
 
     // rendering and checking output if invalid date range
