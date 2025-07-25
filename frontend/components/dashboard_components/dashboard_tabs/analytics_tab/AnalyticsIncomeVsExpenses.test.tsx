@@ -10,7 +10,7 @@ jest.mock("@/context/DatabaseContext", () => ({
 }));
 
 // mock getTransactionDetails
-jest.spyOn(databaseQuery, "getTransactionDetails").mockImplementation(({ transactions, date}) => {
+jest.spyOn(databaseQuery, "getTransactionDetails").mockImplementation(({ transactions, date }) => {
     return transactions.filter(transaction => {
         const transactionDate = dayjs(transaction.transaction_date);
 
@@ -35,7 +35,7 @@ describe("IncomeExpenses", () => {
         (useDatabase as jest.Mock).mockReturnValue({
             transactions: [
                 {
-                    transaction_date: dayjs("2024-06-01").toString(),
+                    transaction_date: "2024-06-01",
                     transaction_description: "salary",
                     withdrawal_amount: 0,
                     deposit_amount: 1000,
@@ -44,7 +44,7 @@ describe("IncomeExpenses", () => {
                     ending_balance: 1000,
                 },
                 {
-                    transaction_date: dayjs("2024-06-10").toString(),
+                    transaction_date: "2024-06-10",
                     transaction_description: "transfer",
                     withdrawal_amount: 0,
                     deposit_amount: 500,
@@ -53,7 +53,7 @@ describe("IncomeExpenses", () => {
                     ending_balance: 1500,
                 },
                 {
-                    transaction_date: dayjs("2024-06-11").toString(),
+                    transaction_date: "2024-06-11",
                     transaction_description: "food",
                     withdrawal_amount: 200,
                     deposit_amount: 0,
@@ -62,7 +62,7 @@ describe("IncomeExpenses", () => {
                     ending_balance: 1300,
                 },
                 {
-                    transaction_date: dayjs("2024-06-30").toString(),
+                    transaction_date: "2024-06-30",
                     transaction_description: "food",
                     withdrawal_amount: 100,
                     deposit_amount: 0,
@@ -75,9 +75,9 @@ describe("IncomeExpenses", () => {
     });
 
     // rendering and checking output if valid date range
-    it("renders income, expenses, and net savings", async () => {        
+    it("renders income, expenses, and net savings", async () => {
         // render component with valid date range
-        render (
+        render(
             <IncomeExpenses
                 startDate={dayjs("2024-06-01")}
                 endDate={dayjs("2024-06-30")}
@@ -85,7 +85,6 @@ describe("IncomeExpenses", () => {
         );
 
         const mockTransactions = (useDatabase as jest.Mock).mock.results[0].value.transactions;
-        console.log("mock transactions: ", mockTransactions);
 
         const result = databaseQuery.getTransactionDetails({
             transactions: mockTransactions,
@@ -94,12 +93,11 @@ describe("IncomeExpenses", () => {
                 endDate: dayjs("2024-06-30")
             }
         })
-        console.log("filtered transactions returned by getTransactionDetails ", result)
 
         // screen.debug();
 
         // wait for loading to finish
-        await waitFor(() => 
+        await waitFor(() =>
             expect(screen.queryByText(/Loading data.../i)).not.toBeInTheDocument()
         );
 
@@ -108,7 +106,7 @@ describe("IncomeExpenses", () => {
 
         // check income
         expect(screen.getByText((content) => content.includes("$1500.00"))).toBeInTheDocument();
-        
+
         // check expenses
         expect(screen.getByText((content) => content.includes("$300.00"))).toBeInTheDocument();
 
@@ -119,7 +117,7 @@ describe("IncomeExpenses", () => {
     // rendering and checking output if invalid date range
     it("renders placeholder", async () => {
         // render component with invalid date range
-        render (
+        render(
             <IncomeExpenses
                 startDate={dayjs("2024-06-01")}
                 endDate={dayjs("2024-05-01")}
