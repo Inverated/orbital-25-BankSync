@@ -19,7 +19,7 @@ describe("IncomeExpenses", () => {
                 endDate={dayjs("2024-06-30")}
             />
         );
-        // screen.debug();
+        screen.debug();
 
         // wait for loading to finish
         await waitFor(() => 
