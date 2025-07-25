@@ -36,7 +36,7 @@ export default function Home() {
 
     return (
         <div>
-            <header className="sticky top-0 w-full bg-white shadow-md z-50 flex flex-row justify-between items-center pt-6 pb-6 transition-all lg:px-40 md:px-25 not-lg:px-12">
+            <header className="sticky top-0 w-full bg-white shadow-md z-50 flex flex-row justify-between items-center pt-6 pb-4 mb-2 transition-all lg:px-40 md:px-25 not-lg:px-12">
                 <div>
                     <Image src="/logo.png" alt="BankSync" width={250} height={125} />
                 </div>
@@ -58,7 +58,7 @@ export default function Home() {
                 </div>
             </header>
 
-            <section className="bg-gray-100 flex-col items-center text-center py-15">
+            <section className="bg-gray-100 flex-col items-center text-center py-17">
                 <h1 className="text-6xl font-sans font-bold">Welcome to</h1>
                 <Image src="/name.png" alt="BankSync" width={500} height={250} className="mx-auto brightness-109" />
                 <p className="text-lg text-gray-500 w-3/8 mx-auto">
@@ -111,14 +111,14 @@ export default function Home() {
                     More will be added soon!
                 </p>
 
-                <div className="flex space-x-20 justify-center items-center">
-                    <Image src="https://1000logos.net/wp-content/uploads/2021/05/DBS-Bank-logo.png" alt="DBS" width={230} height={250} className="bg-transparent" />
-                    <Image src="https://www.posb.com.sg/iwov-resources/flp/images/posb_logo.svg?1" alt="POSB" width={230} height={200} className="bg-transparent" />
+                <div className="flex space-x-15 justify-center items-center">
+                    <Image src="https://1000logos.net/wp-content/uploads/2021/05/DBS-Bank-logo.png" alt="DBS" width={200} height={250} className="bg-transparent" />
+                    <Image src="https://www.posb.com.sg/iwov-resources/flp/images/posb_logo.svg?1" alt="POSB" width={200} height={200} className="bg-transparent" />
                 </div>
-                <div className="flex space-x-20 justify-center items-center">
-                    <Image src="https://1000logos.net/wp-content/uploads/2021/10/OCBC-Bank-Logo.png" alt="OCBC" width={250} height={250} className="bg-transparent" />
-                    <Image src="https://1000logos.net/wp-content/uploads/2021/11/Standard-Chartered-logo.png" alt="Standard Charter" width={250} height={250} className="bg-transparent" />
-                    <Image src="https://1000logos.net/wp-content/uploads/2021/09/UOB-Logo.png" alt="UOB" width={250} height={250} className="bg-transparent" />
+                <div className="flex space-x-15 justify-center items-center">
+                    <Image src="https://1000logos.net/wp-content/uploads/2021/10/OCBC-Bank-Logo.png" alt="OCBC" width={200} height={250} className="bg-transparent" />
+                    <Image src="https://1000logos.net/wp-content/uploads/2021/11/Standard-Chartered-logo.png" alt="Standard Charter" width={200} height={250} className="bg-transparent" />
+                    <Image src="https://1000logos.net/wp-content/uploads/2021/09/UOB-Logo.png" alt="UOB" width={200} height={250} className="bg-transparent" />
                 </div>
             </section>
 
