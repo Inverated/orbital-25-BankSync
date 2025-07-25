@@ -116,12 +116,3 @@ jest.spyOn(databaseQuery, "getAccountDetails").mockImplementation(({ accounts, c
 jest.mock('@/lib/FastAPI.js', () => ({
 
 }));
-
-
-jest.mock('jsPDF', () => ({
-    jsPDF: jest.fn().mockImplementation(() => ({
-        text: jest.fn(),
-        save: jest.fn(),
-        addPage: jest.fn()
-    }))
-}))
