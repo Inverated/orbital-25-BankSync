@@ -1,4 +1,4 @@
-name: Run Pytest
+name: Run Pytest and Jtest
 
 on:
   push:
@@ -42,3 +42,8 @@ jobs:
         run: |
           cd frontend
           npm ci
+      
+      - name: Run Jest
+        run: |
+          cd frontend 
+          npx jest
