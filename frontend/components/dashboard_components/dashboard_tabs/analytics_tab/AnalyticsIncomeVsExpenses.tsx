@@ -81,7 +81,7 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                     .map(([date, { income, expenses }]) => ({ date, income, expenses }));
 
                 setDataPoints(data);
-
+                console.log(data)
                 const totalIncome = data.reduce((sum, d) => sum + d.income, 0);
                 setTotalIncome(totalIncome);
 
