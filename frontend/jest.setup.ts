@@ -106,7 +106,11 @@ jest.mock('@/lib/supabase', () => ({
                 error: null,
             }),
             getUser: jest.fn().mockResolvedValue({
-                data: { app_metadata: { providers: 'google' }}
+                data: { 
+                    user: {
+                        app_metadata: { providers: ['google'] }
+                    }
+                }
             })
         },
     },
