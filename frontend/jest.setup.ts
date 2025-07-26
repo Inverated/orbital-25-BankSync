@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { Account, Transaction } from "./utils/types";
+import { Account, defaultKeywordMap, StatementResponse, Transaction, uploadReturnData } from "./utils/types";
 import dayjs from "dayjs";
 import * as databaseQuery from "@/lib/databaseQuery";
 
@@ -77,7 +77,8 @@ jest.mock('@/context/UserContext', () => ({
 jest.mock('@/context/ProfileContext', () => ({
     useProfile: () => ({
         profile: { user_name: "mock name" },
-        keywordMap: {},
+        //keywordMap: new Map(Object.entries(defaultKeywordMap)),
+        keywordMap: [],
         refreshProfile: jest.fn(),
         refreshStatus: true,
     }),
@@ -106,7 +107,7 @@ jest.mock('@/lib/supabase', () => ({
                 error: null,
             }),
             getUser: jest.fn().mockResolvedValue({
-                data: { 
+                data: {
                     user: {
                         app_metadata: { providers: ['google'] }
                     }
@@ -149,22 +150,24 @@ jest.spyOn(databaseQuery, "getAccountDetails").mockImplementation(({ accounts, c
     return filtered
 })
 
-jest.mock("@/utils/uploadFile", async () => ({
-    uploadNewFile: ({
-        result: {
-            status: 200,
-            data: {
-                data: [{
-                    hasData: true,
-                    account: testAccounts[0],
-                    transactions: testTransactions
-                }],
-                filename: 'Name',
-                content_type: 'Test',
-                success: true,
-                error: 'Error'
-            },
-            error: null,
-        }
-    })
+const mockReturnData: StatementResponse = {
+    hasData: true,
+    account: testAccounts[0],
+    transactions: testTransactions
+}
+
+jest.mock("@/utils/uploadFile", () => ({
+    uploadNewFile: jest.fn(async () => ({
+        data: {
+            data: [mockReturnData],
+            filename: 'Name',
+            content_type: 'Test',
+            success: true,
+            error: null
+        },
+        status: 200,
+        error: null,
+
+    }))
 }))
+

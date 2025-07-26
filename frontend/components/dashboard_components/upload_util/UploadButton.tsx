@@ -311,7 +311,7 @@ export default function UploadButton() {
                                 </div>
                             </div>
 
-                            <input id="dropzone-file" type="file" name="fileUploadArea"
+                            <input id="dropzone-file" type="file" name="fileUploadArea" data-testid='dropFile'
                                 onChange={(e) => {
                                     setCurrentFile(e)
                                     handleUploadFile()
