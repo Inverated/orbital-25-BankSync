@@ -15,17 +15,20 @@ export default function Username() {
     const updateUsername = async (e: React.FormEvent) => {
         e.preventDefault();
         setAlertMessage('')
+
+        if (newName == '') {
+            setAlertSeverity('warning')
+            setAlertMessage('New username cannot be empty')
+            return
+        }
+        
         if (newName == profile.user_name) {
             console.log('wet')
             setAlertSeverity('warning')
             setAlertMessage('New username must be different')
             return
         }
-        if (newName == '') {
-            setAlertSeverity('warning')
-            setAlertMessage('New username cannot be empty')
-            return
-        }
+        
         const newProfile: Profile = { ...profile, user_name: newName }
         await updateProfileDetails(newProfile);
         await refreshProfile();

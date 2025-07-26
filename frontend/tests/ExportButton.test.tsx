@@ -1,8 +1,15 @@
 import { render, screen } from '@testing-library/react';
-import ExportButton from "./ExportButton";
+import ExportButton from "../components/dashboard_components/dashboard_tabs/transactions_tab/ExportButton";
 import userEvent from "@testing-library/user-event";
 
 const uniqueCat: string[] = ['cat1', 'cat2', 'cat3']
+
+jest.mock("@/utils/downloadFile", () => ({
+    exportToXlsx: Promise<Blob>,
+    exportToPdf: Promise<Blob>,
+    downloadBlob: Promise<Blob>,
+    passwordProtect: Promise<Blob>,
+}));
 
 test('display individual transaction row', async () => {
     render(<ExportButton filteredAccount={[]} filteredTransaction={[]} />)

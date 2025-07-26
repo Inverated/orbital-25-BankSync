@@ -76,7 +76,7 @@ jest.mock('@/context/UserContext', () => ({
 
 jest.mock('@/context/ProfileContext', () => ({
     useProfile: () => ({
-        profile: {},
+        profile: { user_name: "mock name"},
         keywordMap: {},
         refreshProfile: jest.fn(),
         refreshStatus: true,
@@ -85,6 +85,27 @@ jest.mock('@/context/ProfileContext', () => ({
 
 jest.mock('@supabase/supabase-js', () => ({
     createClient: jest.fn()
+}));
+
+jest.mock('@/lib/supabase', () => ({
+    supabase: {
+        auth: {
+            getSession: jest.fn().mockResolvedValue({
+                data: { session: { user: { id: 'mock id' } } },
+                error: null,
+            }),
+            updateUser: jest.fn().mockResolvedValue({
+                error: null,
+            }),
+            signOut: jest.fn().mockResolvedValue({
+                error: null,
+            }),
+        },
+    },
+}));
+
+jest.mock("next/navigation", () => ({
+    redirect: jest.fn(),
 }));
 
 jest.spyOn(databaseQuery, "getTransactionDetails").mockImplementation(({ transactions, date }) => {
@@ -112,7 +133,3 @@ jest.spyOn(databaseQuery, "getAccountDetails").mockImplementation(({ accounts, c
 
     return filtered
 })
-
-jest.mock('@/lib/FastAPI.js', () => ({
-
-}));

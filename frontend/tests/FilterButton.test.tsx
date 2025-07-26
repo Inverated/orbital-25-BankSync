@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import FilterButton from './FilterButton';
+import FilterButton from '../components/dashboard_components/dashboard_tabs/transactions_tab/FilterButton';
 import { Dayjs } from 'dayjs';
 import userEvent from '@testing-library/user-event';
 import { testAccounts, testTransactions } from '@/jest.setup';
