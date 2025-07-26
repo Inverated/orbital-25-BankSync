@@ -9,7 +9,7 @@ const uniqueCat: string[] = ['cat1', 'cat2', 'cat3']
 const handleFilterQuery = ((accountSelection: string[], categorySelection: string[], ascendingSelection: boolean,
     date: { startDate: Dayjs | null, endDate: Dayjs | null } | null) => { })
 
-test('display individual transaction row', async () => {
+test('avaliable filter options from mock data', async () => {
     render(<FilterButton setFilter={handleFilterQuery} />)
 
     expect(screen.getByText('Filter')).toBeInTheDocument()

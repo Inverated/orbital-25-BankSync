@@ -11,7 +11,7 @@ jest.mock("@/utils/downloadFile", () => ({
     passwordProtect: Promise<Blob>,
 }));
 
-test('display individual transaction row', async () => {
+test('export function with display of loaded data', async () => {
     render(<ExportButton filteredAccount={[]} filteredTransaction={[]} />)
 
     expect(screen.queryByRole('button', { name: 'Export' })).toBeInTheDocument()

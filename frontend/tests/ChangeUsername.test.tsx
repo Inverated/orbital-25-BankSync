@@ -2,7 +2,7 @@ import UserName from '@/components/settings_components/Username';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-test('display individual transaction row', async () => {
+test('changing username', async () => {
     render(<UserName />)
 
     expect(screen.getByPlaceholderText(/enter new/i))

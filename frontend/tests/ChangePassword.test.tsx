@@ -2,7 +2,7 @@ import Password from '@/components/settings_components/Password';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-test('display individual transaction row', async () => {
+test('changing password', async () => {
     render(<Password />)
 
     expect(screen.getByPlaceholderText(/enter new/i))
