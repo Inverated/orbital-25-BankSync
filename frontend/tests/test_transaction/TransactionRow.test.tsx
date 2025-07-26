@@ -1,5 +1,5 @@
 import { Account, Transaction } from "@/utils/types"
-import TransactionRow from "../components/dashboard_components/dashboard_tabs/transactions_tab/TransactionRow"
+import TransactionRow from "../../components/dashboard_components/dashboard_tabs/transactions_tab/TransactionRow"
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 

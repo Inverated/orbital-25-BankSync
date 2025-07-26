@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import ExportButton from "../components/dashboard_components/dashboard_tabs/transactions_tab/ExportButton";
+import ExportButton from "../../components/dashboard_components/dashboard_tabs/transactions_tab/ExportButton";
 import userEvent from "@testing-library/user-event";
 import { testAccounts, testTransactions } from '@/jest.setup';
 
