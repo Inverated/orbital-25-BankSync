@@ -76,7 +76,7 @@ jest.mock('@/context/UserContext', () => ({
 
 jest.mock('@/context/ProfileContext', () => ({
     useProfile: () => ({
-        profile: { user_name: "mock name"},
+        profile: { user_name: "mock name" },
         keywordMap: {},
         refreshProfile: jest.fn(),
         refreshStatus: true,
@@ -89,6 +89,11 @@ jest.mock('@supabase/supabase-js', () => ({
 
 jest.mock('@/lib/supabase', () => ({
     supabase: {
+        from: jest.fn(() => ({
+            upsert: jest.fn().mockResolvedValue({
+                error: null
+            })
+        })),
         auth: {
             getSession: jest.fn().mockResolvedValue({
                 data: { session: { user: { id: 'mock id' } } },

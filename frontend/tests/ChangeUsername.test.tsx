@@ -18,10 +18,16 @@ test('display individual transaction row', async () => {
 
     const user = userEvent.setup()
 
-    const clearInputs = () => {
-        user.clear(newName)
-    }
+    user.clear(newName)
 
     await user.click(updateName)
     expect(screen.getByText(/empty/i)).toBeInTheDocument()
+
+    await user.type(newName, userName)
+    await user.click(updateName)
+    expect(screen.getByText(/different/i)).toBeInTheDocument()
+
+    await user.type(newName, '2')
+    await user.click(updateName)
+    expect(screen.getByText(/successful/i)).toBeInTheDocument()
 })

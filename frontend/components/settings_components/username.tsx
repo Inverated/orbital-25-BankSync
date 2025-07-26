@@ -9,7 +9,7 @@ export default function Username() {
     const { profile } = useProfile();
     const [alertMessage, setAlertMessage] = useState('')
     const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "warning" | null>(null)
-    const [newName, setNewName] = useState(profile.user_name || "");
+    const [newName, setNewName] = useState("");
     const { refreshProfile } = useProfile();
 
     const updateUsername = async (e: React.FormEvent) => {
@@ -21,9 +21,8 @@ export default function Username() {
             setAlertMessage('New username cannot be empty')
             return
         }
-        
+
         if (newName == profile.user_name) {
-            console.log('wet')
             setAlertSeverity('warning')
             setAlertMessage('New username must be different')
             return
