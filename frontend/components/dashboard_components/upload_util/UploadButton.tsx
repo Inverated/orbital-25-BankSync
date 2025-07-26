@@ -58,7 +58,6 @@ export default function UploadButton() {
 
     const handleUploadFile = async () => {
         resetValues()
-
         if (currentFile.current != null) {
             setPasswordQuery(false)
 
@@ -72,7 +71,6 @@ export default function UploadButton() {
                 data: uploadReturnData | null,
                 error: Error | null
             } = await uploadNewFile(currentFile.current, filePassword.current?.value)
-
             setShowParsingLoading(false)
 
             if (result.status == 404) {
@@ -253,13 +251,16 @@ export default function UploadButton() {
 
     return (
         <div className="relative group">
-            <Upload
+            <button
                 onClick={() => {
                     setUploadDialogue(true);
                     setShowTooltip(false);
-                }}
-                className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'}
-            />
+                }}>
+                <Upload
+                    className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'}
+                />
+            </button>
+
 
             {showTooltip && (
                 <div className="absolute -top-7 -translate-x-1/2 left-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointers-events-none">
@@ -273,7 +274,7 @@ export default function UploadButton() {
                     <div className="bg-white rounded-lg shadow-lg px-8 py-5 max-w-5/8 w-full z-60 max-h-11/12 overflow-y-auto">
                         <div className="flex flex-row space-x-2 items-center mb-3">
                             <p className="text-2xl">File Upload</p>
-                
+
                             <button className="hover:cursor-pointer relative group/help inline-block"
                                 onClick={() => alert('Current supported bank: DBS/POSB, OCBC, UOB and SC pdf only or exported files from BankSync.\n\nGeneric file types with header \nDate  |  Description  |  W.D / D.P  |  D.P / W.D  |  Balance\nworks with some issues in description ending')}>
                                 <Info className='h-6 w-6' />

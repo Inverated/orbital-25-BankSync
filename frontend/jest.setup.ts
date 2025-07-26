@@ -118,6 +118,9 @@ jest.mock('@/lib/supabase', () => ({
 
 jest.mock("next/navigation", () => ({
     redirect: jest.fn(),
+    useRouter: jest.fn(() => ({
+        push: jest.fn()
+    }))
 }));
 
 jest.spyOn(databaseQuery, "getTransactionDetails").mockImplementation(({ transactions, date }) => {
@@ -145,3 +148,23 @@ jest.spyOn(databaseQuery, "getAccountDetails").mockImplementation(({ accounts, c
 
     return filtered
 })
+
+jest.mock("@/utils/uploadFile", async () => ({
+    uploadNewFile: ({
+        result: {
+            status: 200,
+            data: {
+                data: [{
+                    hasData: true,
+                    account: testAccounts[0],
+                    transactions: testTransactions
+                }],
+                filename: 'Name',
+                content_type: 'Test',
+                success: true,
+                error: 'Error'
+            },
+            error: null,
+        }
+    })
+}))
