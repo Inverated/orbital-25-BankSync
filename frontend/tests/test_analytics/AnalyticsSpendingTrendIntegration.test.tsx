@@ -1,8 +1,7 @@
 import dayjs from "dayjs";
 import { render, screen, waitFor } from "@testing-library/react";
 import SpendingTrend from "../../components/dashboard_components/dashboard_tabs/analytics_tab/AnalyticsSpendingTrend";
-import { MockDatabaseProvider } from "@/context/MockDatabaseProvider";
-import { testAccounts } from "@/jest.setup";
+import { Account } from "@/utils/types";
 
 const mockTransactions = [
     {
@@ -70,13 +69,30 @@ const mockTransactions = [
     }
 ]
 
+const mockAccounts: Account[] = [
+    {
+        account_name: "account 1",
+        account_no: '12345',
+        bank_name: 'bank 1',
+        balance: 100,
+        latest_recorded_date: "2024-06-30",
+    },
+    {
+        account_name: "account 2",
+        account_no: '54321',
+        bank_name: 'bank 2',
+        balance: 1000,
+        latest_recorded_date: "2024-05-30",
+    },
+]
+
 // mock useDatabase context
 jest.mock('@/context/DatabaseContext', () => ({
     useDatabase: () => ({
         refreshDatabase: jest.fn(),
         loaded: true,
         transactions: mockTransactions,
-        accounts: testAccounts
+        accounts: mockAccounts
     }),
 }));
 

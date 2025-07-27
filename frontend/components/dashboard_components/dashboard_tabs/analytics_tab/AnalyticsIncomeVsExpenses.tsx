@@ -64,7 +64,6 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                     date: { startDate: startDate, endDate: endDate }
                 });
 
-                console.log(depositAndTransactions)
                 depositAndTransactions.forEach(entry => months.forEach(month => {
                     const start = month.startOf("month")
                     const end = month.endOf("month")
@@ -77,7 +76,6 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                         })
                     }
                 }));
-                console.log(map)
 
                 const data: MonthlyIncomeAndExpenses[] = Array.from(map.entries())
                     .map(([date, { income, expenses }]) => ({ date, income, expenses }));

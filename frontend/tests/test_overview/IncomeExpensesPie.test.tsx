@@ -1,16 +1,16 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MockDatabaseProvider } from "@/context/MockDatabaseProvider";
 import dayjs from "dayjs";
-import IncomeExpensesPie from "./IncomeExpensesPie";
+import IncomeExpensesPie from "../../components/dashboard_components/dashboard_tabs/overview_tab/IncomeExpensesPie";
 
 // mock supabase
-jest.mock("@/lib/supabase", () => {
+jest.mock("@/lib/supabase", () => ({
     supabase: {
         from: jest.fn(() => ({
             select: jest.fn().mockResolvedValue({ data: [], error: null })
         }))
     }
-})
+}))
 
 // mock react-chartjs-2 Pie component
 let chartProps: any = null;

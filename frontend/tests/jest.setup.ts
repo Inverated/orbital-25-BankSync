@@ -1,7 +1,4 @@
 import "@testing-library/jest-dom";
-import { Account, defaultKeywordMap, StatementResponse, Transaction, uploadReturnData } from "./utils/types";
-import dayjs from "dayjs";
-import * as databaseQuery from "@/lib/databaseQuery";
 
 jest.mock('@/context/UserContext', () => ({
     useUserId: () => ({
@@ -58,29 +55,3 @@ jest.mock("next/navigation", () => ({
         push: jest.fn()
     }))
 }));
-
-jest.spyOn(databaseQuery, "getTransactionDetails").mockImplementation(({ transactions, date }) => {
-    return transactions.filter(transaction => {
-        const transactionDate = dayjs(transaction.transaction_date);
-
-        if (date && date.startDate && date.endDate) {
-            return (transactionDate >= date.startDate && transactionDate <= date.endDate);
-        } else {
-            return true;
-        }
-    })
-})
-
-jest.spyOn(databaseQuery, "getAccountDetails").mockImplementation(({ accounts, condition }) => {
-    let filtered: Account[] = [...accounts]
-    if (condition) condition.forEach(({ key, value }) => {
-        filtered = filtered.filter(entry => {
-            const item = entry[key]
-            if (item && value.includes(item.toString())) {
-                return true
-            }
-        })
-    })
-
-    return filtered
-})
