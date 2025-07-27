@@ -46,7 +46,4 @@ jobs:
       - name: Run Jest
         run: |
           cd frontend 
-          npx jest --no-cache --testPathIgnorePatterns="
-            tests/test_overview/IncomeExpensesPie.test.tsx|
-            tests/test_analytics/AnalyticsIncomeVsExpensesIntegration.test.tsx
-          "
+          npx jest --no-cache --testPathIgnorePatterns="tests/test_overview/IncomeExpensesPie.test.tsx|tests/test_analytics/AnalyticsIncomeVsExpensesIntegration.test.tsx"
