@@ -103,6 +103,9 @@ export default function IncomeExpensesPie({ date, category }: IncomeExpensesPieP
         ]
     }
 
+    console.log("chartData", chartData.labels);
+    console.log("chartData", chartData.datasets[0].data);
+
     const chartOptions = {
         responsive: true,
         plugins: {
