@@ -1,4 +1,5 @@
 import UserName from '@/components/settings_components/Username';
+import { Account, Transaction } from '@/utils/types';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 

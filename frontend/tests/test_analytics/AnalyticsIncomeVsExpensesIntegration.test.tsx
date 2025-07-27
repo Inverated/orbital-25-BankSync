@@ -1,8 +1,17 @@
 import dayjs from "dayjs";
 import IncomeExpenses from "../../components/dashboard_components/dashboard_tabs/analytics_tab/AnalyticsIncomeVsExpenses";
 import { render, screen, waitFor } from "@testing-library/react";
-import { MockDatabaseProvider } from "@/context/MockDatabaseProvider";
-import { testAccounts } from "@/jest.setup";
+import { Account } from "@/utils/types";
+
+const mockAccounts: Account[] = [
+    {
+        account_name: "account 1",
+        account_no: '12345',
+        bank_name: 'bank 1',
+        balance: 100,
+        latest_recorded_date: "2024-06-30",
+    },
+]
 
 // mock react-chartjs-2 Line component
 let chartProps: any = null;
@@ -85,7 +94,7 @@ jest.mock('@/context/DatabaseContext', () => ({
         refreshDatabase: jest.fn(),
         loaded: true,
         transactions: mockTransactions,
-        accounts: testAccounts
+        accounts: mockAccounts
     }),
 }));
 

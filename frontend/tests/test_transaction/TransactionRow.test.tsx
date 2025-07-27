@@ -19,6 +19,33 @@ const details: Transaction & Partial<Account> = {
     ending_balance: 10000
 }
 
+const testTransaction: Transaction = {
+    transaction_description: "Transaction description",
+    transaction_date: '2025-1-1',
+    account_no: "Account No",
+    category: "Cat1",
+    withdrawal_amount: 1000,
+    deposit_amount: 0,
+    ending_balance: 100000
+}
+
+const testAccount: Account = {
+    account_name: "Account Name",
+    account_no: "Account No",
+    bank_name: "Bank Name",
+    balance: 10,
+    latest_recorded_date: '2025-1-1',
+}
+
+jest.mock('@/context/DatabaseContext', () => ({
+    useDatabase: () => ({
+        refreshDatabase: jest.fn(),
+        loaded: true,
+        transactions: [testTransaction],
+        accounts: [testAccount]
+    }),
+}));
+
 beforeAll(() => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 });
