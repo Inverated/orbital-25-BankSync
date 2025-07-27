@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MockDatabaseProvider } from "@/context/MockDatabaseProvider";
 import dayjs from "dayjs";
-import IncomeExpensesPie from "./IncomeExpensesPie";
+import IncomeExpensesPie from "../../components/dashboard_components/dashboard_tabs/overview_tab/IncomeExpensesPie";
 
 // mock supabase
 jest.mock("@/lib/supabase", () => ({
