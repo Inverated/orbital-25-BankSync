@@ -1,5 +1,5 @@
 import { Account, Transaction } from "@/utils/types";
-import { ReactNode } from "react";
+import { ReactNode, useContext } from "react";
 import { DatabaseContext } from "./DatabaseContext";
 
 type MockProviderProps = {
@@ -25,3 +25,11 @@ export const MockDatabaseProvider = ({
         </DatabaseContext.Provider>
     );
 }
+
+export const useDatabase = () => {
+    const context = useContext(DatabaseContext);
+    if (!context) {
+        throw new Error('useDatabase must be used within a UserProvider in Dashboard');
+    }
+    return context;
+};
