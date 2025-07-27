@@ -2,7 +2,7 @@ import json
 import pytest
 from backend.services.fileProcesser import fileParser
 
-test_site = 'backend/services/test_parser/test_files/'
+test_site = 'backend/tests/test_parser/test_files/'
 
 
 @pytest.mark.parametrize(

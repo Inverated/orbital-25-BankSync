@@ -1,9 +1,5 @@
 'use client'
 
-import ConnectedAccount from "@/components/settings_components/connectedAccount";
-import CustomFilter from "@/components/settings_components/customFilters";
-import AccountSecurity from "@/components/settings_components/accountSecurity";
-import Password from "@/components/settings_components/password";
 import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,7 +8,11 @@ import { ProfileProvider } from "@/context/ProfileContext";
 import { Session } from "@supabase/supabase-js";
 import { UserProvider } from "@/context/UserContext";
 import { DatabaseProvider } from "@/context/DatabaseContext";
-import Username from "@/components/settings_components/username";
+import Username from "@/components/settings_components/Username";
+import Password from "@/components/settings_components/Password";
+import CustomFilter from "@/components/settings_components/CustomFilters";
+import ConnectedAccount from "@/components/settings_components/ConnectedAccount";
+import AccountSecurity from "@/components/settings_components/AccountSecurity";
 
 
 export default function Settings() {

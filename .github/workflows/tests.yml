@@ -1,0 +1,49 @@
+name: Run Pytest and Jtest
+
+on:
+  push:
+    branches:
+      - '**'
+
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        node-version: [20]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with: 
+          python-version: '3.12.4'
+      
+      - name: Install python dependencies
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Run Pytest
+        run: python -m pytest 
+      
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install node.js dependencies
+        run: |
+          cd frontend
+          npm ci
+      
+      - name: Run Jest
+        run: |
+          cd frontend 
+          npx jest

@@ -11,7 +11,7 @@ Initialise backend:
 
 cd backend
 python -m venv venv
-.\venv\Scripts\activate
+.\venv\\Scripts\activate
 pip install -r requirements.txt
 
 Run backend + frontend
