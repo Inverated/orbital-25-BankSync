@@ -63,7 +63,8 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
                     transactions: transactions,
                     date: { startDate: startDate, endDate: endDate }
                 });
-
+                
+                console.log(depositAndTransactions)
                 depositAndTransactions.forEach(entry => months.forEach(month => {
                     const start = month.startOf("month").toISOString();
                     const end = month.endOf("month").toISOString();
