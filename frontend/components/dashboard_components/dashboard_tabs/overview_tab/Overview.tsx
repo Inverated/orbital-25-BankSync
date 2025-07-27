@@ -176,7 +176,7 @@ export default function Overview() {
                     )}
 
                     {incomeDate && (
-                        <div className="flex flex-col py-2">
+                        <div className="flex flex-col py-2 px-4 w-full">
                             <IncomeExpensesPie date={incomeDate} category={"income"} />
                         </div>
                     )}
@@ -224,7 +224,7 @@ export default function Overview() {
                     )}
 
                     {expensesDate && (
-                        <div className="flex flex-col py-2">
+                        <div className="flex flex-col py-2 px-4 w-full">
                             <IncomeExpensesPie date={expensesDate} category={"expenses"} />
                         </div>
                     )}

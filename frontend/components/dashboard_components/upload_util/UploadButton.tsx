@@ -67,12 +67,23 @@ export default function UploadButton() {
             }
 
             setShowParsingLoading(true)
+
+            const timeoutPromise = new Promise<void>((resolve) => {
+                setTimeout(() => {
+                    setErrorMessage("Backend is currently sleeping. Please give it a min to restart.");
+                    resolve();
+                }, 5000)
+            });
+
+            const uploadPromise = uploadNewFile(currentFile.current, filePassword.current?.value)
+
             const result: {
                 status: number,
                 data: uploadReturnData | null,
                 error: Error | null
-            } = await uploadNewFile(currentFile.current, filePassword.current?.value)
+            } = await Promise.race([uploadPromise, timeoutPromise.then(() => uploadPromise)]);
 
+            setErrorMessage('')
             setShowParsingLoading(false)
 
             if (result.status == 404) {
@@ -256,6 +267,7 @@ export default function UploadButton() {
             <Upload
                 onClick={() => {
                     setUploadDialogue(true);
+                    setErrorMessage('')
                     setShowTooltip(false);
                 }}
                 className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'}
@@ -273,7 +285,7 @@ export default function UploadButton() {
                     <div className="bg-white rounded-lg shadow-lg px-8 py-5 max-w-5/8 w-full z-60 max-h-11/12 overflow-y-auto">
                         <div className="flex flex-row space-x-2 items-center mb-3">
                             <p className="text-2xl">File Upload</p>
-                
+
                             <button className="hover:cursor-pointer relative group/help inline-block"
                                 onClick={() => alert('Current supported bank: DBS/POSB, OCBC, UOB and SC pdf only or exported files from BankSync.\n\nGeneric file types with header \nDate  |  Description  |  W.D / D.P  |  D.P / W.D  |  Balance\nworks with some issues in description ending')}>
                                 <Info className='h-6 w-6' />

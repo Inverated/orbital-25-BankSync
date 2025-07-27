@@ -23,7 +23,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
     const [exportType, setExportType] = useState<typeof EXPORTOPTIONS[number]>('EXCEL')
     const [showTypeDropdown, setShowTypeDropdown] = useState(false)
 
-    const [networkError, setNetworkError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
     const [downloadSuccess, setDownloadSuccess] = useState(false)
 
     const passwordRef = useRef<HTMLInputElement>(null)
@@ -54,9 +54,20 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
             blob = await exportPdfToBlob()
         }
         if (blob) {
-            setNetworkError(false)
+            setErrorMessage('')
             if (passwordRef.current?.value) {
-                const response = await passwordProtect(blob, exportType, passwordRef.current.value)
+                const timeoutPromise = new Promise<void>((resolve) => {
+                    setTimeout(() => {
+                        setErrorMessage("Backend is currently sleeping. Please give it a min to restart.");
+                        resolve();
+                    }, 5000)
+                });
+
+                const protectPromise = passwordProtect(blob, exportType, passwordRef.current.value)
+
+                const response = await Promise.race([protectPromise, timeoutPromise.then(() => protectPromise)]);
+                setErrorMessage('')
+                
                 if (response?.status == 200 && response.data) {
                     if (exportType == 'EXCEL') {
                         downloadBlob(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))
@@ -65,7 +76,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                     }
                 } else if (response?.status == 404) {
                     // Download even if cannot connect to backend to encrypt
-                    setNetworkError(true)
+                    setErrorMessage('Network error, unable to encrypt with password')
                     downloadBlob(blob)
                 }
             } else {
@@ -79,7 +90,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
         setFilteredAccountEntry([])
         setTransactionEntry([])
         setAccountEntry([])
-        setNetworkError(false)
+        setErrorMessage('')
         setActiveTab('account')
     }
 
@@ -203,9 +214,7 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
                                         ref={passwordRef}
                                         className="placeholder:left-0 placeholder:text-xs pl-2 py-1 border rounded-sm w-fit" />
                                 </div>
-                                <div hidden={!networkError} className="text-sm text-red-500 mt-2">
-                                    Network error, unable to encrypt with password
-                                </div>
+                                <p className="text-red-500 mt-2" hidden={errorMessage == ''}>{errorMessage}</p>
                             </div>
                         </div>
                         <div className="flex justify-end items-center gap-3">
