@@ -83,7 +83,7 @@ export default function OptionMenu({ user }: OptionMenuProps) {
             {logoutDialogue &&
                 <div className="fixed inset-0 flex justify-center items-center z-50">
                     <div className="absolute inset-0 bg-black opacity-50"></div>
-                    <div className="bg-white p-8 shadow-lg w-1/4 z-10 rounded-2xl">
+                    <div className="bg-white p-8 shadow-lg min-w-fit max-w-1/4 z-10 rounded-2xl">
                         <p className="text-xl font-semibold">Are you sure you want to logout?</p>
                         
                         <div className="flex justify-end pt-6 gap-4">
