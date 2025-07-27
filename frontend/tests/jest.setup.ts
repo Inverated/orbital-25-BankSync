@@ -1,4 +1,10 @@
 import "@testing-library/jest-dom";
+import { beforeEach } from '@jest/globals';
+import { cleanup } from '@testing-library/react';
+
+beforeEach(() => {
+  cleanup(); // Clear DOM and components
+});
 
 jest.mock('@/context/UserContext', () => ({
     useUserId: () => ({
