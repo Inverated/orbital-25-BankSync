@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
-import IncomeExpenses from "../../components/dashboard_components/dashboard_tabs/analytics_tab/AnalyticsIncomeVsExpenses";
 import { useDatabase } from "@/context/DatabaseContext";
 import * as databaseQuery from "@/lib/databaseQuery";
 import { render, screen, waitFor } from "@testing-library/react";
+import IncomeExpenses from "@/components/dashboard_components/dashboard_tabs/analytics_tab/AnalyticsIncomeVsExpenses";
 
 // mock useDatabase context
 jest.mock("@/context/DatabaseContext", () => ({
