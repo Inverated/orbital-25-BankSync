@@ -122,20 +122,26 @@ def processExportedExcel(workbook: Workbook) -> tuple[bool, list[Statement]]:
         else:
             if not validAcc:
                 return (False, 'Please use exported excel file only')
+            
+        latestDate = row[4]
+        if not isinstance(row[4], str):
+            latestDate = row[4].strftime('%Y-%m-%d')
         statements.append(Statement(
             hasData=False,
             account=Account(
-                bank_name=row[0],
-                account_no=row[1],
-                account_name=row[2],
+                bank_name=str(row[0]),
+                account_no=str(row[1]),
+                account_name=str(row[2]),
                 balance=row[3],
-                latest_recorded_date=row[4]
+                latest_recorded_date=str(latestDate)
             )
         ))
 
     transTab = workbook['Transactions']
     validTrans = False
     for index, row in enumerate(transTab.iter_rows(values_only=True)):
+        if row[0] == None:
+            break
         if index == 0:
             if row == ('Transaction Date', 'Description', 'Deposit', 'Withdrawal', 'Ending Balance', 'Category', 'Account No'):
                 validTrans = True
@@ -146,7 +152,7 @@ def processExportedExcel(workbook: Workbook) -> tuple[bool, list[Statement]]:
 
         date, description, deposit, withdrawal, endingBal, category, accNo = row
         date = date.date().isoformat()
-
+        accNo = str(accNo)
         added = False
         for statement in statements:
             if statement.account.account_no == accNo:
