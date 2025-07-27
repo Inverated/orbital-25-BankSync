@@ -36,7 +36,7 @@ export default function Home() {
 
     return (
         <div>
-            <header className="sticky top-0 w-full bg-white shadow-md z-50 flex flex-row justify-between items-center pt-6 pb-6 transition-all lg:px-40 md:px-25 not-lg:px-12">
+            <header className="sticky top-0 w-full bg-white shadow-md z-50 flex flex-row justify-between space-x-4 items-center pt-6 pb-6 transition-all lg:px-40 md:px-25 not-lg:px-10">
                 <div>
                     <Image src="/logo.png" alt="BankSync" width={250} height={125} />
                 </div>
@@ -50,7 +50,7 @@ export default function Home() {
                     </button>
 
                     <button
-                        className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-full text-green-500 font-sans font-semibold tracking-widest border border-green-500 px-4 py-2 transition cursor-pointer"
+                        className="bg-transparent hover:bg-gray-200 active:bg-gray-300 active:scale-95 rounded-full text-green-500 font-sans font-semibold tracking-widest border border-green-500 px-3 py-2 transition cursor-pointer"
                         onClick={() => router.push('/registration/signup')}
                     >
                         Sign up
@@ -61,11 +61,11 @@ export default function Home() {
             <section className="bg-gray-100 flex-col items-center text-center py-15">
                 <h1 className="text-6xl font-sans font-bold">Welcome to</h1>
                 <Image src="/name.png" alt="BankSync" width={500} height={250} className="mx-auto brightness-109" />
-                <p className="text-lg text-gray-500 w-3/8 mx-auto">
+                <p className="text-lg text-gray-500 lg:w-3/8 md:w-5/8 px-5 mx-auto">
                     A simple, centralized platform to manage all your finances.
                 </p>
 
-                <p className="text-lg text-gray-500 w-5/16 mx-auto">
+                <p className="text-lg text-gray-500 lg:w-5/16 md:w-1/2 px-5 mx-auto">
                     <span className="text-green-500 font-semibold">Monitor balances</span>, <span className="text-green-500 font-semibold">track spending</span> and <span className="text-green-500 font-semibold">uncover financial insights</span> across all your accounts — all in one place.
                 </p>
             </section>
@@ -103,19 +103,19 @@ export default function Home() {
             <section className="bg-gray-100 pt-20 pb-9 flex-col items-center text-center">
                 <h1 className="text-4xl font-sans font-bold mb-8">Supported Banks</h1>
 
-                <p className="text-lg text-gray-500 w-3/8 mx-auto">
+                <p className="text-lg text-gray-500 lg:w-3/8 md:w-5/8 px-5 mx-auto">
                     BankSync currently supports the uploading of statements from the banks below.
                 </p>
 
-                <p className="text-lg text-gray-500 w-3/8 mx-auto mb-4">
+                <p className="text-lg text-gray-500 lg:w-3/8 md:w-5/8 px-5 mx-auto mb-4">
                     More will be added soon!
                 </p>
 
-                <div className="flex space-x-20 justify-center items-center">
+                <div className="transition-all flex lg:space-x-20 md:space-x-15 lg:flex-row md:flex-row not-lg:flex-col lg:scale-100  md:scale-87 not-lg:scale-100 justify-center items-center">
                     <Image src="https://1000logos.net/wp-content/uploads/2021/05/DBS-Bank-logo.png" alt="DBS" width={230} height={250} className="bg-transparent" />
                     <Image src="https://www.posb.com.sg/iwov-resources/flp/images/posb_logo.svg?1" alt="POSB" width={230} height={200} className="bg-transparent" />
                 </div>
-                <div className="flex space-x-20 justify-center items-center">
+                <div className="transition-all flex lg:space-x-20 md:space-x-15 lg:flex-row md:flex-row not-lg:flex-col lg:scale-100  md:scale-87 not-lg:scale-90 justify-center items-center">
                     <Image src="https://1000logos.net/wp-content/uploads/2021/10/OCBC-Bank-Logo.png" alt="OCBC" width={250} height={250} className="bg-transparent" />
                     <Image src="https://1000logos.net/wp-content/uploads/2021/11/Standard-Chartered-logo.png" alt="Standard Charter" width={250} height={250} className="bg-transparent" />
                     <Image src="https://1000logos.net/wp-content/uploads/2021/09/UOB-Logo.png" alt="UOB" width={250} height={250} className="bg-transparent" />
@@ -127,7 +127,7 @@ export default function Home() {
                     Ready to take control of your finances?
                 </h1>
 
-                <p className="text-lg text-gray-500 w-3/8 mx-auto mb-7">
+                <p className="text-lg text-gray-500 lg:w-3/8 md:w-5/8 px-5 mx-auto mb-7">
                     Sign up now and start managing your accounts with ease.
                 </p>
 

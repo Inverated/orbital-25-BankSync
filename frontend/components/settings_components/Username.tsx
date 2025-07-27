@@ -36,7 +36,7 @@ export default function Username() {
     }
 
     return (
-        <div className="px-7 py-4.5 w-[455px]">
+        <div className="px-7 py-4.5">
             <div className="text-2xl font-semibold">Change Username</div>
 
             <form>

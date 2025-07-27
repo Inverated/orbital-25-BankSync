@@ -26,7 +26,7 @@ export default function ConnectedAccount() {
     }, [])
 
     return (
-        <div className="px-7 py-4.5">
+        <div className="px-7 py-4.5 w-fit">
             <div className="text-2xl font-semibold">Connected Account</div>
             <div>
                 <div className="mt-5">Connect accounts with the same email address.</div>

@@ -22,7 +22,7 @@ export default function TabBar({ currentPage, setPage }: TabBarProps) {
 
     return (
         <div className="transition-all">
-            <ul className="flex flex-wrap lg:space-x-2 justify-end">
+            <ul className="flex flex-wrap lg:space-x-2 justify-end max-w-fit">
                 {pages.map((tab) => (
                     <li key={tab} className="">
                         <button

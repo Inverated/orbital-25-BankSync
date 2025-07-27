@@ -63,7 +63,7 @@ export default function Dashboard() {
             <DatabaseProvider userId={currentSession.user.id}>
                 <UserProvider userId={currentSession.user.id}>
                     <div className="flex flex-col">
-                        <header className="bg-white shadow-md z-50 flex flex-col pt-6 pb-4 mb-2 transition-all lg:px-40 md:px-25 not-lg:px-12">
+                        <header className="min-w-full w-auto bg-white shadow-md z-50 flex flex-col pt-6 pb-4 mb-2 transition-all lg:px-40 md:px-25 not-lg:px-12">
                             <div className="w-full flex flex-row justify-between items-center">
                                 <div>
                                     <Image src="/logo.png" alt="BankSync" width={250} height={125} />
@@ -75,7 +75,7 @@ export default function Dashboard() {
                             </div>
 
                             <div className="flex justify-end pt-3">
-                                <div className="max-w-fit  rounded-xl lg:px-3 md:px-1 lg:py-3 md:py-1 bg-gray-100 flex flex-row items-center">
+                                <div className="max-w-fit rounded-xl lg:px-3 md:px-1 lg:py-3 md:py-1 bg-gray-100 flex flex-row items-center">
                                     <TabsBar currentPage={currentPage} setPage={setPage} />
                                 </div>
                             </div>

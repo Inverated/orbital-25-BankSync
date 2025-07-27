@@ -99,7 +99,7 @@ export default function CustomFilter() {
                     onClick={resetFilter}>
                     Reset Filters
                 </button>
-                <div className="overflow-visible space-x-3 not-sm:flex-col">
+                <div className="overflow-visible sm:space-x-3 flex not-sm:flex-col not-sm:space-y-2 items-center">
                     <button className="h-fit px-3 py-1.5 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition"
                         onClick={initialiseCategoryArray}>
                         Cancel

@@ -178,7 +178,7 @@ export default function Transactions() {
 
     return (
         <div className="flex flex-col items-center justify-center">
-            <div className="w-3/4">
+            <div className="lg:w-3/4 md:w-3/4 not-lg:w-6/7">
                 <div className="flex justify-end space-x-4 mx-4">
                     <ExportButton
                         filteredAccount={accountEntry}

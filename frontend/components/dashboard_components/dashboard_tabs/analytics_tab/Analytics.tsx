@@ -23,7 +23,7 @@ export default function Analytics() {
 
     return (
         <div className="flex justify-center">
-            <div className="flex flex-col w-3/4">
+            <div className="flex flex-col lg:w-3/4 md:w-3/4 not-lg:w-11/12">
                 <div className="border-gray-300 border-2 p-3 m-5 rounded-lg">
                     <div className="flex flex-row items-center p-2 gap-2">
                         <AnalyticsDatePicker
@@ -77,7 +77,7 @@ export default function Analytics() {
 
                 <SpendingTrend startDate={startDate} endDate={endDate} />
 
-                <div className="flex flex-row justify-center m-5 gap-5">
+                <div className="flex lg:flex-row md:flex-row not-lg:flex-col  justify-center m-5 gap-5">
                     <SpendingCategory startDate={startDate} endDate={endDate} />
                     <IncomeExpenses startDate={startDate} endDate={endDate} />
                 </div>

@@ -147,7 +147,7 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
         if (loaded) setShowEditDialogue(false)
     }, [loaded])
 
-    const buttonStyle = 'mx-2 my-1 py-2 px-3 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition' as const
+    const buttonStyle = 'lg:mx-2 md:mx-2 not-lg:mx-1 my-1 py-2 lg:px-3 md:px-3 not-lg:px-1 rounded-lg hover:cursor-pointer bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-97 text-white font-semibold tracking-wide transition' as const
     
     return (
         <div>
@@ -173,7 +173,7 @@ export default function TransactionRow({ details, uniqueCategory }: arguements) 
                     </div>
                 </div>
                 :
-                <div ref={expandedRow} className='border border-gray-300 border-2 rounded-lg m-4 transition'>
+                <div ref={expandedRow} className='border-gray-300 border-2 rounded-lg m-4 transition'>
                     {/* Expanded transaction row */}
                     <div className='flex flex-col p-2'>
                         <p className='flex p-3 start-0.5'>

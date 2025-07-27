@@ -98,7 +98,14 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
                     Loading data...
                 </div>
             ) : (
-                <Bar data={chartData} options={chartOptions} />
+                <div>
+                    <div className="lg:block md:block not-lg:hidden">
+                        <Bar data={chartData} options={chartOptions} />
+                    </div>
+                    <div className="lg:hidden md:hidden not-lg:block text-center content-center min-h-20">
+                        Rotate or extend your display to view the graph
+                    </div>
+                </div>
 
             )}
         </div>
