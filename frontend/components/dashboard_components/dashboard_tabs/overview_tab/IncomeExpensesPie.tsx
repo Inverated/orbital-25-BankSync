@@ -80,8 +80,8 @@ export default function IncomeExpensesPie({ date, category }: IncomeExpensesPieP
 
     const generateSliceColors = (index: number, total: number) => {
         const hue = (category === "income") ? 210 : 0;
-        const saturation = 50 + (index * (30 / (total - 1)));
-        const lightness = 80 + (index * (50 / (total - 1)));
+        const saturation = 60 + (index * (20 / (total - 1)));
+        const lightness = 60 + (index * (25 / (total - 1)));
 
         if (total === 1) {
             return `hsl(${hue}, 70%, 65%)`

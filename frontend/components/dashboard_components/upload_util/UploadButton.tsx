@@ -66,11 +66,23 @@ export default function UploadButton() {
             }
 
             setShowParsingLoading(true)
+
+            const timeoutPromise = new Promise<void>((resolve) => {
+                setTimeout(() => {
+                    setErrorMessage("Backend is currently sleeping. Please give it a min to restart.");
+                    resolve();
+                }, 5000)
+            });
+
+            const uploadPromise = uploadNewFile(currentFile.current, filePassword.current?.value)
+
             const result: {
                 status: number,
                 data: uploadReturnData | null,
                 error: Error | null
-            } = await uploadNewFile(currentFile.current, filePassword.current?.value)
+            } = await Promise.race([uploadPromise, timeoutPromise.then(() => uploadPromise)]);
+
+            setErrorMessage('')
             setShowParsingLoading(false)
 
             if (result.status == 404) {
@@ -254,6 +266,7 @@ export default function UploadButton() {
             <button
                 onClick={() => {
                     setUploadDialogue(true);
+                    setErrorMessage('')
                     setShowTooltip(false);
                 }}>
                 <Upload
