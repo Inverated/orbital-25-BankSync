@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 import { render, screen, waitFor } from "@testing-library/react";
 import SpendingCategory from "../../components/dashboard_components/dashboard_tabs/analytics_tab/AnalyticsSpendingCategory";
-import { MockDatabaseProvider } from "@/context/MockDatabaseProvider";
 import { testAccounts } from "@/jest.setup";
 
 const mockTransactions = [

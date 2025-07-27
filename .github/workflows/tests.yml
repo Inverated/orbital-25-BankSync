@@ -46,4 +46,4 @@ jobs:
       - name: Run Jest
         run: |
           cd frontend 
-          npx jest
+          npx jest --no-cache
