@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { MockDatabaseProvider } from "@/context/MockDatabaseProvider";
 import dayjs from "dayjs";
 import IncomeExpensesPie from "@/components/dashboard_components/dashboard_tabs/overview_tab/IncomeExpensesPie";
 
@@ -21,152 +20,157 @@ jest.mock("react-chartjs-2", () => ({
     },
 }));
 
+const mockAccounts = [
+    {
+        account_no: "12345abcde",
+        account_name: "Savings Account",
+        bank_name: "DBS",
+        balance: 100000,
+        latest_recorded_date: "2025-05-30",
+    },
+    {
+        account_no: "67890fghij",
+        account_name: "Investment Account",
+        bank_name: "SC",
+        balance: 5000,
+        latest_recorded_date: "2025-05-30",
+    }
+];
+
+const mockTransactions = [
+    {
+        transaction_date: "2025-04-08",
+        transaction_description: "food",
+        withdrawal_amount: 50,
+        deposit_amount: 0,
+        account_no: "12345abcde",
+        category: "food",
+        ending_balance: 88300,
+    },
+    {
+        transaction_date: "2025-04-22",
+        transaction_description: "shopping",
+        withdrawal_amount: 100,
+        deposit_amount: 0,
+        account_no: "12345abcde",
+        category: "shopping",
+        ending_balance: 88200,
+    },
+    {
+        transaction_date: "2025-04-30",
+        transaction_description: "salary",
+        withdrawal_amount: 0,
+        deposit_amount: 6000,
+        account_no: "12345abcde",
+        category: "salary",
+        ending_balance: 94200,
+    },
+    {
+        transaction_date: "2025-06-10",
+        transaction_description: "food",
+        withdrawal_amount: 100,
+        deposit_amount: 0,
+        account_no: "12345abcde",
+        category: "food",
+        ending_balance: 94100,
+    },
+    {
+        transaction_date: "2025-06-12",
+        transaction_description: "shopping",
+        withdrawal_amount: 100,
+        deposit_amount: 0,
+        account_no: "12345abcde",
+        category: "shopping",
+        ending_balance: 94000,
+    },
+    {
+        transaction_date: "2025-06-30",
+        transaction_description: "salary",
+        withdrawal_amount: 0,
+        deposit_amount: 6000,
+        account_no: "12345abcde",
+        category: "salary",
+        ending_balance: 100000,
+    },
+    {
+        transaction_date: "2025-04-01",
+        transaction_description: "transfer",
+        withdrawal_amount: 0,
+        deposit_amount: 1000,
+        account_no: "67890fghij",
+        category: "transfer",
+        ending_balance: 4700,
+    },
+    {
+        transaction_date: "2025-04-01",
+        transaction_description: "investment",
+        withdrawal_amount: 1000,
+        deposit_amount: 0,
+        account_no: "67890fghij",
+        category: "investment",
+        ending_balance: 3700,
+    },
+    {
+        transaction_date: "2025-04-30",
+        transaction_description: "investment",
+        withdrawal_amount: 0,
+        deposit_amount: 2000,
+        account_no: "67890fghij",
+        category: "investment",
+        ending_balance: 5700,
+    },
+    {
+        transaction_date: "2025-06-01",
+        transaction_description: "transfer",
+        withdrawal_amount: 1000,
+        deposit_amount: 0,
+        account_no: "67890fghij",
+        category: "transfer",
+        ending_balance: 4700,
+    },
+    {
+        transaction_date: "2025-06-01",
+        transaction_description: "investment",
+        withdrawal_amount: 200,
+        deposit_amount: 0,
+        account_no: "67890fghij",
+        category: "investment",
+        ending_balance: 4500,
+    },
+    {
+        transaction_date: "2025-06-30",
+        transaction_description: "investment",
+        withdrawal_amount: 0,
+        deposit_amount: 500,
+        account_no: "67890fghij",
+        category: "investment",
+        ending_balance: 5000,
+    }
+];
+
+// mock useDatabase context
+jest.mock('@/context/DatabaseContext', () => ({
+    useDatabase: () => ({
+        refreshDatabase: jest.fn(),
+        loaded: true,
+        transactions: mockTransactions,
+        accounts: mockAccounts
+    }),
+}));
+
 describe("MoneyInMoneyOut: Unit Testing", () => {
-    const mockAccounts = [
-        {
-            account_no: "12345abcde",
-            account_name: "Savings Account",
-            bank_name: "DBS",
-            balance: 100000,
-            latest_recorded_date: "2025-05-30",
-        },
-        {
-            account_no: "67890fghij",
-            account_name: "Investment Account",
-            bank_name: "SC",
-            balance: 5000,
-            latest_recorded_date: "2025-05-30",
-        }
-    ];
-
-    const mockTransactions = [
-        {
-            transaction_date: "2025-04-08",
-            transaction_description: "food",
-            withdrawal_amount: 50,
-            deposit_amount: 0,
-            account_no: "12345abcde",
-            category: "food",
-            ending_balance: 88300,
-        },
-        {
-            transaction_date: "2025-04-22",
-            transaction_description: "shopping",
-            withdrawal_amount: 100,
-            deposit_amount: 0,
-            account_no: "12345abcde",
-            category: "shopping",
-            ending_balance: 88200,
-        },
-        {
-            transaction_date: "2025-04-30",
-            transaction_description: "salary",
-            withdrawal_amount: 0,
-            deposit_amount: 6000,
-            account_no: "12345abcde",
-            category: "salary",
-            ending_balance: 94200,
-        },
-        {
-            transaction_date: "2025-06-10",
-            transaction_description: "food",
-            withdrawal_amount: 100,
-            deposit_amount: 0,
-            account_no: "12345abcde",
-            category: "food",
-            ending_balance: 94100,
-        },
-        {
-            transaction_date: "2025-06-12",
-            transaction_description: "shopping",
-            withdrawal_amount: 100,
-            deposit_amount: 0,
-            account_no: "12345abcde",
-            category: "shopping",
-            ending_balance: 94000,
-        },
-        {
-            transaction_date: "2025-06-30",
-            transaction_description: "salary",
-            withdrawal_amount: 0,
-            deposit_amount: 6000,
-            account_no: "12345abcde",
-            category: "salary",
-            ending_balance: 100000,
-        },
-        {
-            transaction_date: "2025-04-01",
-            transaction_description: "transfer",
-            withdrawal_amount: 0,
-            deposit_amount: 1000,
-            account_no: "67890fghij",
-            category: "transfer",
-            ending_balance: 4700,
-        },
-        {
-            transaction_date: "2025-04-01",
-            transaction_description: "investment",
-            withdrawal_amount: 1000,
-            deposit_amount: 0,
-            account_no: "67890fghij",
-            category: "investment",
-            ending_balance: 3700,
-        },
-        {
-            transaction_date: "2025-04-30",
-            transaction_description: "investment",
-            withdrawal_amount: 0,
-            deposit_amount: 2000,
-            account_no: "67890fghij",
-            category: "investment",
-            ending_balance: 5700,
-        },
-        {
-            transaction_date: "2025-06-01",
-            transaction_description: "transfer",
-            withdrawal_amount: 1000,
-            deposit_amount: 0,
-            account_no: "67890fghij",
-            category: "transfer",
-            ending_balance: 4700,
-        },
-        {
-            transaction_date: "2025-06-01",
-            transaction_description: "investment",
-            withdrawal_amount: 200,
-            deposit_amount: 0,
-            account_no: "67890fghij",
-            category: "investment",
-            ending_balance: 4500,
-        },
-        {
-            transaction_date: "2025-06-30",
-            transaction_description: "investment",
-            withdrawal_amount: 0,
-            deposit_amount: 500,
-            account_no: "67890fghij",
-            category: "investment",
-            ending_balance: 5000,
-        }
-    ];
-
     // rendering and checking output for income in April
     it("renders bar chart with correct data for income in April", async () => {
         // render component
-        render (
-            <MockDatabaseProvider 
-                accounts={mockAccounts}
-                transactions={mockTransactions}
-            >
-                <IncomeExpensesPie 
-                    date={dayjs("2025-04-01")}
-                    category="income" 
-                />
-            </MockDatabaseProvider>
+        render(
+            <IncomeExpensesPie
+                date={dayjs("2025-04-01")}
+                category="income"
+            />
         );
 
         // wait for loading to finish
-        await waitFor(() => 
+        await waitFor(() =>
             expect(screen.queryByText(/Loading data.../i)).not.toBeInTheDocument()
         );
 
@@ -191,20 +195,15 @@ describe("MoneyInMoneyOut: Unit Testing", () => {
     // rendering and checking output for expenses in June
     it("renders bar chart with correct data for expenses in June", async () => {
         // render component
-        render (
-            <MockDatabaseProvider 
-                accounts={mockAccounts}
-                transactions={mockTransactions}
-            >
-                <IncomeExpensesPie 
-                    date={dayjs("2025-06-01")}
-                    category="expenses" 
-                />
-            </MockDatabaseProvider>
+        render(
+            <IncomeExpensesPie
+                date={dayjs("2025-06-01")}
+                category="expenses"
+            />
         );
 
         // wait for loading to finish
-        await waitFor(() => 
+        await waitFor(() =>
             expect(screen.queryByText(/Loading data.../i)).not.toBeInTheDocument()
         );
 
@@ -229,16 +228,11 @@ describe("MoneyInMoneyOut: Unit Testing", () => {
     // rendering and checking output for income if no transactions
     it("renders bar chart with correct data for income if no transactions", async () => {
         // render component
-        render (
-            <MockDatabaseProvider 
-                accounts={mockAccounts}
-                transactions={mockTransactions}
-            >
-                <IncomeExpensesPie 
-                    date={dayjs("2025-05-01")}
-                    category="income" 
-                />
-            </MockDatabaseProvider>
+        render(
+            <IncomeExpensesPie
+                date={dayjs("2025-05-01")}
+                category="income"
+            />
         );
 
         // check placeholder text
@@ -248,16 +242,11 @@ describe("MoneyInMoneyOut: Unit Testing", () => {
     // rendering and checking output for expenses if no transactions
     it("renders bar chart with correct data for expenses if no transactions", async () => {
         // render component
-        render (
-            <MockDatabaseProvider 
-                accounts={mockAccounts}
-                transactions={mockTransactions}
-            >
-                <IncomeExpensesPie 
-                    date={dayjs("2025-03-01")}
-                    category="income" 
-                />
-            </MockDatabaseProvider>
+        render(
+            <IncomeExpensesPie
+                date={dayjs("2025-03-01")}
+                category="income"
+            />
         );
 
         // check placeholder text
