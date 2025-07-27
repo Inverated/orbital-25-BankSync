@@ -153,6 +153,9 @@ def processExportedExcel(workbook: Workbook) -> tuple[bool, list[Statement]]:
         date, description, deposit, withdrawal, endingBal, category, accNo = row
         date = date.date().isoformat()
         accNo = str(accNo)
+        description = str(description)
+        category = str(category)
+        
         added = False
         for statement in statements:
             if statement.account.account_no == accNo:
