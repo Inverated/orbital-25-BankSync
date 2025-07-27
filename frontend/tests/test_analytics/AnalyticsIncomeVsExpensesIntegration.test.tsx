@@ -4,13 +4,13 @@ import { MockDatabaseProvider } from "@/context/MockDatabaseProvider";
 import IncomeExpenses from "@/components/dashboard_components/dashboard_tabs/analytics_tab/AnalyticsIncomeVsExpenses";
 
 // mock supabase
-jest.mock("@/lib/supabase", () => {
+jest.mock("@/lib/supabase", () => ({
     supabase: {
         from: jest.fn(() => ({
             select: jest.fn().mockResolvedValue({ data: [], error: null })
         }))
     }
-})
+}))
 
 // mock react-chartjs-2 Line component
 let chartProps: any = null;

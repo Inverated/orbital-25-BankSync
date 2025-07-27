@@ -1,6 +1,6 @@
-import MoneyInMoneyOut from "../../components/dashboard_components/dashboard_tabs/overview_tab/MoneyInMoneyOut";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MockDatabaseProvider } from "@/context/MockDatabaseProvider";
+import MoneyInMoneyOut from "@/components/dashboard_components/dashboard_tabs/overview_tab/MoneyInMoneyOut";
 
 // mock supabase
 jest.mock("@/lib/supabase", () => ({

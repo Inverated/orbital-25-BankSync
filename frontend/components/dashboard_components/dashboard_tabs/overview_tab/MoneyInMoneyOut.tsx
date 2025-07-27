@@ -38,12 +38,10 @@ export default function MoneyInMoneyOut({ account_no }: MoneyInMoneyOutProps) {
                 months.map(key => [key.format('MMM YY'), ({ moneyIn: 0.0, moneyOut: 0.0 })])
             )
             depositAndTransactions.forEach(entry => months.forEach(month => {
-                const start = month.startOf("month");
-                const end = month.endOf("month");
+                const start = month.startOf("month")
+                const end = month.endOf("month")
                 const curr = month.format('MMM YY');
-
                 const entryDate = dayjs(entry.transaction_date);
-                
                 if (entryDate.valueOf() >= start.valueOf() && entryDate.valueOf() <= end.valueOf()) {
                     map.set(curr, {
                         moneyIn: (map.get(curr)?.moneyIn || 0) + entry.deposit_amount,

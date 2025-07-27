@@ -1,6 +1,6 @@
 import { useDatabase } from "@/context/DatabaseContext";
 import { getTransactionDetails } from "@/lib/databaseQuery";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { LineChart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
@@ -61,11 +61,11 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
                 });
 
                 depositAndTransactions.forEach(entry => months.forEach(month => {
-                    const start = month.startOf("month").toISOString();
-                    const end = month.endOf("month").toISOString();
-                    const curr = month.format("MMM YY");
-
-                    if (entry.transaction_date >= start && entry.transaction_date <= end) {
+                    const start = month.startOf("month")
+                    const end = month.endOf("month")
+                    const curr = month.format('MMM YY');
+                    const entryDate = dayjs(entry.transaction_date);
+                    if (entryDate.valueOf() >= start.valueOf() && entryDate.valueOf() <= end.valueOf()) {
                         map.set(curr, (map.get(curr) || 0) + entry.withdrawal_amount)
                         return
                     }

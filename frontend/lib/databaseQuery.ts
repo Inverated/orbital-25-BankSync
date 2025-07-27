@@ -19,7 +19,6 @@ export function getTransactionDetails({
     ascending_date = false,
     date = null
 }: TransactionDetails): Transaction[] {
-    console.log(transactions, condition)
     let filtered: Transaction[] = [...transactions]
     condition.forEach(({ key, value }) => {
         filtered = filtered.filter(entry => {
