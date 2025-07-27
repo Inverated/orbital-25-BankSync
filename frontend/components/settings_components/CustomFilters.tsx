@@ -1,4 +1,3 @@
-import ComponentFilterRow from "@/components/settings_components/componentFilterRow"
 import { useDatabase } from "@/context/DatabaseContext"
 import { useProfile } from "@/context/ProfileContext"
 import { useUserId } from "@/context/UserContext"
@@ -6,6 +5,7 @@ import { updateProfileDetails } from "@/lib/supabaseUpdate"
 import { defaultKeywordMap, Profile } from "@/utils/types"
 import { CircleCheck, CircleX } from "lucide-react"
 import { useEffect, useState } from "react"
+import ComponentFilterRow from "./ComponentFilterRow"
 
 export default function CustomFilter() {
     const { keywordMap, refreshProfile, refreshStatus } = useProfile()

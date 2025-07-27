@@ -58,7 +58,6 @@ export default function UploadButton() {
 
     const handleUploadFile = async () => {
         resetValues()
-
         if (currentFile.current != null) {
             setPasswordQuery(false)
 
@@ -67,12 +66,10 @@ export default function UploadButton() {
             }
 
             setShowParsingLoading(true)
-
             const timeoutPromise = new Promise<void>((resolve) => {
                 setTimeout(() => {
-                    setErrorMessage("Backend is currently sleeping. Please give it a min to restart.");
                     resolve();
-                }, 5000)
+                }, 3000)
             });
 
             const uploadPromise = uploadNewFile(currentFile.current, filePassword.current?.value)
@@ -81,7 +78,10 @@ export default function UploadButton() {
                 status: number,
                 data: uploadReturnData | null,
                 error: Error | null
-            } = await Promise.race([uploadPromise, timeoutPromise.then(() => uploadPromise)]);
+            } = await Promise.race([uploadPromise, timeoutPromise.then(() => {
+                setErrorMessage("Backend is currently sleeping. Please give it a min to restart.");
+                return uploadPromise.finally(() => setErrorMessage(''))
+            })]);
 
             setErrorMessage('')
             setShowParsingLoading(false)
@@ -264,14 +264,17 @@ export default function UploadButton() {
 
     return (
         <div className="relative group">
-            <Upload
+            <button
                 onClick={() => {
                     setUploadDialogue(true);
                     setErrorMessage('')
                     setShowTooltip(false);
-                }}
-                className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'}
-            />
+                }}>
+                <Upload
+                    className={'mx-2 w-8 h-8 items-center rounded-lg hover:cursor-pointer'}
+                />
+            </button>
+
 
             {showTooltip && (
                 <div className="absolute -top-7 -translate-x-1/2 left-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointers-events-none">
@@ -322,7 +325,7 @@ export default function UploadButton() {
                                 </div>
                             </div>
 
-                            <input id="dropzone-file" type="file" name="fileUploadArea"
+                            <input id="dropzone-file" type="file" name="fileUploadArea" data-testid='dropFile'
                                 onChange={(e) => {
                                     setCurrentFile(e)
                                     handleUploadFile()

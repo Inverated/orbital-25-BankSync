@@ -19,12 +19,10 @@ export function getTransactionDetails({
     ascending_date = false,
     date = null
 }: TransactionDetails): Transaction[] {
-
     let filtered: Transaction[] = [...transactions]
-
     condition.forEach(({ key, value }) => {
         filtered = filtered.filter(entry => {
-            const item = entry[key as keyof Transaction]
+            const item = entry[key]
             if (item && value.includes(item.toString())) {
                 return true
             }
@@ -58,7 +56,7 @@ export function getAccountDetails({
 
     condition.forEach(({ key, value }) => {
         filtered = filtered.filter(entry => {
-            const item = entry[key as keyof Account]
+            const item = entry[key]
             if (item && value.includes(item.toString())) {
                 return true
             }

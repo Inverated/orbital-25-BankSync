@@ -58,16 +58,18 @@ export default function ExportButton({ filteredAccount, filteredTransaction }: {
             if (passwordRef.current?.value) {
                 const timeoutPromise = new Promise<void>((resolve) => {
                     setTimeout(() => {
-                        setErrorMessage("Backend is currently sleeping. Please give it a min to restart.");
                         resolve();
                     }, 5000)
                 });
 
                 const protectPromise = passwordProtect(blob, exportType, passwordRef.current.value)
 
-                const response = await Promise.race([protectPromise, timeoutPromise.then(() => protectPromise)]);
+                const response = await Promise.race([protectPromise, timeoutPromise.then(() => {
+                    setErrorMessage("Backend is currently sleeping. Please give it a min to restart.");
+                    return protectPromise ? protectPromise.finally(() => setErrorMessage('')) : protectPromise
+                })]);
                 setErrorMessage('')
-                
+
                 if (response?.status == 200 && response.data) {
                     if (exportType == 'EXCEL') {
                         downloadBlob(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))
