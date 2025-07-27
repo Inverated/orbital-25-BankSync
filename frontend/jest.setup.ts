@@ -170,4 +170,3 @@ jest.mock("@/utils/uploadFile", () => ({
 
     }))
 }))
-

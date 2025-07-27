@@ -9,7 +9,7 @@ type DatabaseContextType = {
     loaded: boolean;
 }
 
-const DatabaseContext = createContext<DatabaseContextType | null>(null);
+export const DatabaseContext = createContext<DatabaseContextType | null>(null);
 
 type DatabaseProviderProps = {
     children: ReactNode;
