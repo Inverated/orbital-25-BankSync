@@ -3,7 +3,7 @@ import { beforeEach } from '@jest/globals';
 import { cleanup } from '@testing-library/react';
 
 beforeEach(() => {
-  cleanup(); // Clear DOM and components
+  cleanup()
 });
 
 jest.mock('@/context/UserContext', () => ({
