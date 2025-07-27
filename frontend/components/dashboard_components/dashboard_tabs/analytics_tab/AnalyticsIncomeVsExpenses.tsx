@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { LineChart } from "lucide-react";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { Line } from "react-chartjs-2";
 import { getTransactionDetails } from "@/lib/databaseQuery";
 import { useDatabase } from "@/context/DatabaseContext";
@@ -66,11 +66,11 @@ export default function IncomeExpenses({ startDate, endDate }: IncomeExpensesPro
 
                 console.log(depositAndTransactions)
                 depositAndTransactions.forEach(entry => months.forEach(month => {
-                    const start = month.startOf("month").toISOString();
-                    const end = month.endOf("month").toISOString();
+                    const start = month.startOf("month")
+                    const end = month.endOf("month")
                     const curr = month.format('MMM YY');
-
-                    if (entry.transaction_date >= start && entry.transaction_date <= end) {
+                    const entryDate = dayjs(entry.transaction_date);
+                    if (entryDate.valueOf() >= start.valueOf() && entryDate.valueOf() <= end.valueOf()) {
                         map.set(curr, {
                             income: (map.get(curr)?.income || 0) + entry.deposit_amount,
                             expenses: (map.get(curr)?.expenses || 0) + entry.withdrawal_amount
