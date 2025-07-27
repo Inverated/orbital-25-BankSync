@@ -10,7 +10,7 @@ jest.mock("@/context/DatabaseContext", () => ({
 }));
 
 // mock getTransactionDetails
-jest.spyOn(databaseQuery, "getTransactionDetails").mockImplementation(({ transactions, date}) => {
+jest.spyOn(databaseQuery, "getTransactionDetails").mockImplementation(({ transactions, date }) => {
     return transactions.filter(transaction => {
         const transactionDate = dayjs(transaction.transaction_date);
 
@@ -102,9 +102,9 @@ describe("IncomeExpenses: Unit Testing", () => {
     });
 
     // rendering and checking output for valid date range
-    it("renders income, expenses, and net savings", async () => {        
+    it("renders income, expenses, and net savings", async () => {
         // render component with valid date range
-        render (
+        render(
             <IncomeExpenses
                 startDate={dayjs("2024-05-01")}
                 endDate={dayjs("2024-06-30")}
@@ -112,7 +112,7 @@ describe("IncomeExpenses: Unit Testing", () => {
         );
 
         // wait for loading to finish
-        await waitFor(() => 
+        await waitFor(() =>
             expect(screen.queryByText(/Loading data.../i)).not.toBeInTheDocument()
         );
 
@@ -122,13 +122,15 @@ describe("IncomeExpenses: Unit Testing", () => {
         // check income
         const incomeSection = screen.getByText("Income").closest("div");
         expect(incomeSection).toHaveTextContent("Income");
-        expect(incomeSection).toHaveTextContent("$1500.50");
-        
+        await waitFor(() => {
+            expect(incomeSection).toHaveTextContent("$1500.50");
+        });
+
         // check expenses
         const expensesSection = screen.getByText("Expenses").closest("div");
         expect(expensesSection).toHaveTextContent("Expenses");
         expect(expensesSection).toHaveTextContent("$300.10");
-        
+
         // check net savings
         const netSavingsSection = screen.getByText("Net Savings").closest("div");
         expect(netSavingsSection).toHaveTextContent("Net Savings");
@@ -136,9 +138,9 @@ describe("IncomeExpenses: Unit Testing", () => {
     });
 
     // rendering and checking output for valid date range
-    it("renders income, expenses, and net savings", async () => {        
+    it("renders income, expenses, and net savings", async () => {
         // render component with valid date range
-        render (
+        render(
             <IncomeExpenses
                 startDate={dayjs("2024-05-01")}
                 endDate={dayjs("2024-07-31")}
@@ -146,7 +148,7 @@ describe("IncomeExpenses: Unit Testing", () => {
         );
 
         // wait for loading to finish
-        await waitFor(() => 
+        await waitFor(() =>
             expect(screen.queryByText(/Loading data.../i)).not.toBeInTheDocument()
         );
 
@@ -156,13 +158,16 @@ describe("IncomeExpenses: Unit Testing", () => {
         // check income
         const incomeSection = screen.getByText("Income").closest("div");
         expect(incomeSection).toHaveTextContent("Income");
-        expect(incomeSection).toHaveTextContent("$1500.50");
+        await waitFor(() => {
+            expect(incomeSection).toHaveTextContent("$1500.50");
+        });
         
+
         // check expenses
         const expensesSection = screen.getByText("Expenses").closest("div");
         expect(expensesSection).toHaveTextContent("Expenses");
         expect(expensesSection).toHaveTextContent("$10300.10");
-        
+
         // check net savings
         const netSavingsSection = screen.getByText("Net Savings").closest("div");
         expect(netSavingsSection).toHaveTextContent("Net Savings");
@@ -172,13 +177,13 @@ describe("IncomeExpenses: Unit Testing", () => {
     // rendering and checking output for invalid date range
     it("renders placeholder", async () => {
         // render component with invalid date range
-        render (
+        render(
             <IncomeExpenses
                 startDate={dayjs("2024-06-01")}
                 endDate={dayjs("2024-05-01")}
             />
         );
-        
+
         // check placeholder text
         expect(screen.getByText("Income vs. Expenses Chart")).toBeInTheDocument();
     })

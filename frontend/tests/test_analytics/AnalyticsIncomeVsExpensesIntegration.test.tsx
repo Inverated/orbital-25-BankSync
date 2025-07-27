@@ -110,7 +110,9 @@ describe("IncomeExpenses: Integration Testing", () => {
 
         // check chart props
         expect(chartProps.data.labels).toEqual(["May 24", "Jun 24"]);
-        expect(chartProps.data.datasets[0].data).toEqual([0.5, 1500]);
+        await waitFor(() => {
+            expect(chartProps.data.datasets[0].data).toEqual([0.5, 1500]);
+        });
         expect(chartProps.data.datasets[1].data).toEqual([0.1, 300]);
 
         // check income
@@ -151,7 +153,9 @@ describe("IncomeExpenses: Integration Testing", () => {
 
         // check chart props
         expect(chartProps.data.labels).toEqual(["May 24", "Jun 24", "Jul 24"]);
-        expect(chartProps.data.datasets[0].data).toEqual([0.5, 1500, 0]);
+        await waitFor(() => {
+            expect(chartProps.data.datasets[0].data).toEqual([0.5, 1500, 0]);
+        });
         expect(chartProps.data.datasets[1].data).toEqual([0.1, 300, 10000]);
 
         // check income
