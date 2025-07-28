@@ -36,7 +36,6 @@ export default function IncomeExpensesPie({ date, category }: IncomeExpensesPieP
                     transactions: transactions,
                     date: { startDate: date, endDate: date }
                 });
-                console.log(transactionAccountList)
                 if (category === "income") {
                     transactionAccountList
                         .filter(entry => entry.deposit_amount != 0.0)
@@ -50,7 +49,6 @@ export default function IncomeExpensesPie({ date, category }: IncomeExpensesPieP
                             map.set(entry.account_no, (map.get(entry.account_no) || 0) + entry.withdrawal_amount)
                         );
                 }
-                console.log(map)
                 const data: AccountCashFLow[] = Array.from(map.entries())
                     .map(([account_no, cash]) => { 
                         const account = accounts.find(acc => acc.account_no === account_no);
@@ -103,8 +101,8 @@ export default function IncomeExpensesPie({ date, category }: IncomeExpensesPieP
         ]
     }
 
-    console.log("chartData", chartData.labels);
-    console.log("chartData", chartData.datasets[0].data);
+    //console.log("chartData", chartData.labels);
+    //console.log("chartData", chartData.datasets[0].data);
 
     const chartOptions = {
         responsive: true,

@@ -101,7 +101,7 @@ export default function SpendingTrend({ startDate, endDate }: SpendingTrendProps
             }
         ],
     }
-    console.log("chartData", chartData.datasets[0].data);
+    //console.log("chartData", chartData.datasets[0].data);
 
     const chartOptions = {
         responsive: true,
